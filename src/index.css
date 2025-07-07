@@ -1,1 +1,8 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
+
+@media screen and (min-width: 1601px) {
+.container {
+        min-width: 1600px;
+    }
+}

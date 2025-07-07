@@ -11,6 +11,8 @@ import Chat from "@/assets/svg/Chat.svg?react";
 import Settings from "@/assets/svg/Settings.svg?react";
 import Spinner from "@/components/common/Loader/Spinner";
 import Image from "@/components/common/Image";
+import Logo from "@/assets/svg/Logo.svg?react";
+import Phone from "@/assets/svg/Phone.svg?react";
 
 export type IconNameType =
   | "notification"
@@ -22,7 +24,9 @@ export type IconNameType =
   | "client"
   | "calendar"
   | "chat"
-  | "settings";
+  | "settings"
+  | "logo"
+  | "phone";
 
 type IconProps = {
   name: IconNameType;
@@ -50,12 +54,12 @@ export const Icon = ({
   ...restProps
 }: IconProps) => {
   const style = {
-    color: fill, 
+    color: fill,
     stroke,
     ...iIconStyle,
   };
   const renderIcon = (icon: IconNameType) => {
-    const iconProps = { ...restProps }; 
+    const iconProps = { ...restProps };
 
     switch (icon) {
       case "notification":
@@ -78,6 +82,10 @@ export const Icon = ({
         return <Chat {...iconProps} />;
       case "settings":
         return <Settings {...iconProps} />;
+      case "logo":
+        return <Logo {...iconProps} />;
+      case "phone":
+        return <Phone {...iconProps} />;
       default:
         return null;
     }
