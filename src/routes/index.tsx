@@ -5,8 +5,8 @@ import {
   createBrowserRouter,
   type RouteObject
 } from 'react-router-dom';
-import AuthenticateRoute from './RouteGuard/AuthenticateRoute';
-import UnAuthenticateRoute from './RouteGuard/UnAuthenticateRoute';
+import AuthenticateRoute from '@/routes/RouteGuard/AuthenticateRoute';
+import UnAuthenticateRoute from '@/routes/RouteGuard/UnAuthenticateRoute';
 import { ROUTES } from '@/constants/routePath';
 import ErrorBoundary, { ErrorElement } from '@/components/common/ErrorBoundary';
 import SectionLoader from '@/components/common/Loader/Spinner';

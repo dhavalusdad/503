@@ -1,18 +1,13 @@
-import { useDashboard, DashboardHeader, DashboardCard, UserCard } from '../../features/dashboard';
+import { useDashboard, DashboardCard, UserCard } from '../../features/dashboard';
 import { SectionLoader } from '@/components/common/Loader';
 
 const Dashboard = () => {
   const {
     users,
     stats,
-    searchTerm,
-    sortBy,
-    sortOrder,
     isLoading,
     error,
     handleUserClick,
-    handleSearch,
-    handleSort,
   } = useDashboard();
 
   if (isLoading) {
@@ -48,14 +43,14 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <DashboardHeader
+      {/* <DashboardHeader
         stats={stats}
         searchTerm={searchTerm}
         onSearchChange={handleSearch}
         sortBy={sortBy}
         sortOrder={sortOrder}
         onSort={handleSort}
-      />
+      /> */}
 
       <div className="px-6 py-8">
         {/* Stats Cards */}
@@ -105,16 +100,16 @@ const Dashboard = () => {
         {/* Users Grid */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Users ({users.length})</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Users ({users?.length})</h2>
           </div>
           <div className="p-6">
-            {users.length === 0 ? (
+            {users?.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500">No users found matching your search criteria.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {users.map((user) => (
+                {users?.map((user) => (
                   <UserCard
                     key={user.id}
                     user={user}

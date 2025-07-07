@@ -1,7 +1,7 @@
-import QueryProvider from "./api/QueryProvider";
-import SectionLoader from "./components/common/Loader/Spinner";
-import { Providers } from "./redux/provider";
-import Route from "./routes";
+import QueryProvider from "@/api/QueryProvider";
+import SectionLoader from "@/components/common/Loader/Spinner";
+import { Providers } from "@/redux/provider";
+import Route from "@/routes";
 
 const PreRoute = () => {
   const loader = false;

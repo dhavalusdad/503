@@ -1,7 +1,6 @@
-// Common Components
-// export { Loader } from './Loader';
-// export type { LoaderProps } from './Loader';
-
-// Add more common components here as you create them
-// export { ErrorBoundary } from './ErrorBoundary';
-// export { Pagination } from './Pagination'; 
+export * from './ErrorBoundary';
+export * from './Loader';
+export * from './Button';
+export * from './Input';
+export * from './Table';
+export * from './Pagination';
