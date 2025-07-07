@@ -6,6 +6,8 @@ export const jsonStringify = <T>(value: T, defaultValue: ''): string => {
   }
 };
 
+export * from './dateUtils';
+
 export const jsonParse = <T>(jsonString: string, defaultValue: T): T => {
   try {
     return JSON.parse(jsonString) as T;

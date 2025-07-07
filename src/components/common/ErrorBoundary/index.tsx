@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from 'react';
-import Error from './Error';
+import Error from '@/components/common/ErrorBoundary/Error';
 
 // Define the types for the state
 interface ErrorBoundaryState {

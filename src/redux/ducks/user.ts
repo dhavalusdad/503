@@ -13,6 +13,7 @@ export type UserState = {
   dob?: string;
   phone?: string;
   gender?: string;
+  logo_path?: string;
   tokenInfo?: {
     [key: string]: number | string | (string | number)[];
   };
