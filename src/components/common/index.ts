@@ -1,6 +1,6 @@
 // Common Components
-export { Loader } from './Loader';
-export type { LoaderProps } from './Loader';
+// export { Loader } from './Loader';
+// export type { LoaderProps } from './Loader';
 
 // Add more common components here as you create them
 // export { ErrorBoundary } from './ErrorBoundary';

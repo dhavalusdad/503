@@ -12,7 +12,7 @@ export const dispatchClearUser = (data?: {
   store.dispatch(
     clearUser({
       isRedirect: data?.isRedirect || false,
-      isForceClear: data?.isForceClear || import.meta.env.DEV
+      isForceClear: data?.isForceClear || false
     })
   );
 };
