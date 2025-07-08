@@ -20,6 +20,7 @@ import Mail from "@/assets/svg/Mail.svg?react";
 import Website from "@/assets/svg/Website.svg?react";
 import Facebook from "@/assets/svg/Facebook.svg?react";
 import Instagram from "@/assets/svg/Instagram.svg?react";
+import Arrow from "@/assets/svg/Arrow.svg?react";
 
 export type IconNameType =
   | "notification"
@@ -40,7 +41,8 @@ export type IconNameType =
   | "mail"
   | "website"
   | "facebook"
-  | "instagram";
+  | "instagram"
+  | "arrow";
 
 type IconProps = {
   name: IconNameType;
@@ -114,6 +116,8 @@ export const Icon = ({
         return <Facebook {...iconProps} />;
       case "instagram":
         return <Instagram {...iconProps} />;
+      case "arrow":
+        return <Arrow {...iconProps} />;
       default:
         return null;
     }
