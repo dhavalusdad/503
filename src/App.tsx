@@ -1,5 +1,5 @@
 import QueryProvider from "@/api/QueryProvider";
-import SectionLoader from "@/components/common/Loader/Spinner";
+import SectionLoader from "@/stories/Common/Loader/Spinner";
 import { Providers } from "@/redux/provider";
 import Route from "@/routes";
 
