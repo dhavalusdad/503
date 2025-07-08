@@ -1,4 +1,4 @@
-import Icon from "@/components/common/Icon";
+import { Icon } from "@/stories/Common";
 
 const Header = () => {
   return (
