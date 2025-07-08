@@ -1,6 +1,9 @@
+import { ROUTES } from "@/constants/routePath";
 import { Icon } from "@/stories/Common";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <div className="bg-white border border-solid border-surface py-30px px-38px rounded-20px">
       <div className="flex items-center justify-between">
@@ -21,6 +24,7 @@ const Header = () => {
             </button>
             <button
               type="button"
+              onClick={() => navigate(ROUTES.DASHBOARD.path)}
               className="flex items-center gap-2.5 px-6 py-3.5 border border-solid border-primary rounded-10px cursor-pointer bg-primary text-white"
             >
               <span>Create Account</span>

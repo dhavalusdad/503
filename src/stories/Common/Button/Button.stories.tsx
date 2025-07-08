@@ -1,74 +1,97 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import Button from './index';
-
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import Button, { type ButtonProps } from "./index";
+import "../../../index.css";
+import Icon from "../Icon";
 
 const meta: Meta<typeof Button> = {
-  title: 'Common/Button',
+  title: "Common/Button",
   component: Button,
-  tags: ['autodocs'],
-  argTypes: {
-    variant: {
-      control: { type: 'select' },
-      options: ['primary', 'secondary', 'outline'],
-    },
-    size: {
-      control: { type: 'select' },
-      options: ['sm', 'md', 'lg'],
-    },
-    disabled: { control: 'boolean' },
-    loading: { control: 'boolean' },
-    children: { control: 'text' },
-    onClick: { action: 'clicked' },
+  tags: ["autodocs"],
+  args: {
+    variant: "filled",
+    title: "Click Me",
   },
 };
-export default meta;
 
+export default meta;
 
 type Story = StoryObj<typeof Button>;
 
-
-export const Primary: Story = {
+export const Filled: Story = {
   args: {
-    children: 'Primary Button',
-    variant: "primary",
-    size: 'md',
+    variant: "filled",
   },
 };
-
-
-export const Secondary: Story = {
-  args: {
-    children: 'Secondary Button',
-    variant: 'secondary',
-    size: 'md',
-  },
-};
-
 
 export const Outline: Story = {
   args: {
-    children: 'Outline Button',
-    variant: 'outline',
-    size: 'md',
-  },
-}
-
-
-export const Loading: Story = {
-  args: {
-    children: 'Loading...',
-    variant: 'primary',
-    size: 'md',
-    loading: true,
+    variant: "outline",
   },
 };
 
+export const None: Story = {
+  args: {
+    variant: "none",
+  },
+};
+
+export const WithIconStart: Story = {
+  args: {
+    variant: "filled",
+    title: "Profile",
+    icon: <Icon name="calendar" />,
+    isIconFirst: true,
+  },
+};
+
+export const WithIconEnd: Story = {
+  args: {
+    variant: "filled",
+    title: "Profile",
+    icon: <Icon name="calendar" />,
+    isIconFirst: false,
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    variant: "filled",
+    title: "Loading...",
+    isLoading: true,
+  },
+};
 
 export const Disabled: Story = {
   args: {
-    children: 'Disabled Button',
-    variant: 'primary',
-    size: 'md',
-    disabled: true,
+    variant: "filled",
+    title: "Disabled",
+    isDisabled: true,
+  },
+};
+
+export const CustomClassNames: Story = {
+  args: {
+    variant: "filled",
+    title: "Styled Button",
+    className: "text-xl px-6 py-2",
+    titleClassName: "underline",
+  },
+};
+
+export const OnlyIcon: Story = {
+  args: {
+    variant: "outline",
+    icon: <Icon name="calendar" />,
+  },
+};
+
+export const WithChildren: Story = {
+  render: (args: ButtonProps) => (
+    <Button {...args}>
+      <span className="text-sm font-semibold">🚀 Launch</span>
+    </Button>
+  ),
+  args: {
+    variant: "filled",
   },
 };
