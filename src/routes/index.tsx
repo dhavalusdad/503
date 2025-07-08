@@ -9,7 +9,7 @@ import AuthenticateRoute from '@/routes/RouteGuard/AuthenticateRoute';
 import UnAuthenticateRoute from '@/routes/RouteGuard/UnAuthenticateRoute';
 import { ROUTES } from '@/constants/routePath';
 import ErrorBoundary, { ErrorElement } from '@/components/common/ErrorBoundary';
-import SectionLoader from '@/components/common/Loader/Spinner';
+import SectionLoader from '@/stories/Common/Loader/Spinner';
 import AppLayout from '@/components/layout';
 
 const applySuspense = (routes: RouteObject[]): RouteObject[] => {

@@ -1,5 +1,5 @@
 import React from 'react';  
-import { Table } from '@/components/common/Table';
+import { Table } from '@/stories/Common/Table';
 import { clientColumns } from '@/features/client/components/ClientTableColumns';
 import { dummyClients } from '@/features/client/data/dummyData';
 

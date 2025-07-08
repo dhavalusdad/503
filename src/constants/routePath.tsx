@@ -1,11 +1,11 @@
 import React from "react";
 import type { RouteObject } from "react-router-dom";
 
-const Root = React.lazy(() => import("@/pages/Root"));
+const Landing = React.lazy(() => import("@/pages/Landing"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 const Profile = React.lazy(() => import("@/pages/Profile"));
 const Client = React.lazy(() => import("@/pages/Client"));
-
+const Appointment = React.lazy(() => import("@/pages/Appointment"));
 export type RoutesType = {
   [key in
     | "DEFAULT"
@@ -38,7 +38,7 @@ export const ROUTES: RoutesType = {
   DEFAULT: {
     path: "/",
     routeType: "public",
-    element: <Root />,
+    element: <Landing />,
   },
   PROFILE: {
     path: "/profile",
@@ -55,7 +55,7 @@ export const ROUTES: RoutesType = {
     path: "/appointment",
     routeType: "authenticate",
     headerName: "Appointment",
-    element: <>Appointment</>,
+    element: <Appointment />,
   },
   CLIENT: {
     path: "/client",

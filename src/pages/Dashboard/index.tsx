@@ -1,5 +1,5 @@
 import { useDashboard, DashboardCard, UserCard } from '../../features/dashboard';
-import { SectionLoader } from '@/components/common/Loader';
+import { SectionLoader } from '@/stories/Common/Loader/Spinner';
 
 const Dashboard = () => {
   const {

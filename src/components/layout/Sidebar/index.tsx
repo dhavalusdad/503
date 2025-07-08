@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { ROUTES } from "@/constants/routePath";
-import { Icon, type IconNameType } from "@/components/common/Icon";
+import { Icon, type IconNameType } from "@/stories/Common";
 import clsx from "clsx";
 
 interface SidebarProps {
