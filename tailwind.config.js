@@ -13,7 +13,8 @@ export default {
         primarygray: '#6B6B6B',
         surface: '#E8ECF3',
         blackdark: '#2E3139',
-        Gray: '#F6F5F4'
+        Gray: '#F6F5F4',
+        Greenlight: '#08A045'
       },
       spacing: {
 
@@ -38,7 +39,8 @@ export default {
         '64px': '64px'
       },
       lineHeight: {
-        '18px': '18px'
+        '18px': '18px',
+        '21px': '21px'
       },
       fontFamily: {
         Nunito: ['Nunito']
@@ -46,10 +48,16 @@ export default {
       width: {
         '85%': '85%',
         '30%': '30%',
-        '55px': '55px'
+        '55px': '55px',
+        '332px': '332px',
+        '363px': '363px'
       },
       height: {
-        '55px': '55px'
+        '55px': '55px',
+        '1px': '1px'
+      },
+      boxShadow: {
+        content: '0px 10px 30px 0px #0000004D'
       }
     },
   },
