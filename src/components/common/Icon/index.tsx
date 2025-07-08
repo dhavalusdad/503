@@ -13,6 +13,13 @@ import Spinner from "@/components/common/Loader/Spinner";
 import Image from "@/components/common/Image";
 import Logo from "@/assets/svg/Logo.svg?react";
 import Phone from "@/assets/svg/Phone.svg?react";
+import Close from "@/assets/svg/Close.svg?react";
+import Search from "@/assets/svg/Search.svg?react";
+import Loading from "@/assets/svg/Loading.svg?react";
+import Mail from "@/assets/svg/Mail.svg?react";
+import Website from "@/assets/svg/Website.svg?react";
+import Facebook from "@/assets/svg/Facebook.svg?react";
+import Instagram from "@/assets/svg/Instagram.svg?react";
 
 export type IconNameType =
   | "notification"
@@ -26,7 +33,14 @@ export type IconNameType =
   | "chat"
   | "settings"
   | "logo"
-  | "phone";
+  | "phone"
+  | "close"
+  | "search"
+  | "loading"
+  | "mail"
+  | "website"
+  | "facebook"
+  | "instagram";
 
 type IconProps = {
   name: IconNameType;
@@ -86,6 +100,20 @@ export const Icon = ({
         return <Logo {...iconProps} />;
       case "phone":
         return <Phone {...iconProps} />;
+      case "close":
+        return <Close {...iconProps} />;
+      case "search":
+        return <Search {...iconProps} />;
+      case "loading":
+        return <Loading {...iconProps} />;
+      case "mail":
+        return <Mail {...iconProps} />;
+      case "website":
+        return <Website {...iconProps} />;
+      case "facebook":
+        return <Facebook {...iconProps} />;
+      case "instagram":
+        return <Instagram {...iconProps} />;
       default:
         return null;
     }
