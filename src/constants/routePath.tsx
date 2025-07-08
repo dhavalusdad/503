@@ -1,7 +1,7 @@
 import React from "react";
 import type { RouteObject } from "react-router-dom";
 
-const Root = React.lazy(() => import("@/pages/Root"));
+const Landing = React.lazy(() => import("@/pages/Landing"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 const Profile = React.lazy(() => import("@/pages/Profile"));
 const Client = React.lazy(() => import("@/pages/Client"));
@@ -38,7 +38,7 @@ export const ROUTES: RoutesType = {
   DEFAULT: {
     path: "/",
     routeType: "public",
-    element: <Root />,
+    element: <Landing />,
   },
   PROFILE: {
     path: "/profile",

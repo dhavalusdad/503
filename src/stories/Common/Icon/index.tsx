@@ -9,6 +9,15 @@ import Client from "@/assets/svg/Client.svg?react";
 import Calendar from "@/assets/svg/Calendar.svg?react";
 import Chat from "@/assets/svg/Chat.svg?react";
 import Settings from "@/assets/svg/Settings.svg?react";
+import Logo from "@/assets/svg/Logo.svg?react";
+import Phone from "@/assets/svg/Phone.svg?react";
+import Close from "@/assets/svg/Close.svg?react";
+import Search from "@/assets/svg/Search.svg?react";
+import Loading from "@/assets/svg/Loading.svg?react";
+import Mail from "@/assets/svg/Mail.svg?react";
+import Website from "@/assets/svg/Website.svg?react";
+import Facebook from "@/assets/svg/Facebook.svg?react";
+import Instagram from "@/assets/svg/Instagram.svg?react";
 import Spinner from "@/stories/Common/Loader/Spinner";
 import { Image } from "@/stories/Common";
 
@@ -22,7 +31,16 @@ export type IconNameType =
   | "client"
   | "calendar"
   | "chat"
-  | "settings";
+  | "settings"
+  | "logo"
+  | "phone"
+  | "close"
+  | "search"
+  | "loading"
+  | "mail"
+  | "website"
+  | "facebook"
+  | "instagram";
 
 type IconProps = {
   name: IconNameType;
@@ -50,12 +68,12 @@ export const Icon = ({
   ...restProps
 }: IconProps) => {
   const style = {
-    color: fill, 
+    color: fill,
     stroke,
     ...iIconStyle,
   };
   const renderIcon = (icon: IconNameType) => {
-    const iconProps = { ...restProps }; 
+    const iconProps = { ...restProps };
 
     switch (icon) {
       case "notification":
@@ -78,6 +96,24 @@ export const Icon = ({
         return <Chat {...iconProps} />;
       case "settings":
         return <Settings {...iconProps} />;
+      case "logo":
+        return <Logo {...iconProps} />;
+      case "phone":
+        return <Phone {...iconProps} />;
+      case "close":
+        return <Close {...iconProps} />;
+      case "search":
+        return <Search {...iconProps} />;
+      case "loading":
+        return <Loading {...iconProps} />;
+      case "mail":
+        return <Mail {...iconProps} />;
+      case "website":
+        return <Website {...iconProps} />;
+      case "facebook":
+        return <Facebook {...iconProps} />;
+      case "instagram":
+        return <Instagram {...iconProps} />;
       default:
         return null;
     }
