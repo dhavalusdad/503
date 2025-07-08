@@ -1,5 +1,5 @@
-import Icon from "@/components/common/Icon";
-import Image from "@/components/common/Image";
+import { Icon } from "@/stories/Common";
+import { Image } from "@/stories/Common";
 import { ROUTES } from "@/constants/routePath";
 import { currentUser } from "@/redux/ducks/user";
 import { useEffect, useRef, useState, type PropsWithChildren } from "react";

@@ -9,8 +9,8 @@ import Client from "@/assets/svg/Client.svg?react";
 import Calendar from "@/assets/svg/Calendar.svg?react";
 import Chat from "@/assets/svg/Chat.svg?react";
 import Settings from "@/assets/svg/Settings.svg?react";
-import Spinner from "@/components/common/Loader/Spinner";
-import Image from "@/components/common/Image";
+import Spinner from "@/stories/Common/Loader/Spinner";
+import { Image } from "@/stories/Common";
 
 export type IconNameType =
   | "notification"

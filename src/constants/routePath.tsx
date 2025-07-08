@@ -5,7 +5,7 @@ const Root = React.lazy(() => import("@/pages/Root"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 const Profile = React.lazy(() => import("@/pages/Profile"));
 const Client = React.lazy(() => import("@/pages/Client"));
-
+const Appointment = React.lazy(() => import("@/pages/Appointment"));
 export type RoutesType = {
   [key in
     | "DEFAULT"
@@ -55,7 +55,7 @@ export const ROUTES: RoutesType = {
     path: "/appointment",
     routeType: "authenticate",
     headerName: "Appointment",
-    element: <>Appointment</>,
+    element: <Appointment />,
   },
   CLIENT: {
     path: "/client",

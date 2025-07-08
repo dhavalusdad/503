@@ -10,7 +10,7 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { Pagination } from "../Pagination";
+import { Pagination } from "@/stories/Common/Pagination";
 
 interface TableProps<TData> {
   data: TData[];
@@ -18,6 +18,7 @@ interface TableProps<TData> {
   searchPlaceholder?: string;
   searchableColumns?: string[];
   className?: string;
+  pagination?: boolean;
 }
 
 export const Table = <TData,>({
@@ -25,6 +26,7 @@ export const Table = <TData,>({
   columns,
   searchPlaceholder = "Search...",
   className = "",
+  pagination = true,
 }: TableProps<TData>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -105,11 +107,15 @@ export const Table = <TData,>({
         </table>
       </div>
       {/* Pagination */}
-      <Pagination table={table} />
-      <div className={`mt-2 text-sm text-gray-500 ${className}`}>
-        Showing {table.getRowModel().rows.length} of{" "}
-        {table.getPreFilteredRowModel().rows.length} total rows
-      </div>
+      {pagination && data.length > 0 && (
+        <>
+          <Pagination table={table} />
+          <div className={`mt-2 text-sm text-gray-500 ${className}`}>
+            Showing {table.getRowModel().rows.length} of{" "}
+            {table.getPreFilteredRowModel().rows.length} total rows
+          </div>
+        </>
+      )}
     </div>
   );
 };

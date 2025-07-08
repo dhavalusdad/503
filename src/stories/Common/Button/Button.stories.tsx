@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import Button from '../components/common/Button';
+import Button from './index';
 
 
 const meta: Meta<typeof Button> = {
@@ -9,7 +9,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['primary', 'secondary', 'outline', 'ghost'],
+      options: ['primary', 'secondary', 'outline'],
     },
     size: {
       control: { type: 'select' },
@@ -51,16 +51,7 @@ export const Outline: Story = {
     variant: 'outline',
     size: 'md',
   },
-};
-
-
-export const Ghost: Story = {
-  args: {
-    children: 'Ghost Button',
-    variant: 'ghost',
-    size: 'md',
-  },
-};
+}
 
 
 export const Loading: Story = {
