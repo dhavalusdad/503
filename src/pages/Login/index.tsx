@@ -6,7 +6,7 @@ const Login = () => {
       <div className="w-2/4">
         <LeftContent />
       </div>
-      <div className="w-2/4 bg-white flex items-center justify-center">
+      <div className="w-2/4 bg-white flex items-center justify-center m-auto">
         <RightContent />
       </div>
     </div>

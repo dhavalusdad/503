@@ -25,6 +25,13 @@ import Spinner from "@/stories/Common/Loader/Spinner";
 import { Image } from "@/stories/Common";
 import LogoSecondary from "@/assets/svg/LogoSecondary.svg?react";
 import Email from "@/assets/svg/Email.svg?react";
+import Lock from "@/assets/svg/Lock.svg?react";
+import Google from "@/assets/svg/Google.svg?react";
+import FacebookLogo from "@/assets/svg/FacebookLogo.svg?react";
+import User from "@/assets/svg/User.svg?react";
+import InvalidCross from "@/assets/svg/InvalidCross.svg?react";
+import ValidCheck from "@/assets/svg/ValidCheck.svg?react";
+import TickCircle from "@/assets/svg/TickCircle.svg?react";
 
 export type IconNameType =
   | "notification"
@@ -50,7 +57,14 @@ export type IconNameType =
   | "logosecondary"
   | "passwordEye"
   | "passwordVisible"
-  | "email";
+  | "email"
+  | "lock"
+  | "google"
+  | "facebooklogo"
+  | "user"
+  | "invalidcross"
+  | "validcheck"
+  | "tickcircle";
 
 type IconProps = {
   name: IconNameType;
@@ -134,6 +148,20 @@ export const Icon = ({
         return <PasswordVisible {...iconProps} />;
       case "email":
         return <Email {...iconProps} />;
+      case "lock":
+        return <Lock {...iconProps} />;
+      case "google":
+        return <Google {...iconProps} />;
+      case "facebooklogo":
+        return <FacebookLogo {...iconProps} />;
+      case "user":
+        return <User {...iconProps} />;
+      case "invalidcross":
+        return <InvalidCross {...iconProps} />;
+      case "validcheck":
+        return <ValidCheck {...iconProps} />;
+      case "tickcircle":
+        return <TickCircle {...iconProps} />;
       default:
         return null;
     }

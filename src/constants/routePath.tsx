@@ -7,6 +7,11 @@ const Profile = React.lazy(() => import("@/pages/Profile"));
 const Client = React.lazy(() => import("@/pages/Client"));
 const Appointment = React.lazy(() => import("@/pages/Appointment"));
 const Login = React.lazy(() => import("@/pages/Login"));
+const Register = React.lazy(() => import("@/pages/Login"));
+const Forgot = React.lazy(() => import("@/pages/Login"));
+const ResetPassword = React.lazy(() => import("@/pages/Login"));
+const PasswordChanged = React.lazy(() => import("@/pages/Login"));
+const Verification = React.lazy(() => import("@/pages/Login"));
 export type RoutesType = {
   [key in
     | "DEFAULT"
@@ -18,6 +23,11 @@ export type RoutesType = {
     | "CHAT"
     | "SETTINGS"
     | "LOGIN"
+    | "REGISTER"
+    | "FORGOT"
+    | "RESETPASSWORD"
+    | "PASSWORDCHANGED"
+    | "VERIFICATION"
     | "NOT_FOUND"]: {
     path: string;
     headerName?: string;
@@ -46,6 +56,31 @@ export const ROUTES: RoutesType = {
     path: "/login",
     routeType: "public",
     element: <Login />,
+  },
+  REGISTER: {
+    path: "/Register",
+    routeType: "public",
+    element: <Register />,
+  },
+  FORGOT: {
+    path: "/Forgot",
+    routeType: "public",
+    element: <Forgot />,
+  },
+  RESETPASSWORD: {
+    path: "/Reset-Password",
+    routeType: "public",
+    element: <ResetPassword />,
+  },
+  PASSWORDCHANGED: {
+    path: "/Password-Changed",
+    routeType: "public",
+    element: <PasswordChanged />,
+  },
+  VERIFICATION: {
+    path: "/Verification",
+    routeType: "public",
+    element: <Verification />,
   },
   PROFILE: {
     path: "/profile",

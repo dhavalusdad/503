@@ -1,4 +1,4 @@
-import React, { type ImgHTMLAttributes, useState } from 'react';
+import React, { type ImgHTMLAttributes, useState } from "react";
 
 type imgPathType = string | File;
 
@@ -28,7 +28,7 @@ export const Image: React.FC<ImageProps> = ({
   onClick,
   firstName,
   lastName,
-  initialClassName
+  initialClassName,
 }) => {
   const [hasError, setHasError] = useState(false);
   const getFilePath = (path: imgPathType | undefined): string | undefined => {
@@ -40,17 +40,20 @@ export const Image: React.FC<ImageProps> = ({
         return undefined;
       }
     }
-    if (typeof path === 'string') {
+    if (typeof path === "string") {
       return path;
     }
     return undefined;
   };
   const renderFallback = () => {
     if (firstName || lastName) {
-      const initials = `${firstName?.charAt(0) ?? ''}${lastName?.charAt(0) ?? ''}`;
+      const initials = `${firstName?.charAt(0) ?? ""}${
+        lastName?.charAt(0) ?? ""
+      }`;
       return (
         <div
-          className={`flex items-center justify-center bg-gray-200 text-gray-700 font-bold text-3xl w-full h-full rounded-full ${initialClassName}`}>
+          className={`flex items-center justify-center bg-gray-200 text-gray-700 font-bold text-3xl w-full h-full rounded-full ${initialClassName}`}
+        >
           {initials.toUpperCase()}
         </div>
       );
@@ -62,8 +65,8 @@ export const Image: React.FC<ImageProps> = ({
         height={height}
         width={width}
         src={"/images/default-user-image.png"}
-        alt={alt || ''}
-        className={`max-w-full max-h-full ${imageClassName}`}
+        alt={alt || ""}
+        className={`w-full h-full ${imageClassName}`}
         onClick={() => onClick}
       />
     );
@@ -78,8 +81,8 @@ export const Image: React.FC<ImageProps> = ({
           height={height}
           width={width}
           src={getFilePath(imgPath)}
-          alt={alt || ''}
-          className={`max-w-full max-h-full ${imageClassName}`}
+          alt={alt || ""}
+          className={`w-full h-full ${imageClassName}`}
           onClick={() => onClick}
         />
       ) : (
