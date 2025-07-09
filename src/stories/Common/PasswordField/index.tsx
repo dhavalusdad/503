@@ -1,5 +1,5 @@
-import InputField, { type InputFieldProps } from '@/stories/Common/Input';
-import { useState, type ChangeEventHandler } from 'react';
+import InputField, { type InputFieldProps } from "@/stories/Common/Input";
+import { useState, type ChangeEventHandler } from "react";
 
 interface PasswordFieldProps extends InputFieldProps {
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -12,19 +12,19 @@ interface PasswordFieldProps extends InputFieldProps {
   parentClassName?: string;
 }
 
-export const PasswordField = (props: Omit<PasswordFieldProps, 'type'>) => {
+export const PasswordField = (props: Omit<PasswordFieldProps, "type">) => {
   const [show, setShow] = useState(false);
 
   return (
     <InputField
       {...props}
-      type={show ? 'text' : 'password'}
-      icon={show ? 'passwordVisible' : 'passwordEye'} 
-      onIconClick={() => setShow(prev => !prev)}
-      autoComplete={props.autoComplete || 'new-password'}
+      type={show ? "text" : "password"}
+      icon={show ? "passwordVisible" : "passwordEye"}
+      onIconClick={() => setShow((prev) => !prev)}
+      autoComplete={props.autoComplete || "new-password"}
       inputClass={props.inputClass}
       className="relative"
-      iconClassName="mt-[9px] !top-0 !translate-y-0 text-Gray-600 icon-wrapper w-6 h-6"
+      iconClassName="icon-wrapper h-5 w-5"
     />
   );
 };

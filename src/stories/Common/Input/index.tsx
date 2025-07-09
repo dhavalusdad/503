@@ -1,10 +1,10 @@
-import clsx from 'clsx';
+import clsx from "clsx";
 import {
   type ChangeEventHandler,
   type HTMLInputTypeAttribute,
-  type InputHTMLAttributes
-} from 'react';
-import Icon, {type IconNameType } from '@/stories/Common/Icon';
+  type InputHTMLAttributes,
+} from "react";
+import Icon, { type IconNameType } from "@/stories/Common/Icon";
 
 export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -23,6 +23,7 @@ export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   errorClass?: string;
   iconClassName?: string;
+  iconFirst?: boolean;
 }
 
 export default function InputField({
@@ -42,18 +43,24 @@ export default function InputField({
   error,
   errorClass,
   iconClassName,
-  autoComplete = 'off',
+  autoComplete = "off",
+  iconFirst = false,
   ...otherProps
 }: InputFieldProps) {
   return (
-    <div className={clsx('relative', parentClassName)}>
+    <div className={clsx("relative", parentClassName)}>
       {label && (
-        <label className={clsx('text-gray-800 text-sm font-medium mb-1 block', labelClass)}>
+        <label
+          className={clsx(
+            "text-blackdark text-sm font-normal mb-1.5 block leading-5",
+            labelClass
+          )}
+        >
           {label}
           {isRequired && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <div className={clsx('relative', inputParentClassName)}>
+      <div className={clsx("relative", inputParentClassName)}>
         <input
           type={type}
           disabled={isDisabled}
@@ -63,18 +70,20 @@ export default function InputField({
           onChange={onChange}
           {...otherProps}
           className={clsx(
-            'w-full px-3 py-2 border rounded-md text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all',
+            "w-full p-3.5 border border-solid border-primarylight rounded-10px text-sm text-blackdark placeholder:text-primarygray focus:outline-1 focus:outline-primary transition-all ease-in-out duration-300",
+            iconFirst ? "pl-11" : "",
             inputClass,
             {
-              'border-red-500': error,
-              'opacity-50 cursor-not-allowed': isDisabled
+              "border-red-500": error,
+              "opacity-50 cursor-not-allowed": isDisabled,
             }
           )}
         />
         {icon && (
           <div
             className={clsx(
-              'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 cursor-pointer',
+              "absolute  top-1/2 transform -translate-y-1/2 text-primarygray cursor-pointer",
+              iconFirst ? "left-3" : "right-3",
               iconClassName
             )}
             onClick={onIconClick}
@@ -83,7 +92,7 @@ export default function InputField({
           </div>
         )}
         {error && (
-          <p className={clsx('text-xs text-red-500 mt-1', errorClass)}>
+          <p className={clsx("text-xs text-red-500 mt-1", errorClass)}>
             {error}
           </p>
         )}

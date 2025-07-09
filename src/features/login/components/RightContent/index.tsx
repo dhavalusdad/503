@@ -1,4 +1,6 @@
 import { Icon } from "@/stories/Common";
+import InputField from "@/stories/Common/Input";
+import PasswordField from "@/stories/Common/PasswordField";
 
 export const RightContent = () => {
   return (
@@ -14,8 +16,14 @@ export const RightContent = () => {
           </p>
         </div>
         <div className="flex flex-col gap-4">
-          <p>email Input With Label</p>
-          <p>Password Input With Label</p>
+          <InputField
+            type="email"
+            label="Email"
+            placeholder="Email"
+            icon="email"
+            iconFirst
+          />
+          <PasswordField label="Password" placeholder="Password" />
         </div>
       </div>
     </div>
