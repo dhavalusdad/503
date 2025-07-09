@@ -1,83 +1,92 @@
-import  { useState } from "react";
-import type{ Meta, StoryObj } from "@storybook/react-vite";
-import Input from "./index";
+import React, { useState } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import Input from './index';
 
 const meta: Meta<typeof Input> = {
-  title: "Common/Input",
+  title: 'Components/Input',
   component: Input,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    label: { control: "text" },
-    type: { control: "text" },
-    placeholder: { control: "text" },
-    value: { control: "text" },
-    name: { control: "text" },
-    disabled: { control: "boolean" },
+    label: { control: 'text' },
+    type: {
+      control: { type: 'select' },
+      options: [
+        'text',
+        'password',
+        'number',
+        'checkbox',
+        'radio',
+      ],
+    },
+    placeholder: { control: 'text' },
+    name: { control: 'text' },
+    disabled: { control: 'boolean' },
   },
 };
-
 export default meta;
 
 type Story = StoryObj<typeof Input>;
 
-export const Default: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("");
-    return (
-      <Input
-        {...args}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    );
-  },
+const Template = (args: any) => {
+  const [val, setVal] = useState(
+    args.type === 'checkbox' || args.type === 'radio' ? false : ''
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value =
+      args.type === 'checkbox' || args.type === 'radio'
+        ? e.target.checked
+        : e.target.value;
+    setVal(value);
+  };
+
+  return <Input {...args} value={val} onChange={handleChange} />;
+};
+
+
+export const TextInput: Story = {
+  render: Template,
   args: {
-    label: "Text",
-    placeholder: "Enter text",
-    type: "text",
+    label: 'Text',
+    type: 'text',
+    placeholder: 'Enter text',
   },
 };
 
 export const PasswordInput: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("");
-    return (
-      <Input
-        {...args}
-        type="password"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    );
-  },
+  render: Template,
   args: {
-    label: "Password",
-    placeholder: "Enter password",
+    label: 'Password',
+    type: 'password',
+    placeholder: 'Enter password',
   },
 };
 
-export const DisabledInput: Story = {
+export const NumberInput: Story = {
+  render: Template,
   args: {
-    label: "Disabled",
-    placeholder: "Can't type here",
-    value: "Disabled value",
-    disabled: true,
-    onChange: () => {},
+    label: 'Number',
+    type: 'number',
+    placeholder: 'Enter number',
   },
 };
 
-export const NoLabelInput: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("");
-    return (
-      <Input
-        {...args}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    );
-  },
+
+export const CheckboxInput: Story = {
+  render: Template,
   args: {
-    placeholder: "No label",
+    label: 'Accept Terms',
+    type: 'checkbox',
   },
 };
+
+export const RadioInput: Story = {
+  render: Template,
+  args: {
+    label: 'Select Option',
+    type: 'radio',
+    name: 'group1',
+  },
+};
+
+
