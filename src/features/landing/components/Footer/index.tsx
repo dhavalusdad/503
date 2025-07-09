@@ -1,6 +1,6 @@
 import { Icon } from "@/stories/Common";
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <div className="bg-Gray pt-60px">
       <div className="container mx-auto">

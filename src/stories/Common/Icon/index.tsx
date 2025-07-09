@@ -23,6 +23,7 @@ import PasswordEye from "@/assets/svg/PasswordEye.svg?react";
 import PasswordVisible from "@/assets/svg/PasswordVisible.svg?react";
 import Spinner from "@/stories/Common/Loader/Spinner";
 import { Image } from "@/stories/Common";
+import LogoSecondary from "@/assets/svg/LogoSecondary.svg?react";
 
 export type IconNameType =
   | "notification"
@@ -45,6 +46,7 @@ export type IconNameType =
   | "facebook"
   | "instagram"
   | "arrow"
+  | "logosecondary"
   | "passwordEye"
   | "passwordVisible";
 
@@ -122,6 +124,8 @@ export const Icon = ({
         return <Instagram {...iconProps} />;
       case "arrow":
         return <Arrow {...iconProps} />;
+      case "logosecondary":
+        return <LogoSecondary {...iconProps} />;
       case "passwordEye":
         return <PasswordEye {...iconProps} />;
       case "passwordVisible":

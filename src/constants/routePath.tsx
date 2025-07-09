@@ -6,6 +6,7 @@ const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 const Profile = React.lazy(() => import("@/pages/Profile"));
 const Client = React.lazy(() => import("@/pages/Client"));
 const Appointment = React.lazy(() => import("@/pages/Appointment"));
+const Login = React.lazy(() => import("@/pages/Login"));
 export type RoutesType = {
   [key in
     | "DEFAULT"
@@ -16,6 +17,7 @@ export type RoutesType = {
     | "CALENDAR"
     | "CHAT"
     | "SETTINGS"
+    | "LOGIN"
     | "NOT_FOUND"]: {
     path: string;
     headerName?: string;
@@ -39,6 +41,11 @@ export const ROUTES: RoutesType = {
     path: "/",
     routeType: "public",
     element: <Landing />,
+  },
+  LOGIN: {
+    path: "/login",
+    routeType: "public",
+    element: <Login />,
   },
   PROFILE: {
     path: "/profile",
