@@ -2,7 +2,7 @@ import { ROUTES } from "@/constants/routePath";
 import { Icon } from "@/stories/Common";
 import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+export const Header = () => {
   const navigate = useNavigate();
   return (
     <div className="bg-white border border-solid border-surface py-30px px-38px rounded-20px">

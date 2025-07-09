@@ -16,9 +16,6 @@ export default {
         Gray: '#F6F5F4',
         Greenlight: '#08A045'
       },
-      spacing: {
-
-      },
       padding: {
         '100px': '100px',
         '30px': '30px',
@@ -55,6 +52,12 @@ export default {
       height: {
         '55px': '55px',
         '1px': '1px'
+      },
+      maxWidth: {
+        '438px': '438px'
+      },
+      gap: {
+        '30px': '30px'
       },
       boxShadow: {
         content: '0px 10px 30px 0px #0000004D'
