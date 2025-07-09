@@ -1,6 +1,5 @@
 import { Icon } from "@/stories/Common";
-import Header from "./Header";
-import Footer from "./Footer";
+import { Header, Footer } from "@/features/landing";
 import clsx from "clsx";
 
 const Landing = () => {

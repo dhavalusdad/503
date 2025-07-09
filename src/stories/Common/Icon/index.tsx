@@ -21,6 +21,7 @@ import Instagram from "@/assets/svg/Instagram.svg?react";
 import Arrow from "@/assets/svg/Arrow.svg?react";
 import Spinner from "@/stories/Common/Loader/Spinner";
 import { Image } from "@/stories/Common";
+import LogoSecondary from "@/assets/svg/LogoSecondary.svg?react";
 
 export type IconNameType =
   | "notification"
@@ -42,7 +43,8 @@ export type IconNameType =
   | "website"
   | "facebook"
   | "instagram"
-  | "arrow";
+  | "arrow"
+  | "logosecondary";
 
 type IconProps = {
   name: IconNameType;
@@ -118,6 +120,8 @@ export const Icon = ({
         return <Instagram {...iconProps} />;
       case "arrow":
         return <Arrow {...iconProps} />;
+      case "logosecondary":
+        return <LogoSecondary {...iconProps} />;
       default:
         return null;
     }
