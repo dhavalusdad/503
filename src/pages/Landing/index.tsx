@@ -1,43 +1,46 @@
 import { Icon } from "@/stories/Common";
 import { Header, Footer } from "@/features/landing";
 import clsx from "clsx";
+import rectangle1 from "@/assets/images/Rectangle1.png";
+import rectangle4 from "@/assets/images/Rectangle4.png";
+import businesswomanImage from "@/assets/images/businesswoman-greeting-coworker.png";
 
 const Landing = () => {
   const therapists = [
     {
       name: "Dr. Jane Smith",
       role: "Mental Health Therapist",
-      image: "src/assets/images/Rectangle1.png",
+      image: rectangle1,
       times: ["9:00 AM", "9:30 AM", "10:00 AM"],
     },
     {
       name: "Dr. Michael Brown",
       role: "Psychologist",
-      image: "src/assets/images/Rectangle4.png",
+      image: rectangle4,
       times: [],
     },
     {
       name: "Dr. Jane Smith",
       role: "Mental Health Therapist",
-      image: "src/assets/images/Rectangle1.png",
+      image: rectangle1,
       times: ["9:00 AM", "9:30 AM", "10:00 AM"],
     },
     {
       name: "Dr. Michael Brown",
       role: "Psychologist",
-      image: "src/assets/images/Rectangle4.png",
+      image: rectangle4,
       times: [],
     },
     {
       name: "Dr. Jane Smith",
       role: "Mental Health Therapist",
-      image: "src/assets/images/Rectangle1.png",
+      image: rectangle1,
       times: ["9:00 AM", "9:30 AM", "10:00 AM"],
     },
     {
       name: "Dr. Michael Brown",
       role: "Psychologist",
-      image: "src/assets/images/Rectangle4.png",
+      image: rectangle4,
       times: [],
     },
   ];
@@ -123,7 +126,7 @@ const Landing = () => {
             </div>
             <div className="w-2/4 relative">
               <div className="w-full">
-                <img src="src/assets/images/businesswoman-greeting-coworker.png" />
+                <img src={businesswomanImage} alt="Businesswoman greeting coworker" />
               </div>
               <div className="absolute bottom-28 -left-[85px] bg-white p-5 rounded-2xl w-363px shadow-content">
                 <div className="flex flex-col gap-5">

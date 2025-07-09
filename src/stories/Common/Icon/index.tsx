@@ -19,6 +19,8 @@ import Website from "@/assets/svg/Website.svg?react";
 import Facebook from "@/assets/svg/Facebook.svg?react";
 import Instagram from "@/assets/svg/Instagram.svg?react";
 import Arrow from "@/assets/svg/Arrow.svg?react";
+import PasswordEye from "@/assets/svg/PasswordEye.svg?react";
+import PasswordVisible from "@/assets/svg/PasswordVisible.svg?react";
 import Spinner from "@/stories/Common/Loader/Spinner";
 import { Image } from "@/stories/Common";
 import LogoSecondary from "@/assets/svg/LogoSecondary.svg?react";
@@ -44,7 +46,9 @@ export type IconNameType =
   | "facebook"
   | "instagram"
   | "arrow"
-  | "logosecondary";
+  | "logosecondary"
+  | "passwordEye"
+  | "passwordVisible";
 
 type IconProps = {
   name: IconNameType;
@@ -122,6 +126,10 @@ export const Icon = ({
         return <Arrow {...iconProps} />;
       case "logosecondary":
         return <LogoSecondary {...iconProps} />;
+      case "passwordEye":
+        return <PasswordEye {...iconProps} />;
+      case "passwordVisible":
+        return <PasswordVisible {...iconProps} />;
       default:
         return null;
     }
