@@ -1,31 +1,28 @@
-import { Icon } from "@/stories/Common";
-import InputField from "@/stories/Common/Input";
-import PasswordField from "@/stories/Common/PasswordField";
+import { useLocation } from "react-router-dom";
+import Signin from "./Signin";
+import { ROUTES } from "@/constants/routePath";
+import Register from "./Register";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
+import PasswordChanged from "./PasswordChanged";
+import Verification from "./Verification";
 
 export const RightContent = () => {
+  const location = useLocation();
+  const isLogin = location.pathname === ROUTES.LOGIN.path;
+  const isRegister = location.pathname === ROUTES.REGISTER.path;
+  const isForgot = location.pathname === ROUTES.FORGOT.path;
+  const isResetPassword = location.pathname === ROUTES.RESETPASSWORD.path;
+  const isVerification = location.pathname === ROUTES.VERIFICATION.path;
+  const isPasswordChanged = location.pathname === ROUTES.PASSWORDCHANGED.path;
   return (
     <div className="max-w-438px w-full mx-auto">
-      <div className="flex flex-col gap-30px">
-        <Icon name="logosecondary" />
-        <div className="flex flex-col gap-2.5">
-          <h4 className="text-2xl font-bold text-blackdark">
-            Sign In to your Account
-          </h4>
-          <p className="text-base font-normal text-primarygray">
-            Welcome Back! Please Enter Your Detail
-          </p>
-        </div>
-        <div className="flex flex-col gap-4">
-          <InputField
-            type="email"
-            label="Email"
-            placeholder="Email"
-            icon="email"
-            iconFirst
-          />
-          <PasswordField label="Password" placeholder="Password" />
-        </div>
-      </div>
+      {isLogin && <Signin />}
+      {isRegister && <Register />}
+      {isForgot && <ForgotPassword />}
+      {isResetPassword && <ResetPassword />}
+      {isPasswordChanged && <PasswordChanged />}
+      {isVerification && <Verification />}
     </div>
   );
 };

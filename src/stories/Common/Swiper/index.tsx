@@ -1,9 +1,9 @@
 // components/SwiperComponent.tsx
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper-bundle.css';
+import React from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/swiper-bundle.css";
 
-import { Pagination, Navigation, Autoplay } from 'swiper/modules';
+import { Pagination, Navigation, Autoplay } from "swiper/modules";
 
 interface SwiperComponentProps {
   children: React.ReactNode[];
@@ -24,6 +24,7 @@ const SwiperComponent: React.FC<SwiperComponentProps> = ({
 }) => {
   return (
     <Swiper
+      className="h-full"
       modules={[Pagination, Navigation, ...(autoplayDelay ? [Autoplay] : [])]}
       slidesPerView={slidesPerView}
       spaceBetween={spaceBetween}

@@ -1,5 +1,5 @@
-import clsx from 'clsx';
-import { type ReactNode } from 'react';
+import clsx from "clsx";
+import { type ReactNode } from "react";
 
 export interface ButtonProps {
   isLink?: boolean;
@@ -16,8 +16,8 @@ export interface ButtonProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   isActive?: boolean;
   titleClassName?: string;
-  type?: 'submit' | 'reset' | 'button';
-  variant: 'filled' | 'outline' | 'none';
+  type?: "submit" | "reset" | "button";
+  variant: "filled" | "outline" | "none";
   isDisabled?: boolean;
   isLoading?: boolean;
   children?: ReactNode;
@@ -29,7 +29,7 @@ export interface ButtonProps {
 export const Button = ({
   isLink = false,
   href,
-  className = '',
+  className = "",
   title,
   icon = false,
   isIconFirst = false,
@@ -37,7 +37,7 @@ export const Button = ({
   onClick,
   isActive = false,
   titleClassName,
-  type = 'button',
+  type = "button",
   isDisabled,
   isLoading = false,
   children,
@@ -47,22 +47,21 @@ export const Button = ({
 }: ButtonProps) => {
   const classes = clsx(
     className,
-    'group font-semibold inline-flex items-center text-sm justify-center gap-2 px-4 py-2 leading-none rounded-md transition-all duration-300',
+    "group font-normal inline-flex items-center text-base justify-center gap-2 p-3.5 leading-none rounded transition-all duration-300 cursor-pointer",
     {
-      'select-none': isActive || isLoading,
-      'bg-blue-600 text-white hover:bg-blue-500 border border-blue-600 hover:border-blue-500':
-        variant === 'filled',
-      'border border-blue-600 text-blue-600 bg-blue-100 hover:bg-blue-200 hover:text-white hover:border-blue-500':
-        variant === 'outline',
-      'bg-transparent border-none': variant === 'none',
-      'opacity-50 cursor-not-allowed': isDisabled || isLoading,
+      "select-none": isActive || isLoading,
+      "bg-primary text-white hover:bg-primary/85 border border-primary hover:border-primary/75":
+        variant === "filled",
+      "border border-primarylight/30 text-primary bg-primarylight/30 hover:bg-primarylight hover:text-white hover:border-primarylight":
+        variant === "outline",
+      "opacity-50 cursor-not-allowed": isDisabled || isLoading,
     }
   );
 
   if (isLink && href) return null; // Can replace this with <Link> if using Next.js
 
   return (
-    <div className={clsx('relative', parentClassName)}>
+    <div className={clsx("relative", parentClassName)}>
       <button
         onClick={onClick}
         type={type}

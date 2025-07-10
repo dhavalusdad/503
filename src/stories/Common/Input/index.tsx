@@ -92,7 +92,7 @@ export default function InputField({
           </div>
         )}
         {error && (
-          <p className={clsx("text-xs text-red-500 mt-1", errorClass)}>
+          <p className={clsx("text-xs text-red-500 mt-1.5", errorClass)}>
             {error}
           </p>
         )}

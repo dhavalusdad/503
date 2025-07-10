@@ -14,7 +14,9 @@ export default {
         surface: '#E8ECF3',
         blackdark: '#2E3139',
         Gray: '#F6F5F4',
-        Greenlight: '#08A045'
+        Greenlight: '#08A045',
+        Red: '#FF513F',
+        Green: '#08A045'
       },
       padding: {
         '100px': '100px',
@@ -26,7 +28,8 @@ export default {
       margin: {
         '100px': '100px',
         '60px': '60px',
-        '30px': '30px'
+        '30px': '30px',
+        '35px': '35px'
       },
       borderRadius: {
         '20px': '20px',
@@ -47,11 +50,13 @@ export default {
         '30%': '30%',
         '55px': '55px',
         '332px': '332px',
-        '363px': '363px'
+        '363px': '363px',
+        '18px': '18px'
       },
       height: {
         '55px': '55px',
-        '1px': '1px'
+        '1px': '1px',
+        '18px': '18px'
       },
       maxWidth: {
         '438px': '438px'
