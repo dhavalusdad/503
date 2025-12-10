@@ -1,4 +1,5 @@
 import React from 'react';
+
 import type { Client } from '@/features/client/types';
 
 interface StatusBadgeProps {
@@ -20,8 +21,10 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(status)}`}
+    >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
-}; 
+};

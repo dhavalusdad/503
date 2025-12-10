@@ -1,4 +1,7 @@
 import { Component, type ReactNode } from 'react';
+
+import * as Sentry from '@sentry/react';
+
 import Error from '@/components/common/ErrorBoundary/Error';
 
 // Define the types for the state
@@ -13,10 +16,7 @@ interface ErrorBoundaryProps {
   path?: string;
 }
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, errorInfo: null };
@@ -27,10 +27,20 @@ export class ErrorBoundary extends Component<
     return { hasError: true, errorInfo: error.message };
   }
 
-  componentDidCatch(): void {
+  componentDidCatch(error: Error, info: React.ErrorInfo): void {
     // You can log the error to an external service
     // console.error('Error occurred: ', error);
     // console.error('Error info: ', info);
+    Sentry.captureException(error, {
+      extra: { componentStack: info.componentStack },
+    });
+  }
+
+  componentDidUpdate(prevProps: ErrorBoundaryProps): void {
+    // Reset error state when the path changes (user navigates to a different route)
+    if (prevProps.path !== this.props.path && this.state.hasError) {
+      this.setState({ hasError: false, errorInfo: null });
+    }
   }
 
   render() {

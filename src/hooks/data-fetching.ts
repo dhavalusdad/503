@@ -2,19 +2,19 @@ import {
   type QueryFilters,
   type QueryKey,
   useIsFetching as useIsFetchingRQ,
-  useQueryClient
+  useQueryClient,
 } from '@tanstack/react-query';
 
 export const useInvalidateQuery = () => {
   const queryClient = useQueryClient();
-
   return {
     invalidate: async (
       queryKey?: QueryKey,
       refetchType: QueryFilters['type'] = 'active'
+      // exact: boolean = true
     ) => {
       await queryClient.invalidateQueries({ queryKey, refetchType });
-    }
+    },
   };
 };
 
@@ -26,7 +26,7 @@ export const useRemoveQueries = () => {
     },
     removeQueries: () => {
       queryClient.removeQueries();
-    }
+    },
   };
 };
 
@@ -35,7 +35,7 @@ export const useCancelledQuery = () => {
   return {
     cancelQueries: ({ queryKey }: { queryKey: QueryKey }) => {
       queryClient.cancelQueries({ queryKey, exact: true });
-    }
+    },
   };
 };
 
@@ -47,30 +47,29 @@ export const useResetQueries = () => {
     },
     resetQueries: () => {
       queryClient.resetQueries();
-    }
+    },
   };
 };
 
 export const useIsLoading = ({
   queryKey,
-  queryRootKeys
+  queryRootKeys,
 }: QueryFilters & { queryRootKeys?: string[] } = {}) => {
   const isFetching = useIsFetchingRQ({
     queryKey,
-    predicate: (query) => {
+    predicate: query => {
       return (
-        (!queryRootKeys ||
-          !!queryRootKeys.some((rootKey) => rootKey === query.queryKey[0])) &&
+        (!queryRootKeys || !!queryRootKeys.some(rootKey => rootKey === query.queryKey[0])) &&
         query.state.status === 'pending'
       );
-    }
+    },
   });
   return isFetching > 0;
 };
 
 export const useIsFetching = ({ queryKey }: QueryFilters = {}) => {
   const isFetching = useIsFetchingRQ({
-    queryKey
+    queryKey,
   });
   return isFetching > 0;
 };

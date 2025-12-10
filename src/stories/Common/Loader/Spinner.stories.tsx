@@ -1,13 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import SectionLoader from "./Spinner";
+import SectionLoader from './Spinner';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof SectionLoader> = {
-  title: "Common/Loader",
+  title: 'Common/Loader',
   component: SectionLoader,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    className: { control: "text" },
-    size: { control: "text" },
+    className: { control: 'text' },
+    size: { control: 'text' },
   },
 };
 
@@ -21,6 +22,6 @@ export const Default: Story = {
 
 export const CustomSize: Story = {
   args: {
-    size: "h-6 w-6",
+    size: 'h-6 w-6',
   },
 };

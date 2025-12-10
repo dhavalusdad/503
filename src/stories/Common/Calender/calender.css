@@ -1,0 +1,282 @@
+.scrollbar-hide {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari and Opera */
+}
+
+.month-card-appointment-cell {
+  scrollbar-width: thin;
+  /* Firefox: thin scrollbar */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.month-card-appointment-cell::-webkit-scrollbar {
+  width: 1px;
+  /* Chrome/Safari/Edge: 1px wide */
+  height: 1px;
+  background: transparent;
+  /* Transparent background */
+}
+
+.month-card-appointment-cell::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  /* Optional: subtle thumb */
+  border-radius: 5px;
+}
+
+.month-card-appointment-cell::-webkit-scrollbar-track {
+  background: transparent;
+  /* Transparent track */
+}
+
+.month-card-appointment-cell::-webkit-scrollbar-button {
+  display: none;
+  /* Hides the scrollbar arrows */
+}
+
+.user-selection-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Global calendar user selection prevention */
+.calendar-container,
+.calendar-container *,
+.slot-cell,
+.slot-cell *,
+.selection-buttons,
+.selection-buttons *,
+.time-line,
+.time-line *,
+.calendar-header,
+.calendar-header *,
+.calendar-top-bar,
+.calendar-top-bar *,
+.day-column,
+.day-column *,
+.appointment-card,
+.appointment-card *,
+.available-slot-card,
+.available-slot-card * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Calendar header and top bar transitions */
+.calendar-header {
+  transition: all 0.2s ease-in-out;
+}
+
+.calendar-top-bar {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Day column transitions */
+.day-column {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Time line transitions */
+.time-line {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Time range info transitions */
+.time-range-info {
+  transition: all 0.2s ease-in-out;
+  /* opacity: 0; */
+  /* transform: translateY(-5px); */
+}
+
+.time-range-info.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Appointment and slot card transitions */
+.appointment-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.appointment-card:hover {
+  transform: translateY(-1px);
+}
+
+.available-slot-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.available-slot-card:hover {
+  transform: translateY(-1px);
+}
+
+.calendar-container {
+  transform: translateZ(0);
+}
+
+/* Additional specific elements that should not be selectable */
+.calendar-container button,
+.calendar-container input,
+.calendar-container select,
+.calendar-container textarea,
+.calendar-container [contenteditable],
+.calendar-container .clickable,
+.calendar-container .interactive {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Ensure text content is not selectable */
+.calendar-container span,
+.calendar-container div,
+.calendar-container p,
+.calendar-container h1,
+.calendar-container h2,
+.calendar-container h3,
+.calendar-container h4,
+.calendar-container h5,
+.calendar-container h6 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* DOM-based selection styles */
+.slot-cell {
+  transition: all 0.2s ease-in-out;
+  border-color: #baba9e !important;
+}
+
+.slot-cell:hover {
+  transition: background-color 0.15s ease-in-out;
+  border-color: #baba9e !important;
+}
+
+.slot-cell.selected {
+  background-color: rgb(186, 212, 183) !important;
+  /* Remove borders for selection */
+  border-bottom: none !important;
+  transition: all 0.2s ease-in-out;
+  border-color: #baba9e !important;
+}
+
+.slot-cell.selected::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  z-index: 1;
+  border-color: #baba9e !important;
+}
+
+/* Selection buttons show/hide */
+.selection-buttons {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+  position: absolute;
+  width: 100%;
+  bottom: 4px;
+  z-index: 10;
+  border-color: #baba9e !important;
+  color: white;
+  fill: white;
+}
+
+.selection-buttons.show {
+  opacity: 1;
+  visibility: visible;
+  border-color: #baba9e !important;
+}
+
+.selection-buttons svg {
+  fill: white;
+  border-color: #baba9e !important;
+}
+
+/* Month view appointment popup styles */
+.month-appointment-popup {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  max-height: 400px;
+  /* overflow-y: auto; */
+  max-width: 280px;
+  transition: all 0.2s ease-in-out;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.month-appointment-popup.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.month-appointment-popup.bottom-full {
+  bottom: 100%;
+}
+
+.month-appointment-popup.top-full {
+  top: 100%;
+}
+
+.month-appointment-popup::-webkit-scrollbar {
+  width: 4px;
+}
+
+.month-appointment-popup::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.month-appointment-popup::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.month-appointment-popup::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.slot-cell.selected[data-selection-end='true'] {
+  border-bottom: 1px solid #baba9e !important;
+}
+
+/* Remove default borders from selected slots */
+.slot-cell.selected {
+  background-color: rgb(186, 212, 183) !important;
+  border-left: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-right: none;
+}

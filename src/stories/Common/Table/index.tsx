@@ -1,36 +1,90 @@
-import { useState } from "react";
+import { useState } from 'react';
+
 import {
-  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  flexRender,
   getCoreRowModel,
-  getSortedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  flexRender,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
-import { Pagination } from "@/stories/Common/Pagination";
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import clsx from 'clsx';
+
+import DataNotFound from '@/components/common/DataNotFound';
+import { Icon } from '@/stories/Common/Icon';
+import { Pagination } from '@/stories/Common/Pagination';
+
+import Skeleton from '../Skeleton';
 
 interface TableProps<TData> {
+  id?: string;
   data: TData[];
   columns: ColumnDef<TData>[];
-  searchPlaceholder?: string;
+  // searchPlaceholder?: string;
   searchableColumns?: string[];
+  parentClassName?: string;
   className?: string;
+  tableClassName?: string;
+  theadClassName?: string;
+  thClassName?: string;
+  tdClassName?: string;
+  activeRowClassName?: string;
   pagination?: boolean;
+  totalCount: number;
+  pageIndex: number;
+  pageSize: number;
+  sorting: SortingState;
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+  onPageChange?: (pageIndex: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onSortingChange?: (sorting: SortingState) => void;
+  onRowClick?: (rowData: TData) => void;
+  selectedRowId?: string | number;
+  rowIdAccessor?: keyof TData;
+  isLoading?: boolean;
+  skeletonCount?: number;
 }
 
 export const Table = <TData,>({
+  id = 'root-table',
   data,
   columns,
-  searchPlaceholder = "Search...",
-  className = "",
+  // searchPlaceholder = 'Search...',
+  parentClassName,
+  className,
+  tableClassName,
+  theadClassName,
+  thClassName,
+  tdClassName,
+  activeRowClassName,
   pagination = true,
+  totalCount,
+  pageIndex,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
+  onSortingChange,
+  onRowClick,
+  selectedRowId,
+  sorting,
+  setSorting,
+  skeletonCount = 10,
+  isLoading,
+  rowIdAccessor = 'id' as keyof TData,
 }: TableProps<TData>) => {
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+
+  const handleSortingChange = (
+    newSorting: SortingState | ((old: SortingState) => SortingState)
+  ) => {
+    if (totalCount === 0) return;
+    const resolvedSorting = typeof newSorting === 'function' ? newSorting(sorting) : newSorting;
+    setSorting(resolvedSorting);
+    onSortingChange?.(resolvedSorting);
+  };
 
   const table = useReactTable({
     data,
@@ -39,83 +93,142 @@ export const Table = <TData,>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
+    // onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
-      globalFilter,
+      // globalFilter,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
+    manualPagination: true,
+    pageCount: Math.ceil(totalCount / pageSize),
   });
 
+  const handleRowClick = (rowData: TData) => {
+    if (onRowClick) {
+      onRowClick(rowData);
+    }
+  };
+
   return (
-    <div className={`w-full ${className}`}>
-      <div className={`mb-4`}>
-        <input
-          type="text"
-          value={globalFilter ?? ""}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder={searchPlaceholder}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <thead className="bg-gray-50">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+    <div className={clsx('w-full', parentClassName)} id={id}>
+      <div className={clsx('w-full bg-white overflow-x-auto', className)}>
+        <table className={clsx('w-full', tableClassName)}>
+          <thead
+            className={clsx(
+              'rounded-10px bg-Gray outline outline-solid outline-surface -outline-offset-1',
+              theadClassName
+            )}
+          >
+            {table?.getHeaderGroups()?.map(headerGroup => (
+              <tr key={headerGroup.id} className=''>
+                {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                    className={clsx(
+                      'px-4 py-2.5 text-base font-bold leading-22px text-blackdark text-left cursor-pointer whitespace-nowrap first:rounded-l-10px last:rounded-r-10px ',
+                      thClassName,
+                      header.column.columnDef.meta?.headerClassName || ''
+                    )}
                     onClick={header.column.getToggleSortingHandler()}
                   >
-                    <div className="flex items-center space-x-1">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {header.column.getCanSort() && (
-                        <span className="ml-1">
-                          {{
-                            asc: "↑",
-                            desc: "↓",
-                          }[header.column.getIsSorted() as string] ?? "↕"}
-                        </span>
-                      )}
-                    </div>
+                    {header.column.getCanSort() ? (
+                      <div
+                        className={clsx(
+                          'flex items-center gap-2',
+                          header.column.columnDef.meta?.sortingThClassName || ''
+                        )}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanSort()
+                          ? {
+                              asc: <Icon name='ascSorting' />,
+                              desc: <Icon name='descSorting' />,
+                              default: <Icon name='sorting' />,
+                            }[header.column.getIsSorted() || 'default'] || null
+                          : null}
+                      </div>
+                    ) : (
+                      flexRender(header.column.columnDef.header, header.getContext())
+                    )}
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50">
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+          <tbody>
+            {isLoading ? (
+              // 🔹 Show skeleton rows while loading
+              Array.from({ length: skeletonCount }).map((_, rowIndex) => (
+                <tr key={`skeleton-${rowIndex}`}>
+                  {columns.map((_, colIndex) => (
+                    <td
+                      key={`skeleton-cell-${rowIndex}-${colIndex}`}
+                      className={clsx('px-4 py-3.5', tdClassName)}
+                    >
+                      <Skeleton count={1} className='h-7 w-full ' />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : totalCount === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className='text-center'>
+                  <DataNotFound />
+                </td>
               </tr>
-            ))}
+            ) : (
+              table.getRowModel().rows.map(row => {
+                const isSelected =
+                  selectedRowId !== undefined && row.original[rowIdAccessor] === selectedRowId;
+
+                return (
+                  <tr
+                    key={row.id}
+                    className={clsx(
+                      'even:bg-surfacelight hover:bg-surface transition-colors',
+                      onRowClick && 'cursor-pointer',
+                      isSelected && activeRowClassName
+                    )}
+                    onClick={() => handleRowClick(row.original)}
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <td
+                        key={cell.id}
+                        className={clsx(
+                          'px-4 py-3.5 text-sm font-normal leading-18px text-blackdark whitespace-nowrap',
+                          tdClassName,
+                          cell.column.columnDef.meta?.cellClassName || ''
+                        )}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
-      {/* Pagination */}
-      {pagination && data.length > 0 && (
-        <>
-          <Pagination table={table} />
-          <div className={`mt-2 text-sm text-gray-500 ${className}`}>
-            Showing {table.getRowModel().rows.length} of{" "}
-            {table.getPreFilteredRowModel().rows.length} total rows
-          </div>
-        </>
+      {!isLoading && pagination && totalCount > 0 && (
+        <div className='flex items-center gap-2 mt-4'>
+          <Pagination
+            table={table}
+            totalCount={totalCount}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
+          />
+        </div>
       )}
     </div>
   );
 };
+
+export default Table;
+export * from './hook';

@@ -1,7 +1,17 @@
 import type { PropsWithChildren } from 'react';
+
 import { Provider } from 'react-redux';
-import { store } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import { persister, store } from '@/redux/store';
+import SectionLoader from '@/stories/Common/Loader/Spinner.tsx';
 
 export function Providers({ children }: PropsWithChildren) {
-  return <Provider store={store}>{children}</Provider>;
+  return (
+    <Provider store={store}>
+      <PersistGate loading={<SectionLoader />} persistor={persister}>
+        {children}
+      </PersistGate>
+    </Provider>
+  );
 }

@@ -1,83 +1,77 @@
-import  { useState } from "react";
-import type{ Meta, StoryObj } from "@storybook/react-vite";
-import Input from "./index";
+import { InputField } from './index';
 
-const meta: Meta<typeof Input> = {
-  title: "Common/Input",
-  component: Input,
-  tags: ["autodocs"],
-  argTypes: {
-    label: { control: "text" },
-    type: { control: "text" },
-    placeholder: { control: "text" },
-    value: { control: "text" },
-    name: { control: "text" },
-    disabled: { control: "boolean" },
+import type { Meta, StoryObj } from '@storybook/react';
+
+const meta: Meta<typeof InputField> = {
+  title: 'Common/Input',
+  component: InputField,
+  tags: ['autodocs'],
+  args: {
+    placeholder: 'Enter text',
+    type: 'text',
   },
 };
 
 export default meta;
+type Story = StoryObj<typeof InputField>;
 
-type Story = StoryObj<typeof Input>;
+export const Default: Story = {};
 
-export const Default: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("");
-    return (
-      <Input
-        {...args}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    );
-  },
+export const WithLabel: Story = {
   args: {
-    label: "Text",
-    placeholder: "Enter text",
-    type: "text",
+    label: 'Username',
   },
 };
 
-export const PasswordInput: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("");
-    return (
-      <Input
-        {...args}
-        type="password"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    );
-  },
+export const Required: Story = {
   args: {
-    label: "Password",
-    placeholder: "Enter password",
+    label: 'Email',
+    isRequired: true,
   },
 };
 
-export const DisabledInput: Story = {
+export const WithIcon: Story = {
   args: {
-    label: "Disabled",
-    placeholder: "Can't type here",
-    value: "Disabled value",
-    disabled: true,
-    onChange: () => {},
+    label: 'Search',
+    icon: 'search',
+    onIconClick: () => alert('Icon clicked'),
   },
 };
 
-export const NoLabelInput: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("");
-    return (
-      <Input
-        {...args}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    );
-  },
+export const WithError: Story = {
   args: {
-    placeholder: "No label",
+    label: 'Username',
+    error: 'Username is required',
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    label: 'Disabled',
+    isDisabled: true,
+    value: 'Readonly content',
+  },
+};
+
+export const WithCustomClasses: Story = {
+  args: {
+    label: 'Custom Styled Input',
+    inputClass: 'border-green-500 bg-green-50',
+    parentClassName: 'mb-4',
+    labelClass: 'text-green-700',
+    icon: 'search',
+  },
+};
+
+export const Password: Story = {
+  args: {
+    viewPasswordIcon: true,
+    type: 'password',
+  },
+};
+
+export const Max5Length: Story = {
+  args: {
+    maxLength: 5,
   },
 };

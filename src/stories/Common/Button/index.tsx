@@ -1,5 +1,6 @@
+import React, { type ReactNode } from 'react';
+
 import clsx from 'clsx';
-import { type ReactNode } from 'react';
 
 export interface ButtonProps {
   isLink?: boolean;
@@ -24,6 +25,7 @@ export interface ButtonProps {
   buttonRef?: React.LegacyRef<HTMLButtonElement>;
   id?: string;
   parentClassName?: string;
+  style?: React.CSSProperties;
 }
 
 export const Button = ({
@@ -44,17 +46,16 @@ export const Button = ({
   buttonRef,
   id,
   parentClassName,
+  style,
 }: ButtonProps) => {
   const classes = clsx(
     className,
-    'group font-semibold inline-flex items-center text-sm justify-center gap-2 px-4 py-2 leading-none rounded-md transition-all duration-300',
+    'group font-normal inline-flex items-center text-base justify-center gap-2 py-3.5 px-3.5 leading-none rounded transition-all duration-300 cursor-pointer',
     {
       'select-none': isActive || isLoading,
-      'bg-blue-600 text-white hover:bg-blue-500 border border-blue-600 hover:border-blue-500':
+      'bg-primary text-white hover:bg-primary/85 border border-primary hover:border-primary/75':
         variant === 'filled',
-      'border border-blue-600 text-blue-600 bg-blue-100 hover:bg-blue-200 hover:text-white hover:border-blue-500':
-        variant === 'outline',
-      'bg-transparent border-none': variant === 'none',
+      'border border-primarygray text-primarygray bg-white hover:bg-Gray': variant === 'outline',
       'opacity-50 cursor-not-allowed': isDisabled || isLoading,
     }
   );
@@ -64,6 +65,7 @@ export const Button = ({
   return (
     <div className={clsx('relative', parentClassName)}>
       <button
+        style={style}
         onClick={onClick}
         type={type}
         id={id}
@@ -73,15 +75,15 @@ export const Button = ({
       >
         {children}
         {isLoading ? (
-          <span className="relative h-4 w-4 border-[3px] border-gray-900 border-b-white rounded-full block animate-spin" />
+          <span className='relative h-4 w-4 border-[3px] border-gray-900 border-b-white rounded-full block animate-spin' />
         ) : isIconFirst && icon ? (
           <span>{icon}</span>
         ) : null}
         {title && <span className={titleClassName}>{title}</span>}
-        {!isIconFirst && icon ? <span className="text-lg">{icon}</span> : null}
+        {!isIconFirst && icon ? <span className='text-lg'>{icon}</span> : null}
       </button>
       {(isDisabled || isLoading) && (
-        <div className="absolute inset-0 bg-transparent z-50 cursor-not-allowed"></div>
+        <div className='absolute inset-0 bg-transparent z-50 cursor-not-allowed'></div>
       )}
     </div>
   );

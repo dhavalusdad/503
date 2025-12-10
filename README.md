@@ -1,69 +1,82 @@
-# React + TypeScript + Vite
+# 🏥 Telehealth Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## 📋 Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Ensure you have the following installed before setting up the project:
 
-## Expanding the ESLint configuration
+- **Node.js** `>=22.17.0`
+- **React.js** `>=19.1.0`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+Clone the repository and install dependencies:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# using npm
+npm install
+
+# or using yarn
+yarn install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔧 Git Hooks (Husky)
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+We use **Husky** to enforce commit hooks such as lint and formatting checks before pushing. Set it up with:
+
+```bash
+npm run prepare
 ```
+
+---
+
+## 🚀 Development
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+---
+
+## 📖 Storybook
+
+Run Storybook to explore UI components in isolation:
+
+```bash
+npm run storybook
+```
+
+---
+
+## ⚙️ Linting & Formatting
+
+- Check for lint errors:
+
+  ```bash
+  npm run lint
+  ```
+
+- Automatically fix lint issues:
+
+  ```bash
+  npm run lint:fix
+  ```
+
+- Format code with Prettier:
+
+  ```bash
+  npm run format
+  ```
+
+- Check formatting without applying fixes:
+
+  ```bash
+  npm run format:check
+  ```

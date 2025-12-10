@@ -1,14 +1,278 @@
-@import "./styles/fonts.css";
-@import "tailwindcss";
+@import './styles/fonts.css';
+@import 'tailwindcss';
 @config "../tailwind.config.js";
 
 /* Your custom CSS below */
 body {
-  font-family: "Nunito";
+  font-family: 'Nunito';
 }
 
-@media screen and (min-width: 1601px) {
+@media screen and (min-width: 768px) {
   .container {
-    min-width: 1600px;
+    max-width: 100%;
   }
+}
+
+@media screen and (min-width: 1615px) {
+  .container {
+    max-width: 1600px;
+  }
+}
+
+.swiper-pagination-bullet {
+  @apply !h-1 !w-7 !bg-black/25 !rounded;
+}
+
+.swiper-pagination-bullet-active {
+  @apply !bg-primary;
+}
+
+.swiper-pagination {
+  @apply !bottom-14;
+}
+
+.landing-swiper .swiper-slide {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.checkbox_icon:checked {
+  background-image: url('data:image/svg+xml,%3Csvg%20width%3D%2212%22%20height%3D%229%22%20viewBox%3D%220%200%2012%209%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M11.0694%200.760654C11.152%200.843193%2011.2176%200.94121%2011.2623%201.0491C11.307%201.15699%2011.3301%201.27264%2011.3301%201.38943C11.3301%201.50623%2011.307%201.62187%2011.2623%201.72977C11.2176%201.83766%2011.152%201.93567%2011.0694%202.01821L4.84827%208.23935C4.76573%208.32198%204.66771%208.38753%204.55982%208.43226C4.45193%208.47698%204.33628%208.5%204.21949%208.5C4.1027%208.5%203.98705%208.47698%203.87916%208.43226C3.77127%208.38753%203.67325%208.32198%203.59071%208.23935L0.924511%205.57315C0.757748%205.40638%200.664062%205.1802%200.664062%204.94437C0.664063%204.70853%200.757748%204.48235%200.924511%204.31559C1.09127%204.14883%201.31745%204.05514%201.55329%204.05514C1.78913%204.05514%202.01531%204.14883%202.18207%204.31559L4.21949%206.35412L9.81185%200.760654C9.89439%200.678022%209.9924%200.612471%2010.1003%200.567746C10.2082%200.523021%2010.3238%200.5%2010.4406%200.5C10.5574%200.5%2010.6731%200.523021%2010.781%200.567746C10.8888%200.612471%2010.9869%200.678022%2011.0694%200.760654Z%22%20fill%3D%22white%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  /* Chrome/Safari ke default knob ko hata do */
+  appearance: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: none;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: none;
+}
+
+.scroll-disable::-webkit-scrollbar {
+  display: none;
+}
+
+.alway-show::-webkit-inner-spin-button,
+.alway-show::-webkit-outer-spin-button {
+  opacity: 1;
+  background-color: transparent;
+  -webkit-appearance: 'Always Show Up/Down Arrows' !important;
+}
+
+.client-profile .selected-flag:hover,
+.client-profile .selected-flag:focus,
+.client-profile .flag-dropdown.open .selected-flag {
+  background: #f6f5f4 !important;
+}
+
+.break-word {
+  word-break: break-word;
+}
+
+.no-arrow .swiper-btn {
+  display: none;
+}
+
+.landing-swiper .swiper-pagination {
+  bottom: 20px !important;
+}
+
+.no-arrow.landing-swiper .swiper-pagination {
+  bottom: 0px !important;
+}
+
+.no-swiper-pagination .swiper-pagination {
+  display: none;
+}
+
+.tippy-box[data-placement^='top'] > .tippy-arrow {
+  bottom: -7px;
+  width: 0;
+  height: 0;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+  border-top: 8px solid transparent;
+}
+
+/* .tippy-box[data-placement^='bottom'] > .tippy-arrow {
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid transparent;
+} */
+
+.tippy-box[data-placement^='top'] > .tippy-arrow::after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 7px;
+  border-color: transparent;
+  border-top-color: #fff;
+  top: -8px;
+  left: -7px;
+}
+
+/* Arrow border */
+.tippy-box[data-placement^='top'][data-theme~='red'] > .tippy-arrow::after {
+  border-top-color: #ffe7e4;
+}
+
+.tippy-box[data-placement^='top'][data-theme~='yellow'] > .tippy-arrow::after {
+  border-top-color: #fffce4;
+}
+
+.tippy-box[data-placement^='top'][data-theme~='yellow'] > .tippy-arrow {
+  border-top: 8px solid #ffc030;
+}
+
+.tippy-box[data-placement^='top'][data-theme~='red'] > .tippy-arrow {
+  border-top: 8px solid #ef4444;
+}
+
+.agreement-content {
+  line-height: 1.6;
+}
+
+.agreement-content p {
+  margin: 0 0 1rem 0;
+}
+
+.agreement-content h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  color: #374151;
+}
+
+.agreement-content ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+  list-style-type: decimal;
+}
+
+.agreement-content ul {
+  margin: 1rem 0;
+  padding-left: 2rem;
+  list-style-type: disc;
+}
+
+.agreement-content li {
+  margin: 0.5rem 0;
+  display: list-item;
+}
+
+.agreement-content strong {
+  font-weight: 600;
+}
+
+.agreement-content em {
+  font-style: italic;
+}
+
+.custom-multi-select .css-18gtfiq-control,
+.custom-multi-select .css-16cdn3w-control {
+  padding-left: 40px;
+  border-color: transparent !important;
+  background-image: url('./assets/svg/PaymentMethod2.svg');
+  background-repeat: no-repeat;
+  background-position: top 15px left 10px;
+}
+
+.highcharts-credits {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .react-datepicker__day-name {
+    min-width: 25px !important;
+    height: 25px !important;
+    font-size: 0.75rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .react-datepicker__day-names {
+    padding: 0 7px !important;
+  }
+
+  .react-datepicker__month {
+    padding: 0 7px 20px !important;
+  }
+
+  .react-datepicker__day {
+    border-radius: 4px !important;
+  }
+}
+
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box
+  ul.react-datepicker__time-list
+  li.react-datepicker__time-list-item--selected {
+  background-color: #43573c !important;
+}
+
+.react-datepicker__close-icon::after {
+  background-color: #43573c !important;
+}
+
+.phonefield_input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rich-text-editor .ql-toolbar.ql-snow {
+  @apply bg-white border border-solid !border-surface rounded-t-10px;
+}
+
+.rich-text-editor .ql-container.ql-snow {
+  @apply border border-solid !border-surface rounded-10px bg-white;
+}
+
+.rich-text-editor:has(.ql-toolbar.ql-snow) .ql-container.ql-snow {
+  @apply rounded-t-none;
+}
+
+.rich-text-editor .ql-editor {
+  @apply text-base py-2.5 font-Nunito;
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  @apply text-black/35 not-italic font-normal text-base font-Nunito;
+}
+
+.rich-text-editor.focused .ql-container.ql-snow,
+.rich-text-editor.focused .ql-toolbar.ql-snow {
+  @apply !border-primary transition-all ease-in-out duration-300;
+}
+
+.rich-text-editor .ql-editor {
+  @apply max-h-52;
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  @apply truncate;
+}
+
+.Advancend-template-editor .ql-container {
+  height: auto;
+}
+
+.Advancend-template-editor .ql-editor {
+  max-height: calc(100dvh - 348px);
+  padding: 20px;
 }

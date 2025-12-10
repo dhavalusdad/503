@@ -1,0 +1,42 @@
+.react-tel-input {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 6px;
+}
+.react-tel-input .flag-dropdown {
+  background-color: white;
+  border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid #e8ecf3;
+  position: relative;
+}
+.react-tel-input .flag-dropdown.open {
+  border: 1px solid #e8ecf3;
+  border-radius: 10px;
+}
+.react-tel-input .flag-dropdown:focus,
+.react-tel-input .flag-dropdown.open {
+  outline: 1px solid #43573c !important;
+}
+
+.phonefield_input {
+  padding-left: 14px !important;
+  border: 1px solid #e8ecf3 !important;
+}
+.phonefield_input:focus {
+  outline: 1px solid #43573c !important;
+}
+
+.Register_Phone_Field .react-tel-input .flag-dropdown,
+.Register_Btn_Class .react-tel-input .flag-dropdown {
+  border: 1px solid #baba9e;
+}
+.Register_Phone_Field .react-tel-input .flag-dropdown.open,
+.Register_Btn_Class .react-tel-input .flag-dropdown.open {
+  border: 1px solid #baba9e;
+}
+.Register_Phone_Field,
+.Register_Btn_Class {
+  border: 1px solid #baba9e !important;
+}

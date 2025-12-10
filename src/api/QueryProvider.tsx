@@ -1,9 +1,8 @@
-import {
-  QueryClient,
-  QueryClientProvider,
-  type QueryClientConfig
-} from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
+
+import * as Sentry from '@sentry/react';
+import { QueryClient, type QueryClientConfig, QueryClientProvider } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 interface QueryProviderProps extends PropsWithChildren {
   config?: QueryClientConfig;
@@ -11,25 +10,32 @@ interface QueryProviderProps extends PropsWithChildren {
   maxAge?: number;
 }
 
-export const QueryProvider: React.FC<QueryProviderProps> = ({
-  children,
-  config = {
-    defaultOptions: {
-      queries: {
-        retry: 1,
-        gcTime: 1000 * 60 * 60 * 24, 
-        refetchOnWindowFocus: false
-      }
-    }
-  }
-}) => {
-  const client = new QueryClient(config);
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      gcTime: 1000 * 60 * 60 * 24,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      onError: error => {
+        // Global error handler for mutations
+        if (error instanceof AxiosError) {
+          Sentry.captureException(error, {
+            tags: {
+              error_type: 'react_query_global_mutation',
+              http_status: error.response?.status,
+            },
+            level: 'error',
+          });
+        }
+      },
+    },
+  },
+});
 
-  return (
-    <QueryClientProvider client={client}>
-      {children}
-    </QueryClientProvider>
-  );
+export const QueryProvider: React.FC<QueryProviderProps> = ({ children }) => {
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 export default QueryProvider;

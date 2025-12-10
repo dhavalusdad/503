@@ -70,4 +70,30 @@ export const getCurrentDateISO = (): string => {
  */
 export const getCurrentDateTimeISO = (): string => {
   return moment().format('YYYY-MM-DDTHH:mm:ss');
-}; 
+};
+
+export const DATE_FORMATS = {
+  LONG: 'MMMM D, YYYY', // e.g., April 16, 2024
+  SHORT: 'MM/DD/YYYY', // e.g., 04/16/2024
+  TIME: 'h:mm A', // e.g., 3:45 PM
+  FULL: 'MMMM D, YYYY h:mm A', // e.g., April 16, 2024 3:45 PM
+  YEAR: 'YYYY',
+  DEFAULT: 'YYYY-MM-DD HH:mm:ss',
+  WITH_TZ: 'YYYY-MM-DD HH:mm:ss z',
+  DATE_SHORT_TIME: 'DD/MM/yyyy HH:mm',
+  SHORT_MONTH_AND_YEAR: 'MMM YYYY',
+};
+
+export const formatDateLabel = (dateKey: string, dateFormat: string = 'D MMMM YYYY'): string => {
+  const date = moment(dateKey, 'DD/MM/YYYY');
+  const today = moment();
+  const yesterday = moment().subtract(1, 'days');
+
+  if (date.isSame(today, 'day')) {
+    return 'Today';
+  } else if (date.isSame(yesterday, 'day')) {
+    return 'Yesterday';
+  } else {
+    return date.format(dateFormat);
+  }
+};
