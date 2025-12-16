@@ -1,41 +1,28 @@
 import React, { useEffect, useState } from 'react';
 
 import { yupResolver } from '@hookform/resolvers/yup';
+import clsx from 'clsx';
+import _ from 'lodash';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
+import { useGetAllPermissions } from '@/api/permissions';
+import { useCreateRole, useGetPermissionsByRoleId, useUpdateRole } from '@/api/roles-permissions';
+import { DEPENDENT_PERMISSIONS } from '@/constants/permission.constant';
+import { PermissionType } from '@/enums';
+import type { RoleFormData } from '@/features/admin/components/RolePermission/type/index';
 import Button from '@/stories/Common/Button';
 import CheckboxField from '@/stories/Common/CheckBox';
 import InputField from '@/stories/Common/Input';
 import Modal from '@/stories/Common/Modal';
 import RadioField from '@/stories/Common/RadioBox';
 
-import type {
-  PermissionType,
-  RoleFormData,
-  RoleSubmitData,
-} from '@features/admin/components/RolePermission/type/index';
-
-export type DefaultValueType = {
-  name?: string;
-  permissions: {
-    selected: string[];
-    notSelected: string[];
-  };
-  readOnly?: boolean;
-  isAssignFormToPatient?: boolean;
-};
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: RoleSubmitData) => void;
-  defaultValues?: DefaultValueType;
-  isEditing?: boolean;
-  roleId?: string | number;
-  permissionList: PermissionType[];
+  roleId?: string;
+  isView: boolean;
 };
-
 export const roleFormSchema = yup.object({
   name: yup
     .string()
@@ -43,53 +30,128 @@ export const roleFormSchema = yup.object({
     .required('Role name is required')
     .min(3, 'Role name must be at least 3 characters')
     .max(50, 'Role name must be at most 50 characters'),
-  permissions: yup.object({
-    selected: yup.array(yup.string().defined()).required(),
-    notSelected: yup.array(yup.string().defined()).required(),
-  }),
-  assignForm: yup.boolean().required(),
+
+  permissions: yup
+    .array()
+    .of(yup.string().defined())
+    .required('Permissions are required')
+    .min(1, 'At least one permission must be selected'),
 });
 
 const labelMap: Record<string, string> = {
-  FORMS: 'Add Forms',
+  FORMS: 'Assessment Forms',
   APPOINTMENT: 'Appointments',
-  PATIENT: 'Add Patient',
-  THERAPIST: 'Add Therapist',
+  PATIENT: 'Patient',
+  THERAPIST: 'Therapist',
   AGREEMENTS: 'Agreements',
   ASSIGN: 'Assign Form to Patient',
 };
 
-export const RolePermissionModal: React.FC<Props> = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  defaultValues,
-  isEditing = false,
-  roleId,
-  permissionList,
-}) => {
+export const RolePermissionModal: React.FC<Props> = ({ isOpen, onClose, roleId, isView }) => {
+  const { mutateAsync: createRole, isPending: isCreating } = useCreateRole();
+  const { mutateAsync: updateRole, isPending: isUpdating } = useUpdateRole();
+  const { data: roleData, isPending: isRoleDataFetching } = useGetPermissionsByRoleId(roleId);
+  const { data: permissionData, isPending: isPermissionDataFetching } = useGetAllPermissions();
+
   const {
     handleSubmit,
     setValue,
-    reset,
     register,
     getValues,
     formState: { errors },
+    reset,
   } = useForm<RoleFormData>({
     resolver: yupResolver(roleFormSchema),
     mode: 'onChange',
     defaultValues: {
       name: '',
-      permissions: { selected: [], notSelected: [] },
-      assignForm: false,
+      permissions: [],
     },
   });
+  const watchedPermissions = getValues('permissions');
 
-  const [permissionGroups, setPermissionGroups] = useState<Record<string, PermissionType[]>>({});
-  const isView = defaultValues?.readOnly;
+  const [permissionGroups, setPermissionGroups] = useState<Record<string, RolePermissionType[]>>(
+    {}
+  );
+
+  const addPermissionRecursively = (permissionName: string, selected: string[]) => {
+    if (selected.includes(permissionName)) return;
+    selected.push(permissionName);
+    const allowedPermissions = DEPENDENT_PERMISSIONS[permissionName]?.allow || [];
+    allowedPermissions.forEach(allowedPerm => {
+      addPermissionRecursively(allowedPerm, selected);
+    });
+  };
+
+  const collectPermissionsToDeny = (
+    permissionName: string,
+    denySet: Set<string>,
+    visited: Set<string>
+  ) => {
+    if (visited.has(permissionName)) return;
+    visited.add(permissionName);
+
+    // 1. Add the permission itself
+    denySet.add(permissionName);
+
+    const config = DEPENDENT_PERMISSIONS[permissionName];
+
+    // 2. Add its own deny list
+    if (config?.deny) {
+      config.deny.forEach(p => {
+        collectPermissionsToDeny(p, denySet, visited);
+      });
+    }
+
+    // 3. Find reverse dependencies: anyone whose allow contains current permission
+    Object.entries(DEPENDENT_PERMISSIONS).forEach(([key, { allow = [], deny = [] }]) => {
+      if (allow.includes(permissionName as PermissionType)) {
+        // deny the key itself
+        collectPermissionsToDeny(key, denySet, visited);
+
+        // deny its deny list
+        deny.forEach(p => collectPermissionsToDeny(p, denySet, visited));
+      }
+    });
+  };
+
+  const handleCheckboxChange = (checked: boolean, permissionName: string) => {
+    let selected = [...watchedPermissions];
+
+    if (checked) {
+      addPermissionRecursively(permissionName, selected);
+    } else {
+      const denySet = new Set<string>();
+      const visited = new Set<string>();
+
+      collectPermissionsToDeny(permissionName, denySet, visited);
+
+      selected = selected.filter(s => !denySet.has(s));
+    }
+
+    setValue('permissions', _.uniq(selected), { shouldValidate: true });
+  };
+
+  const onFormSubmit = async (data: RoleFormData) => {
+    const submitData = {
+      roleName: data.name.trim(),
+      permissions: permissionData.filter(p => watchedPermissions.includes(p.name)).map(f => f.id),
+    };
+
+    if (roleId) {
+      await updateRole({ id: roleId, data: submitData });
+    } else {
+      await createRole(submitData);
+    }
+    reset();
+    onClose();
+  };
+
+  if (!isOpen) return null;
 
   useEffect(() => {
-    const grouped = permissionList.reduce(
+    if (isPermissionDataFetching) return;
+    const grouped = permissionData?.reduce(
       (acc, permission) => {
         const base = permission.name.substring(0, permission.name.lastIndexOf('_PERMISSION_'));
         (acc[base] ||= []).push(permission);
@@ -97,107 +159,16 @@ export const RolePermissionModal: React.FC<Props> = ({
       },
       {} as Record<string, PermissionType[]>
     );
-
     setPermissionGroups(grouped);
-  }, [permissionList]);
+  }, [permissionData, isPermissionDataFetching]);
 
   useEffect(() => {
-    if (!isOpen) return;
-
-    if (isEditing && defaultValues) {
-      reset({
-        name: defaultValues.name || '',
-        permissions: defaultValues.permissions,
-        assignForm: defaultValues.isAssignFormToPatient || false,
-      });
-    } else {
-      reset({
-        name: '',
-        permissions: { selected: [], notSelected: [] },
-        assignForm: false,
-      });
-    }
-  }, [isOpen, isEditing, defaultValues, permissionList, reset]);
-
-  const watchedPermissions = getValues('permissions');
-
-  const handleCheckboxChange = (checked: boolean, value: string, groupName: string) => {
-    const selSet = new Set(watchedPermissions.selected);
-    const notSelSet = new Set(watchedPermissions.notSelected);
-
-    const groupPermissions = permissionGroups[groupName];
-    if (!groupPermissions) return;
-
-    const readPermission = groupPermissions.find(p => p.name.endsWith('READ'))?.id;
-
-    if (checked) {
-      selSet.add(value);
-      notSelSet.delete(value);
-
-      if (readPermission && value !== readPermission) {
-        selSet.add(readPermission);
-        notSelSet.delete(readPermission);
-      }
-    } else {
-      selSet.delete(value);
-      notSelSet.add(value);
-
-      if (readPermission && value === readPermission) {
-        groupPermissions.forEach(p => {
-          selSet.delete(p.id);
-          notSelSet.add(p.id);
-        });
-      }
-    }
-
-    setValue(
-      'permissions',
-      {
-        selected: Array.from(selSet),
-        notSelected: Array.from(notSelSet),
-      },
-      { shouldValidate: true }
-    );
-  };
-
-  const handleAssignFormChange = (isAllow: boolean, permissionId: string) => {
-    setValue('assignForm', isAllow, { shouldValidate: true });
-
-    const selSet = new Set(watchedPermissions.selected);
-    const notSelSet = new Set(watchedPermissions.notSelected);
-
-    if (isAllow) {
-      selSet.add(permissionId);
-      notSelSet.delete(permissionId);
-    } else {
-      selSet.delete(permissionId);
-      notSelSet.add(permissionId);
-    }
-
-    setValue(
-      'permissions',
-      {
-        selected: Array.from(selSet),
-        notSelected: Array.from(notSelSet),
-      },
-      { shouldValidate: true }
-    );
-  };
-
-  const onFormSubmit = (data: RoleFormData) => {
-    const submitData: RoleSubmitData = {
-      name: data.name.trim(),
-      permissions: data.permissions,
-      isEditing,
-      ...(isEditing && roleId ? { id: roleId } : {}),
-      assignForm: data.assignForm,
-    };
-
-    onSubmit(submitData);
-    onClose();
-  };
-
-  if (!isOpen) return null;
+    if (isRoleDataFetching) return;
+    reset({
+      name: roleData.name,
+      permissions: roleData.permissions.map(i => i.name),
+    });
+  }, [roleData, isRoleDataFetching]);
 
   return (
     <Modal
@@ -212,21 +183,23 @@ export const RolePermissionModal: React.FC<Props> = ({
           />
           {!isView && (
             <Button
-              title={isEditing ? 'Update' : 'Submit'}
+              title={roleId ? 'Update' : 'Submit'}
               variant='filled'
               type='button'
               onClick={handleSubmit(onFormSubmit)}
               className='!px-6 rounded-10px'
+              isLoading={isCreating || isUpdating}
             />
           )}
         </>
       }
       footerClassName='flex items-center justify-end gap-5 pt-30px border-t border-solid border-surface'
-      title={`${isView ? 'View' : isEditing ? 'Edit' : 'Create'} Role`}
+      title={`${isView ? 'View' : roleId ? 'Edit' : 'Create'} Role`}
       isOpen={isOpen}
       onClose={onClose}
       size='lg'
       closeButton={false}
+      isLoading={(roleId && isRoleDataFetching) || isPermissionDataFetching}
     >
       <div className='flex flex-col gap-5'>
         <InputField
@@ -254,30 +227,30 @@ export const RolePermissionModal: React.FC<Props> = ({
               </h6>
               <div className='flex flex-wrap gap-5 w-[calc(100%-148px)]'>
                 {groupPermissions.map(perm => {
-                  const isChecked = watchedPermissions.selected?.includes(perm.id);
+                  const isChecked = watchedPermissions?.includes(perm.name);
 
-                  if (perm.name === 'ASSIGN_FORM_TO_PATIENT_PERMISSION_UPDATE') {
+                  if (perm.name === PermissionType.PATIENT_ASSIGN_FORM) {
                     return (
                       <div key={perm.id} className='flex items-center gap-5'>
-                        <div key={perm.id} className='w-24'>
+                        <div key={`${perm.id}_allow`} className='w-24'>
                           <RadioField
                             id={`${perm.id}_allow`}
                             name='assignForm'
                             value='true'
                             label='Allow'
-                            isChecked={getValues('assignForm') === true}
-                            onChange={() => handleAssignFormChange(true, perm.id)}
+                            isChecked={watchedPermissions.includes(perm.name)}
+                            onChange={() => handleCheckboxChange(true, perm.name)}
                             isDisabled={isView}
                           />
                         </div>
-                        <div key={perm.id} className='w-24'>
+                        <div key={`${perm.id}_deny`} className='w-24'>
                           <RadioField
                             id={`${perm.id}_deny`}
                             name='assignForm'
                             value='false'
                             label='Deny'
-                            isChecked={getValues('assignForm') === false}
-                            onChange={() => handleAssignFormChange(false, perm.id)}
+                            isChecked={!watchedPermissions.includes(perm.name)}
+                            onChange={() => handleCheckboxChange(false, perm.name)}
                             isDisabled={isView}
                           />
                         </div>
@@ -291,9 +264,7 @@ export const RolePermissionModal: React.FC<Props> = ({
                         id={perm.id}
                         value={perm.id}
                         isChecked={isChecked}
-                        onChange={e =>
-                          handleCheckboxChange(e.target.checked, e.target.value, groupName)
-                        }
+                        onChange={e => handleCheckboxChange(e.target.checked, perm.name)}
                         label={perm.name.replace(/^.*_PERMISSION_/, '').replaceAll('_', ' ')}
                         labelClass='!text-base !leading-4 font-semibold'
                       />
@@ -303,6 +274,9 @@ export const RolePermissionModal: React.FC<Props> = ({
               </div>
             </div>
           ))}
+          {errors.permissions && (
+            <p className={clsx('text-xs text-red-500 mt-1.5')}>{errors.permissions.message}</p>
+          )}
         </div>
       </div>
     </Modal>

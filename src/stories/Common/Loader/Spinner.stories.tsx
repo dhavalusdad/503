@@ -1,4 +1,4 @@
-import SectionLoader from './Spinner';
+import SectionLoader from '@/stories/Common/Loader/Spinner';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

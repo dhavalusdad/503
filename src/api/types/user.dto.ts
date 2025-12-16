@@ -1,3 +1,4 @@
+import type { CommonFilterParamsType } from '@/api/types/common.dto';
 import type { GenderEnum, MaritalStatusEnum } from '@/enums';
 import type { AssessmentFormListFilterDataType } from '@/features/admin/components/AssessmentForm/type';
 import type { QueueFilterDataType } from '@/features/admin/components/backofficeQueue/types';
@@ -7,8 +8,6 @@ import type {
 } from '@/features/admin/components/clientManagement/types';
 import type { ClientListingFilterDataType } from '@/features/appointment/component/ClientAppointmentsBooking/types';
 import type { MyClientsFilterDataType } from '@/pages/Client/types';
-
-import type { CommonFilterParamsType } from './common.dto';
 
 export enum UserRole {
   CLIENT = 'CT',
@@ -48,6 +47,7 @@ export interface User {
   last_login?: string;
   tenant_id?: string;
   accessToken: string;
+  pending_tours: string[];
   roles: [
     {
       name: string;
@@ -198,6 +198,7 @@ export type AssessmentFormParamsType = CommonFilterParamsType & {
   user_id?: string;
   include_dependent?: boolean;
   tenant_id: string;
+  role?: string;
 };
 
 export type ClientFormsParamsType = CommonFilterParamsType &

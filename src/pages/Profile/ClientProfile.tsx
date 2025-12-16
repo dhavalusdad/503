@@ -1,4 +1,4 @@
-import { ClientProfileComponent } from '@/features/client/components/ClientProfile';
+import { ClientProfileComponent } from '@/features/client/components/ClientProfile/ClientProfileComponent';
 
 const ClientProfile: React.FC = () => {
   return (

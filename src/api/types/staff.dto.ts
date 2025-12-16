@@ -1,6 +1,5 @@
+import type { CommonFilterParamsType } from '@/api/types/common.dto';
 import type { StaffManagementFilterType } from '@/pages/Admin/StaffManagement/types';
-
-import type { CommonFilterParamsType } from './common.dto';
 
 export interface User {
   id: string;

@@ -6,6 +6,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useLogout } from '@/api/auth';
 import { useUpdateActiveChatSession } from '@/api/chat';
+import { useGetUserInsuranceStatus } from '@/api/insurance';
+import { useGetUserPaymentProfileStatus } from '@/api/payment';
+import { UserRole } from '@/api/types/user.dto';
 import { tokenStorage } from '@/api/utils/tokenStorage';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
@@ -21,6 +24,8 @@ import { persister } from '@/redux/store';
 import Button from '@/stories/Common/Button';
 import Modal from '@/stories/Common/Modal';
 
+import TourManager from './TourManager';
+
 import type { AxiosError } from 'axios';
 
 type AppLayoutProps = PropsWithChildren<object>;
@@ -31,13 +36,39 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const emit = useSocketEmit();
   const dispatch = useDispatch();
   const user = useSelector(currentUser);
+  const isClient = user.role === UserRole.CLIENT;
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1279);
   const [logoutModalOpen, setLogoutModalOpen] = useState<boolean>(false);
 
-  const [modalOpen, setModalOpen] = useState<'payment' | 'insurance' | ''>('payment');
+  const [modalOpen, setModalOpen] = useState<'payment' | 'insurance' | ''>('');
 
   const { mutate: logoutMutation } = useLogout();
   const { mutate: updateActiveChatSession } = useUpdateActiveChatSession();
+
+  const {
+    data: insuranceStatus,
+    isLoading: isLoadingInsurance,
+    dataUpdatedAt: insuranceDataUpdatedAt,
+  } = useGetUserInsuranceStatus(isClient);
+  const {
+    data: paymentProfileStatus,
+    isLoading: isLoadingPayments,
+    dataUpdatedAt: paymentDataUpdatedAt,
+  } = useGetUserPaymentProfileStatus(isClient);
+
+  useEffect(() => {
+    if (isLoadingInsurance || isLoadingPayments) return;
+    if (modalOpen) return;
+
+    if (paymentProfileStatus && !paymentProfileStatus.has_payment_method) {
+      setModalOpen('payment');
+      return;
+    }
+
+    if (insuranceStatus && !insuranceStatus.has_insurance) {
+      setModalOpen('insurance');
+    }
+  }, [isLoadingInsurance, isLoadingPayments, insuranceDataUpdatedAt, paymentDataUpdatedAt]);
 
   const logout = async (): Promise<void> => {
     const route = {
@@ -109,6 +140,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           )}
         >
           <Header logout={onLogout} />
+
+          {/* Tour Manager handles all tour logic */}
+          <TourManager />
 
           <div className='p-5 flex-1 overflow-y-auto'>{children}</div>
         </div>

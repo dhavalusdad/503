@@ -137,7 +137,7 @@ const AssessmentForms = ({
   };
 
   return (
-    <div className='flex flex-col gap-5'>
+    <div className='flex flex-col gap-5  min-h-[380px]'>
       <div className='flex items-center flex-wrap gap-5 lg:gap-4 2xl:gap-5'>
         <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
           Assessment Forms
@@ -211,9 +211,10 @@ const AssessmentForms = ({
         </div>
       ) : (
         <Table<AssessmentFormDataType>
-          data={appointmentHistoryData}
-          columns={assessmentFormsColumnsForClient}
-          className='w-full'
+          data={appointmentHistoryData || []}
+          columns={assessmentFormsColumnsForClient || []}
+          className={'w-full min-h-[320px]'}
+          parentClassName='min-h-[320px]'
           totalCount={total}
           pageIndex={pageIndex}
           pageSize={pageSize}
@@ -226,57 +227,61 @@ const AssessmentForms = ({
         />
       )}
       {/* updated modal  */}
-      <Modal
-        isOpen={assessmentModalOpen}
-        id='assign-assessment-form-modal'
-        size='xs'
-        title='Assign Assessment Form'
-        onClose={() => setAssessmentModalOpen(false)}
-        closeButton={false}
-        contentClassName='pt-30px !overflow-visible'
-        footerClassName='flex items-center justify-end gap-5'
-        footer={
-          <>
-            <Button
-              variant='outline'
-              title='Cancel'
-              onClick={() => setAssessmentModalOpen(false)}
-              className='rounded-10px !leading-5 !px-6'
-            />
-            <Button
-              variant='filled'
-              title='Assign'
-              onClick={() => handleSubmit()}
-              isDisabled={selectedIds.length == 0 || !userDependentIds?.value}
-              className='rounded-10px !leading-5 !px-6'
-            />
-          </>
-        }
-      >
-        <AssignFormDetails
-          selectedIds={selectedIds}
-          setUserDependentIds={setUserDependentIds}
-          setSelectedIds={setSelectedIds}
-          appointmentIds={appointmentIds}
-          setAppointmentIds={setAppointmentIds}
-          clientId={userId}
-          clientData={clientData}
-          userDependentIds={userDependentIds}
+      {assessmentModalOpen && (
+        <Modal
+          isOpen={assessmentModalOpen}
+          id='assign-assessment-form-modal'
+          size='xs'
+          title='Assign Assessment Form'
+          onClose={() => setAssessmentModalOpen(false)}
+          closeButton={false}
+          contentClassName='pt-30px !overflow-visible'
+          footerClassName='flex items-center justify-end gap-5'
+          footer={
+            <>
+              <Button
+                variant='outline'
+                title='Cancel'
+                onClick={() => setAssessmentModalOpen(false)}
+                className='rounded-10px !leading-5 !px-6'
+              />
+              <Button
+                variant='filled'
+                title='Assign'
+                onClick={() => handleSubmit()}
+                isDisabled={selectedIds.length == 0 || !userDependentIds?.value}
+                className='rounded-10px !leading-5 !px-6'
+              />
+            </>
+          }
+        >
+          <AssignFormDetails
+            selectedIds={selectedIds}
+            setUserDependentIds={setUserDependentIds}
+            setSelectedIds={setSelectedIds}
+            appointmentIds={appointmentIds}
+            setAppointmentIds={setAppointmentIds}
+            clientId={userId}
+            clientData={clientData}
+            userDependentIds={userDependentIds}
+          />
+        </Modal>
+      )}
+      {deleteAssessmentFormsModal && (
+        <DeleteModal
+          isOpen={deleteAssessmentFormsModal}
+          onClose={() => setDeleteAssessmentFormsModal(false)}
+          onSubmit={() => {
+            handleDeleteForm(formId);
+          }}
+          isSubmitLoading={false}
+          message={`Are you sure you want to delete this Assessment form ?`}
+          cancelButton={true}
+          confirmButtonText='Delete'
+          size='xs'
+          title='Delete Assessment forms'
         />
-      </Modal>
-      <DeleteModal
-        isOpen={deleteAssessmentFormsModal}
-        onClose={() => setDeleteAssessmentFormsModal(false)}
-        onSubmit={() => {
-          handleDeleteForm(formId);
-        }}
-        isSubmitLoading={false}
-        message={`Are you sure you want to delete this Assessment form ?`}
-        cancelButton={true}
-        confirmButtonText='Delete'
-        size='xs'
-        title='Delete Assessment forms'
-      />
+      )}
     </div>
   );
 };

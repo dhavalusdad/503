@@ -1,5 +1,11 @@
+import { useInfiniteQuery, useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPut, axiosPost, axiosDelete } from '@/api/axios';
-import type { AssessmentFormParamsType, ClientFormsParamsType } from '@/api/types/user.dto';
+import { formsQueryKey } from '@/api/common/assessment-form.queryKey';
+import {
+  UserRole,
+  type AssessmentFormParamsType,
+  type ClientFormsParamsType,
+} from '@/api/types/user.dto';
 import type { FormStatusType } from '@/enums';
 import type { AssignAssessmentFormDataType } from '@/features/admin/components/clientManagement/types';
 import type {
@@ -7,10 +13,6 @@ import type {
   DynamicFormResponse,
 } from '@/features/admin/components/DynamicFormBuilder/types';
 import { useInvalidateQuery, useRemoveQueries } from '@/hooks/data-fetching';
-
-import { formsQueryKey } from './common/assessment-form.queryKey';
-
-import { useInfiniteQuery, useMutation, useQuery } from '.';
 
 import type { QueryFunctionContext } from '@tanstack/react-query';
 
@@ -107,8 +109,6 @@ export const useGetUserAssessmentForms = (params: AssessmentFormParamsType) => {
         currentPage: res.data.page,
       };
     },
-    // placeholderData: keepPreviousData,
-    staleTime: 1000 * 60 * 60,
   });
 };
 
@@ -145,14 +145,15 @@ export const useGetInfiniteUserAssessmentFormsAPI = (params: AssessmentFormParam
           Array.isArray(items.data) && items.data.length > 0 && currentPage * pageSize < total,
       };
     },
+    gcTime: 0,
     getNextPageParam: lastPage => {
       if (!lastPage?.hasMore) return undefined;
       return (Number(lastPage.currentPage) || 1) + 1;
     },
     initialPageParam: 1,
-    refetchOnMount: false,
+    refetchOnWindowFocus: params.role === UserRole.CLIENT,
+    refetchOnReconnect: params.role === UserRole.CLIENT,
     enabled: !!params.appointment_id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
@@ -221,6 +222,7 @@ export const useGetClientsAssessmentForms = (params: ClientFormsParamsType) => {
       });
       return response.data;
     },
+    enabled: !!user_id,
   });
 };
 
@@ -303,7 +305,7 @@ export const useUpdateFormCategory = () => {
       return response.data;
     },
     onSuccess: () => {
-      invalidate(formsQueryKey.getListData());
+      invalidate(formsQueryKey.getList());
     },
     showToast: true,
   });
@@ -458,7 +460,7 @@ export const useGetTreatmentProgressAnalytics = (params: {
   therapist_id: string;
 }) => {
   return useQuery({
-    queryKey: formsQueryKey.getList(),
+    queryKey: formsQueryKey.getTreatmentList({ params }),
     queryFn: async () => {
       const queryParams = {
         client_id: params.client_id,

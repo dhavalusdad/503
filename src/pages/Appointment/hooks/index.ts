@@ -9,8 +9,8 @@ import { getPaymentMethodsAsync, getTherapyTypesAsync } from '@/api/field-option
 import type { CommonFilterField } from '@/components/layout/Filter';
 import { APPOINTMENT_STATUS_OPTIONS, FIELD_TYPE } from '@/constants/CommonConstant';
 import { FieldOptionType } from '@/enums';
-import type { AppointmentQueryResult } from '@/features/appointment';
 import { getAppointmentColumns } from '@/features/appointment/component/TherapistAppointment/AppointmentColumns';
+import type { AppointmentQueryResult } from '@/features/appointment/types';
 import type { TherapistAppointmentFiltersType } from '@/pages/Appointment/types';
 import { currentUser } from '@/redux/ducks/user';
 import useTableWithFilters, {

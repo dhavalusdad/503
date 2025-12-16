@@ -36,11 +36,7 @@ const ClientDashboard = () => {
     tenant_id: tenant_id || '',
     filters: {
       status: [statusFilter],
-      excludeAppointmentStatuses: [
-        AppointmentStatus.CANCELLED,
-        AppointmentStatus.COMPLETED,
-        AppointmentStatus.NO_SHOW,
-      ],
+      excludeAppointmentStatuses: [AppointmentStatus.CANCELLED, AppointmentStatus.NO_SHOW],
     },
     user_id,
     page: 1,
@@ -74,14 +70,17 @@ const ClientDashboard = () => {
 
   // Normal dashboard content after agreements signed
   return (
-    <div className='relative flex flex-col gap-5'>
+    <div className='relative flex flex-col gap-5' id='tour-welcome-section'>
       <div className='flex items-center gap-3 xl:gap-5 flex-wrap'>
         <h5 className='text-lg font-bold text-blackdark mr-auto order-1 lg:order-none'>
           Upcoming Appointments
         </h5>
         {paymentProfileData?.paymentProfiles &&
           paymentProfileData?.paymentProfiles?.length === 0 && (
-            <div className='order-3 lg:order-none border border-solid border-yellow rounded-10px bg-yellowlight flex flex-wrap justify-end items-center gap-2.5 p-2.5'>
+            <div
+              id='tour-pendingprofile-info'
+              className='order-3 lg:order-none border border-solid border-yellow rounded-10px bg-yellowlight flex flex-wrap justify-end items-center gap-2.5 p-2.5'
+            >
               <div className='flex items-center gap-2.5'>
                 <Icon name='warning' className='text-yellow' />
                 <span className='text-base font-normal text-blackdark'>
@@ -100,6 +99,7 @@ const ClientDashboard = () => {
           )}
         <Button
           variant='filled'
+          id='tour-book-btn'
           title='Book an Appointment'
           icon={<Icon name='plus' />}
           isIconFirst

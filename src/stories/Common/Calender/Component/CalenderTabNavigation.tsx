@@ -14,7 +14,7 @@ export interface TabNavigationProps {
   activeTabClassName?: string;
 }
 
-const TabNavigation: React.FC<TabNavigationProps> = ({
+const CalenderTabNavigation: React.FC<TabNavigationProps> = ({
   tabs,
   activeTab,
   onTabChange,
@@ -42,7 +42,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
             key={tab}
             onClick={() => onTabChange(tab)}
             className={clsx(
-              'rounded-md !py-[0.60rem] px-2.5 !leading-22px w-full',
+              'rounded-md !py-[0.60rem] !px-2.5 !leading-22px w-full',
               activeTab === tab
                 ? activeTabClassName
                   ? activeTabClassName
@@ -58,4 +58,4 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
   );
 };
 
-export default TabNavigation;
+export default CalenderTabNavigation;

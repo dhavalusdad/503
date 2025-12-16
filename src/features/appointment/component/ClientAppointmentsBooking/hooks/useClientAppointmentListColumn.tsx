@@ -22,7 +22,7 @@ const useGetAppointmentListColumns = () => {
       cell: ({ row }) => {
         return (
           <span
-            className='hover:text-primary hover:underline cursor-pointer underline-offset-2 block'
+            className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
             onClick={() => navigate(ROUTES.APPOINTMENT_VIEW.navigatePath(row.original.id))}
           >
             {row.getValue('therapist_name')}
@@ -71,12 +71,28 @@ const useGetAppointmentListColumns = () => {
       enableSorting: false,
       meta: {
         headerClassName: '!text-center',
+        customSkeleton: (
+          <div className='flex items-center justify-center'>
+            <Button
+              variant='none'
+              id='tour-chat-icon'
+              className='hover:bg-white rounded-full'
+              icon={<Icon name='talkIcon' className='icon-wrapper w-5 h-5 text-blackdark' />}
+            />
+            <Button
+              variant='none'
+              className='hover:bg-white rounded-full'
+              icon={<Icon name='eye' className='icon-wrapper w-5 h-5 text-blackdark' />}
+            />
+          </div>
+        ),
       },
       cell: ({ row }) => {
         return (
           <div className='flex items-center justify-center'>
             <Button
               variant='none'
+              id='tour-chat-icon'
               isDisabled={Boolean(!row.original.chat_session_id)}
               className='hover:bg-white rounded-full'
               onClick={() => {

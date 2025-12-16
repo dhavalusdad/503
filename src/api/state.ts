@@ -1,8 +1,6 @@
+import { useQuery } from '@/api';
 import { axiosGet } from '@/api/axios.ts';
-
-import { stateQueryKey } from './common/state.queryKey';
-
-import { useQuery } from '.';
+import { stateQueryKey } from '@/api/common/state.queryKey';
 
 const BASE_PATH = '/states';
 const CREDENTIAL_STATE_BASE_PATH = '/credentialing-states';

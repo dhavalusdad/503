@@ -1,11 +1,9 @@
+import { useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
+import { insuranceQueryKey } from '@/api/common/insurance';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
 import { InsuranceType } from '@/pages/Preferences/components/AddInsuranceModal';
-
-import { calendarQueryKeys } from './common/calendar.queryKey';
-import { insuranceQueryKey } from './common/insurance';
-
-import { useMutation, useQuery } from '.';
 
 const BASE_PATH = '/insurance';
 const USER_PATH = '/user';

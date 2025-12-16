@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useInfiniteQuery } from '@/api';
 import { axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { notificationQueryKeys } from '@/api/common/notification.query';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { notificationQueryKeys } from './common/notification.query';
 
 import type { QueryFunctionContext } from '@tanstack/react-query';
 
@@ -21,9 +20,11 @@ export const useGetNotifications = <T>(status: 'unread' | 'read' | 'all' = 'all'
 export const useInfiniteNotifications = ({
   status = 'all',
   limit = 10,
+  timezone,
 }: {
   status?: 'unread' | 'read' | 'all';
   limit?: number;
+  timezone?: string;
 }) => {
   return useInfiniteQuery({
     queryKey: notificationQueryKeys.list(status),
@@ -31,7 +32,7 @@ export const useInfiniteNotifications = ({
       const pageParam = (context.pageParam as number) ?? 1;
 
       const response = await axiosGet(`${BASE_PATH}`, {
-        params: { status, page: pageParam, limit },
+        params: { status, page: pageParam, limit, timezone },
       });
 
       const payload = response.data.data;

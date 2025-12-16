@@ -25,7 +25,7 @@ const WellnessDetails = () => {
     hasNextPage: wellnessHasNextPage,
     isFetchingNextPage: wellnessIsFetchingNextPage,
     fetchNextPage: wellnessFetchNextPage,
-    isLoading: wellnessIsLoading,
+    // isLoading: wellnessIsLoading,
     isFetching: wellnessIsFetching,
   } = usePatientWellnessAll({
     patient_id: clientId as string,
@@ -40,7 +40,7 @@ const WellnessDetails = () => {
     // hasNextPage: therapyGoalsHasNextPage,
     // isFetchingNextPage: therapyGoalsIsFetchingNextPage,
     // fetchNextPage: therapyGoalsFetchNextPage,
-    isLoading: therapyGoalsIsLoading,
+    // isLoading: therapyGoalsIsLoading,
     // isFetching: therapyGoalsIsFetching,
   } = useGetAllTherapyGoals({
     client_id: clientId as string,
@@ -143,37 +143,37 @@ const WellnessDetails = () => {
   };
 
   // Show loading state if either API is loading initially
-  if (wellnessIsLoading || therapyGoalsIsLoading) {
-    return (
-      <div className='bg-white rounded-20px border border-solid border-surface p-5'>
-        <div className='flex items-center flex-wrap gap-5 mb-5'>
-          <h2 className='text-lg font-bold leading-6 text-blackdark mr-auto'>Wellness Details</h2>
-          <Button
-            variant='filled'
-            title='Manage Therapy Goal'
-            onClick={() => setTherapyGoalSideBar(true)}
-            className='rounded-10px min-h-50px'
-          />
-        </div>
-        <div className='flex items-center justify-center py-10'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
-          <span className='ml-2'>Loading wellness data...</span>
-        </div>
-      </div>
-    );
-  }
+  // if (wellnessIsLoading || therapyGoalsIsLoading) {
+  //   return (
+  //     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
+  //       <div className='flex items-center flex-wrap gap-5 mb-5'>
+  //         <h2 className='text-lg font-bold leading-6 text-blackdark mr-auto'>Wellness Details</h2>
+  //         <Button
+  //           variant='filled'
+  //           title='Manage Therapy Goal'
+  //           onClick={() => setTherapyGoalSideBar(true)}
+  //           className='rounded-10px min-h-50px'
+  //         />
+  //       </div>
+  //       <div className='flex items-center justify-center py-10'>
+  //         <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
+  //         <span className='ml-2'>Loading wellness data...</span>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5 h-full flex flex-col'>
       {/* Header */}
       <div className='flex items-center flex-wrap gap-5 mb-5'>
         <h2 className='text-lg font-bold leading-6 text-blackdark mr-auto'>Wellness Details</h2>
-        <Button
+        {/* <Button
           variant='filled'
           title='Manage Therapy Goal'
           onClick={() => setTherapyGoalSideBar(true)}
           className='rounded-10px min-h-50px'
-        />
+        /> */}
       </div>
 
       {/* Wellness Cards Grid with Scroll Container */}

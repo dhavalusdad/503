@@ -1,8 +1,11 @@
 import { keepPreviousData, useQueryClient } from '@tanstack/react-query';
 
+import { useMutation, useQuery } from '@/api';
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { CLIENT_KEYS_NAME, clientQueryKey } from '@/api/common/client.queryKey';
 import type { ClientManagementParamsType } from '@/api/types/user.dto';
 import { isDefined } from '@/api/utils';
+import { TagType } from '@/enums';
 import type {
   AssignRemoveTagPayload,
   CreateClientData,
@@ -11,9 +14,7 @@ import type {
 import { showToast } from '@/helper';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
 
-import { CLIENT_KEYS_NAME, clientQueryKey } from './common/client.queryKey';
-
-import { useMutation, useQuery } from '.';
+import { USER_KEYS_NAME } from './common/user.queryKey';
 
 const CLIENT_BASE_PATH = '/client';
 const TAGS_BASE_PATH = '/tag';
@@ -150,13 +151,14 @@ export const useGetClientManagementDetailsQuery = (id: string, enabled = true) =
   });
 };
 
-export const useGetClientManagementTagsQuery = (id: string) => {
+export const useGetClientManagementTagsQuery = (id: string, type: TagType = TagType.ALERT_TAG) => {
   return useQuery({
     queryKey: [id],
     queryFn: async () => {
       return await axiosGet(`${TAGS_BASE_PATH}/all-tag`, {
         params: {
           id,
+          type,
         },
       });
     },
@@ -176,6 +178,7 @@ export const useUpdateClientBasicInfo = (id: string) => {
       });
     },
     onSuccess: () => {
+      invalidate([CLIENT_KEYS_NAME.LIST]);
       invalidate(clientQueryKey.details(id));
       showToast('User Profile Updated Successfully');
     },
@@ -193,7 +196,8 @@ export const useAssignRemoveUserTag = () => {
       return await axiosPost(`${USER_TAGS_BASE_PATH}/assign-remove`, { data: payload });
     },
     onSuccess: (_, variables: AssignRemoveTagPayload) => {
-      queryClient.invalidateQueries({ queryKey: [variables.user_id] });
+      queryClient.invalidateQueries([variables.user_id]);
+      queryClient.invalidateQueries(clientQueryKey.getList());
     },
     onError: error => {
       console.error('Failed to assign/remove tag:', error);
@@ -202,8 +206,7 @@ export const useAssignRemoveUserTag = () => {
 };
 
 export const useSetClientFlag = () => {
-  const { invalidate } = useInvalidateQuery();
-
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, isFlag }: SetFlagPayload) => {
       const res = await axiosPost(`${CLIENT_BASE_PATH}/flag`, {
@@ -212,25 +215,41 @@ export const useSetClientFlag = () => {
       });
       return res.data;
     },
-    onSuccess: () => {
-      invalidate([CLIENT_KEYS_NAME.LIST]);
+    onSuccess: (_, variables) => {
+      const allPages = queryClient.getQueriesData({ queryKey: [CLIENT_KEYS_NAME.LIST] });
+      let queryKey: (string | object)[] = [];
+      for (const currentPage of allPages) {
+        if (currentPage[1]?.data?.data.find(i => i.id === variables.id)) {
+          queryKey = currentPage[0];
+          break;
+        }
+      }
+
+      if (queryKey) {
+        queryClient.setQueriesData(
+          { queryKey: [queryKey[0], { page: queryKey[1]?.page }], exact: false },
+          oldData => {
+            return {
+              ...oldData,
+              data: {
+                ...oldData?.data,
+                data: oldData?.data?.data.map(client => {
+                  if (client.id === variables.id) {
+                    return { ...client, isFlag: variables.isFlag };
+                  }
+                  return client;
+                }),
+              },
+            };
+          }
+        );
+      }
     },
     onError: error => {
       console.error('Failed to set flag:', error);
     },
   });
 };
-
-export function useTags({ enabled = true }: { enabled?: boolean }) {
-  return useQuery({
-    queryKey: ['tags'],
-    queryFn: async () => {
-      const res = await axiosGet(`${TAGS_BASE_PATH}`, {});
-      return res.data;
-    },
-    enabled,
-  });
-}
 
 // Async function for tags with pagination support for CustomAsyncSelect
 export const getTagsAsync = async (page?: number, searchTerm?: string) => {
@@ -280,7 +299,7 @@ export const getClientsAsync = async (page?: number, searchTerm?: string) => {
       params.search = searchTerm;
     }
 
-    const response = await axiosPost(`${CLIENT_BASE_PATH}`, {
+    const response = await axiosPost(`${CLIENT_BASE_PATH}/list`, {
       params,
     });
 
@@ -291,13 +310,11 @@ export const getClientsAsync = async (page?: number, searchTerm?: string) => {
       (client: {
         id: string;
         user?: { first_name: string; last_name: string; profile_image?: string };
-        full_name?: string;
       }) => {
-        // Handle both response structures (with user object or direct properties)
         return {
           value: client.id,
-          label: client.full_name || 'Unknown Client',
-          image: client.user?.profile_image,
+          label: `${client?.user?.first_name} ${client?.user?.last_name}`,
+          image: client?.user?.profile_image,
         };
       }
     );
@@ -349,7 +366,7 @@ export const useDeleteDependent = () => {
 
 export const useUpdateClientData = () => {
   const { invalidate } = useInvalidateQuery();
-
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
       clientId,
@@ -364,6 +381,10 @@ export const useUpdateClientData = () => {
     },
     onSuccess: (_, variables) => {
       invalidate(clientQueryKey.details(variables.clientId));
+      queryClient.invalidateQueries({
+        queryKey: [USER_KEYS_NAME.THERAPIST_CLIENT_LIST],
+        exact: false,
+      });
     },
     onError: error => {
       console.error('Failed to update client data:', error);

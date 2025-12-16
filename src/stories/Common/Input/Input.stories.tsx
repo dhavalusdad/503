@@ -1,4 +1,4 @@
-import { InputField } from './index';
+import InputField from '@/stories/Common/Input';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

@@ -1,6 +1,6 @@
-import TagsCell from '.';
+import TagsCell from '@/stories/Common/TagsCell';
 
-import type { TagsDataType } from './types';
+import type { TagsDataType } from '@/stories/Common/TagsCell/types';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof TagsCell> = {

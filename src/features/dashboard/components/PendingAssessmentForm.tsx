@@ -7,12 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { useGetInfinitePendingClientsAssessmentForms } from '@/api/assessment-forms';
 import { ROUTES } from '@/constants/routePath';
 import { FormStatusType } from '@/enums';
+import type { UnsignedFormNote } from '@/features/dashboard/types';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import Image from '@/stories/Common/Image';
-
-import type { UnsignedFormNote } from '../types';
 
 const SERVER_URL = import.meta.env.VITE_BASE_URL;
 

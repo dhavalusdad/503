@@ -51,7 +51,7 @@ export default function JoinAppointment() {
   const invite = query.get('invite');
   const inviteToken = invite || sessionStorage.getItem('inviteToken');
   const { role: loginRole } = useSelector(currentUser);
-  const [role, setRole] = useState<string | null>(loginRole);
+  const [role, setRole] = useState<string>(loginRole);
   const [displayName, setDisplayName] = useState('');
   const [isJoining, setIsJoining] = useState(false);
   const [previewTracks, setPreviewTracks] = useState<LocalTrack[]>([]);
@@ -108,9 +108,15 @@ export default function JoinAppointment() {
       setDisplayName(storedName);
       setIdentity(identity);
     }
-
-    initializePreview();
-  }, []);
+    if (
+      appointmentDetails?.status &&
+      appointmentDetails?.status !== AppointmentStatus.COMPLETED &&
+      appointmentDetails?.status !== AppointmentStatus.NO_SHOW &&
+      appointmentDetails?.status !== AppointmentStatus.CANCELLED
+    ) {
+      initializePreview();
+    }
+  }, [appointmentDetails]);
 
   useEffect(() => {
     if (invite) {
@@ -149,7 +155,7 @@ export default function JoinAppointment() {
         appointmentDetails?.status === AppointmentStatus.NO_SHOW ||
         appointmentDetails?.status === AppointmentStatus.CANCELLED
       ) {
-        navigate('/session-expired');
+        navigate(ROUTES.SESSION_EXPIRED.path);
       }
     }
   }, [appointmentDetails, isLoading, isError, navigate]);
@@ -157,6 +163,7 @@ export default function JoinAppointment() {
   const initializePreview = async () => {
     try {
       if (isJoiningErrorDuplicate) return;
+
       // 1) Request permissions first to ensure device labels are available
       const permissions = await requestMediaPermissions();
       setHasPermissions({ ...permissions });
@@ -192,7 +199,13 @@ export default function JoinAppointment() {
     }
   };
 
-  useEffect(() => {
+  const audioVideo = () => {
+    if (
+      appointmentDetails?.status === AppointmentStatus.COMPLETED ||
+      appointmentDetails?.status === AppointmentStatus.NO_SHOW ||
+      appointmentDetails?.status === AppointmentStatus.CANCELLED
+    )
+      return;
     if (hasPermissions?.audio || hasPermissions?.video) {
       // Ensure device labels are refreshed after permissions by re-enumerating
       navigator.mediaDevices
@@ -203,11 +216,21 @@ export default function JoinAppointment() {
         })
         .catch(() => {});
     }
-  }, [hasPermissions]);
+  };
+
+  useEffect(() => {
+    audioVideo();
+  }, [hasPermissions, appointmentDetails]);
 
   // Keep device lists in sync if devices are plugged/unplugged
   useEffect(() => {
     const handleChange = async () => {
+      if (
+        appointmentDetails?.status === AppointmentStatus.COMPLETED ||
+        appointmentDetails?.status === AppointmentStatus.NO_SHOW ||
+        appointmentDetails?.status === AppointmentStatus.CANCELLED
+      )
+        return;
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         setAudioDeviceList([...(devices.filter(d => d.kind === 'audioinput') || [])]);
@@ -220,7 +243,7 @@ export default function JoinAppointment() {
     return () => {
       navigator.mediaDevices?.removeEventListener?.('devicechange', handleChange);
     };
-  }, []);
+  }, [appointmentDetails]);
 
   useEffect(() => {
     const saved = sessionStorage.getItem('BlurMode');
@@ -252,9 +275,11 @@ export default function JoinAppointment() {
       if (isVideoEnabled) {
         // Stop the track completely to free up camera resources
         videoTrack.disable();
+        videoTrack.stop();
       } else {
         // Recreate the video track when enabling
         videoTrack.enable();
+        videoTrack.restart();
       }
       setIsVideoEnabled(!isVideoEnabled);
     } else {
@@ -273,8 +298,10 @@ export default function JoinAppointment() {
       if (isAudioEnabled) {
         // Stop the track completely to free up microphone resources
         audioTrack.disable();
+        audioTrack.stop();
       } else {
         audioTrack.enable();
+        audioTrack.restart();
       }
       setIsAudioEnabled(!isAudioEnabled);
     } else {
@@ -418,13 +445,13 @@ export default function JoinAppointment() {
           therapistJoined: true,
           startedAt: new Date().toISOString(),
         });
-
-        notifyParticipantWaitingStatus({
-          recipientId: appointmentDetails?.client?.user?.id,
-          roomId: roomId,
-          appointmentId: appointmentDetails?.id,
-        });
-
+        if (appointmentDetails?.client?.user.user_settings?.length) {
+          notifyParticipantWaitingStatus({
+            recipientId: appointmentDetails?.client?.user?.id,
+            roomId: roomId,
+            appointmentId: appointmentDetails?.id,
+          });
+        }
         navigate(ROUTES.ROOM.navigatePath(roomId), {
           state: { role, inviteToken: inviteToken || '' },
         });
@@ -806,6 +833,7 @@ export default function JoinAppointment() {
               <WaitingRoom
                 tenant_id={appointmentDetails.tenant_id}
                 appointmentId={appointmentDetails?.id}
+                role={role}
               />
             )}
 
@@ -821,9 +849,13 @@ export default function JoinAppointment() {
                     </p>
                   </div>
                   {userDependentList().length > 1 ? (
-                    <SwiperComponent className='w-full h-fit'>
+                    <SwiperComponent
+                      showNav={false}
+                      showBullets={true}
+                      className='w-full h-fit !pb-5'
+                    >
                       {userDependentList().map((item: UserAppointment) => (
-                        <div key={item?.user?.id} className='w-full h-[200px]'>
+                        <div key={item?.user?.id} className='w-full'>
                           {/* <MemberCard member={item.user} index={index} showDeleteButton={false} /> */}
 
                           <div key={item?.user?.id} className='flex flex-col gap-1.5'>
@@ -833,7 +865,9 @@ export default function JoinAppointment() {
                             </p>
                             <p>
                               <strong>Age: </strong>
-                              {moment().diff(moment(item?.user?.dob), 'years')}
+                              {item?.user?.dob
+                                ? moment().diff(moment(item?.user?.dob), 'years')
+                                : '-'}
                             </p>
                             <p>
                               <strong>Gender: </strong>
@@ -849,7 +883,7 @@ export default function JoinAppointment() {
                     </SwiperComponent>
                   ) : (
                     userDependentList().map((item: UserAppointment) => (
-                      <div key={item?.user?.id} className='w-full h-[200px]'>
+                      <div key={item?.user?.id} className='w-full'>
                         {/* <MemberCard member={item.user} index={index} showDeleteButton={false} /> */}
 
                         <div key={item?.user?.id} className='flex flex-col gap-1.5'>
@@ -859,7 +893,7 @@ export default function JoinAppointment() {
                           </p>
                           <p>
                             <strong>Age: </strong>
-                            {moment().diff(moment(item?.user?.dob), 'years')}
+                            {item?.user?.dob ? moment().diff(moment(item?.user?.dob), 'years') : ''}
                           </p>
                           <p>
                             <strong>Gender: </strong>

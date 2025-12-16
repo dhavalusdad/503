@@ -129,8 +129,9 @@ const AddEditClinicAddressesModal = ({ isOpen, onClose, id }: AddEditClinicAddre
       onClose={handleClose}
       closeButton={false}
       contentClassName='pt-30px'
+      footerClassName='flex items-center justify-end gap-5'
       footer={
-        <div className='flex items-center justify-end gap-5'>
+        <>
           <Button
             type='button'
             variant='outline'
@@ -147,7 +148,7 @@ const AddEditClinicAddressesModal = ({ isOpen, onClose, id }: AddEditClinicAddre
             className='rounded-10px !leading-5 !px-6'
             isDisabled={!isDirty}
           />
-        </div>
+        </>
       }
       id='add-edit-clinic-addresses-modal'
     >
@@ -160,7 +161,7 @@ const AddEditClinicAddressesModal = ({ isOpen, onClose, id }: AddEditClinicAddre
           type='text'
           placeholder='Enter Clinic Name'
           isRequired
-          labelClass='!text-base !leading-5'
+          labelClass='!text-base'
           inputClass='!text-base !leading-5'
         />
         <InputField
@@ -170,7 +171,7 @@ const AddEditClinicAddressesModal = ({ isOpen, onClose, id }: AddEditClinicAddre
           error={errors.address?.message}
           type='text'
           placeholder='Enter Address Line'
-          labelClass='!text-base !leading-5'
+          labelClass='!text-base'
           inputClass='!text-base !leading-5'
           isRequired
         />
@@ -182,13 +183,24 @@ const AddEditClinicAddressesModal = ({ isOpen, onClose, id }: AddEditClinicAddre
           placeholder='Select State'
           error={errors.state_id?.message}
           isRequired
-          labelClassName='!text-base !leading-5'
+          labelClassName='!text-base'
           onChange={selected => {
             setValue('state_id', selected);
             setValue('city_id', null); // Reset city when state changes
           }}
           isLoading={statesLoading}
           portalRootId='add-edit-clinic-addresses-modal'
+          StylesConfig={{
+            control: () => ({
+              minHeight: '50px',
+            }),
+            singleValue: () => ({
+              fontSize: '16px',
+            }),
+            option: () => ({
+              fontSize: '16px',
+            }),
+          }}
         />
 
         <Select
@@ -201,9 +213,20 @@ const AddEditClinicAddressesModal = ({ isOpen, onClose, id }: AddEditClinicAddre
           placeholder='Select City'
           error={errors.city_id?.message}
           isRequired
-          labelClassName='!text-base !leading-5'
+          labelClassName='!text-base'
           isDisabled={!selectedState}
           portalRootId='add-edit-clinic-addresses-modal'
+          StylesConfig={{
+            control: () => ({
+              minHeight: '50px',
+            }),
+            singleValue: () => ({
+              fontSize: '16px',
+            }),
+            option: () => ({
+              fontSize: '16px',
+            }),
+          }}
         />
       </div>
     </Modal>

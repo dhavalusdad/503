@@ -53,9 +53,8 @@ const AppointmentDetailsModal = ({
                 onClick={handleStartSession}
                 className='bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg'
                 isDisabled={true}
-              >
-                Start Session
-              </Button>
+                title=' Start Session'
+              />
             </div>
           )}
         </>

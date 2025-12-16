@@ -1,4 +1,4 @@
-import { NoteCard } from '.';
+import { NoteCard } from '@/stories/Common/NoteCard';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

@@ -33,7 +33,7 @@ export const PatientOverview = (props: PatientOverviewProps) => {
   const clientUser = appointmentDetails.client.user || '-';
   const fullName = `${clientUser.first_name} ${clientUser.last_name}`;
   const dob = clientUser.dob || '-';
-  const age = moment().diff(moment(dob), 'years') || '-';
+  const age = moment().diff(moment(dob), 'years') || '';
   const gender = clientUser.gender;
   const therapyType = appointmentDetails.therapy_type.name || '-';
 
@@ -47,7 +47,7 @@ export const PatientOverview = (props: PatientOverviewProps) => {
         <div className='flex items-center gap-1'>
           <span className='font-bold text-base leading-5 text-blackdark'>Age : </span>
           <span className='font-normal text-sm leading-5 text-primarygray'>
-            {age ? `${age} years` : '-'}
+            {age ? `${age} years` : ''}
           </span>
         </div>
         <div className='flex items-center gap-1'>

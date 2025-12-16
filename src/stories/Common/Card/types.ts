@@ -31,7 +31,6 @@ export interface Therapist {
   specialties: Specialty[];
   id: string;
   bio?: string;
-  years_experience?: number | null;
   user?: User;
   specialist?: Specialty[];
   availability?: Availability[];

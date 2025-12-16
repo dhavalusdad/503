@@ -11,14 +11,13 @@ import { useGetAvailabilitySlots } from '@/api/availability';
 import { getFieldOptionsAsync } from '@/api/field-option';
 import { APPOINTMENT_STATUS_OPTIONS, AppointmentStatusLabels } from '@/constants/CommonConstant';
 import { AppointmentStatus, FieldOptionType } from '@/enums';
+import type { AppointmentDataType } from '@/features/admin/components/appointmentList/types';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
 import InputField from '@/stories/Common/Input';
 import Modal from '@/stories/Common/Modal';
 import Select, { CustomAsyncSelect } from '@/stories/Common/Select';
-
-import type { AppointmentDataType } from '../types';
 
 interface AppointmentEditModalProps {
   isOpen: boolean;
@@ -65,7 +64,11 @@ const AppointmentEditModal = ({
   selectedAppointment,
 }: AppointmentEditModalProps) => {
   const user = useSelector(currentUser);
-  const { mutate: updateAppointment } = useUpdateAppointmentAdmin();
+  const {
+    mutateAsync: updateAppointment,
+    isPending,
+    isError: isUpdateError,
+  } = useUpdateAppointmentAdmin();
   const {
     setValue,
     getValues,
@@ -90,9 +93,11 @@ const AppointmentEditModal = ({
     []
   );
 
-  const { data: appointmentDetails, dataUpdatedAt } = useGetAppointmentDetails(
-    selectedAppointment.id
-  );
+  const {
+    data: appointmentDetails,
+    dataUpdatedAt,
+    isPending: getAppointmentDetailsPending,
+  } = useGetAppointmentDetails(selectedAppointment.id);
 
   const { data: availabilitySlots } = useGetAvailabilitySlots({
     therapist_id: selectedAppointment.therapist.id,
@@ -183,22 +188,19 @@ const AppointmentEditModal = ({
     setValue('slotId', '', { shouldValidate: true });
   };
 
-  const onSubmit = (data: FormData) => {
-    try {
-      updateAppointment({
-        data: {
-          status:
-            data.status.value === AppointmentStatusLabels.Scheduled
-              ? AppointmentStatus.SCHEDULED
-              : data.status.value,
-          therapy_type_id: data.therapyType.value,
-          slot_id: data.slotId,
-        },
-        id: selectedAppointment.id,
-      });
-    } catch (error) {
-      console.error('Error updating appointment:', error);
-    } finally {
+  const onSubmit = async (data: FormData) => {
+    await updateAppointment({
+      data: {
+        status:
+          data.status.value === AppointmentStatusLabels.Scheduled
+            ? AppointmentStatus.SCHEDULED
+            : data.status.value,
+        therapy_type_id: data.therapyType.value,
+        slot_id: data.slotId,
+      },
+      id: selectedAppointment.id,
+    });
+    if (!isUpdateError) {
       onClose();
     }
   };
@@ -228,6 +230,7 @@ const AppointmentEditModal = ({
       title='Edit Appointment'
       size='sm'
       closeButton={false}
+      isLoading={getAppointmentDetailsPending}
       footer={
         <div className='flex items-center justify-end gap-5'>
           <Button
@@ -242,6 +245,7 @@ const AppointmentEditModal = ({
             title='Save Changes'
             onClick={handleSubmit(onSubmit)}
             className='rounded-10px !leading-5 !px-6'
+            isLoading={isPending}
           />
         </div>
       }

@@ -4,12 +4,10 @@ import { useFormContext } from 'react-hook-form';
 import { useGetCitiesByState } from '@/api/city';
 import { useGetCountries, useGetStateByCountry } from '@/api/user';
 import { QUEUE_REQUEST_METADATA_FIELD_NAME } from '@/features/admin/components/backofficeQueue/constant';
+import ProfileTippy from '@/features/profile/components/TherapistProfileTippy';
+import type { TherapistProfileFormData } from '@/features/profile/types';
 import InputField from '@/stories/Common/Input';
 import Select from '@/stories/Common/Select';
-
-import ProfileTippy from './TherapistProfileTippy';
-
-import type { TherapistProfileFormData } from '../types';
 
 type Props = {
   checkIsRequiredField: (field: keyof TherapistProfileFormData) => boolean;
@@ -52,8 +50,8 @@ const TherapistAddress = (props: Props) => {
             error={errors.address1?.message}
             name='address1'
             label='Street 1'
-            labelClass='!text-base !leading-22px'
-            inputClass={'!text-base !leading-6 !p-3 bg-white'}
+            labelClass='!text-base'
+            inputClass={'!text-base !leading-5 bg-white'}
             isRequired={checkIsRequiredField('address1')}
             isDisabled={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.ADDRESS1)}
           />
@@ -66,8 +64,8 @@ const TherapistAddress = (props: Props) => {
             error={errors.address2?.message}
             name='address2'
             label='Street 2'
-            labelClass='!text-base !leading-22px'
-            inputClass={'!text-base !leading-6 !p-3 bg-white'}
+            labelClass='!text-base'
+            inputClass={'!text-base !leading-5 bg-white'}
             isRequired={checkIsRequiredField('address2')}
             isDisabled={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.ADDRESS2)}
           />
@@ -80,7 +78,7 @@ const TherapistAddress = (props: Props) => {
                 : [{ value: '', label: 'No cities for selected state' }]
             }
             label='City'
-            labelClassName='!text-base !leading-22px'
+            labelClassName='!text-base'
             name='city'
             placeholder='Select City'
             error={errors.city?.message}
@@ -124,7 +122,7 @@ const TherapistAddress = (props: Props) => {
                 : [{ value: '', label: 'No states for selected country' }]
             }
             label='State'
-            labelClassName='!text-base !leading-22px'
+            labelClassName='!text-base'
             name='state'
             placeholder='Select State'
             error={errors.state?.message}
@@ -166,7 +164,7 @@ const TherapistAddress = (props: Props) => {
             )}
             label='Country'
             name='country'
-            labelClassName='!text-base !leading-22px'
+            labelClassName='!text-base'
             placeholder='Select Country'
             onChange={(selected: { value: string }) => {
               const country_id = selected?.value;
@@ -213,8 +211,8 @@ const TherapistAddress = (props: Props) => {
             isRequired={checkIsRequiredField('address1')}
             parentClassName=''
             placeholder='Enter ZIP code'
-            labelClass='!text-base !leading-22px'
-            inputClass={'!text-base !leading-6 !p-3 bg-white'}
+            labelClass='!text-base'
+            inputClass={'!text-base !leading-5 bg-white'}
             isDisabled={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.POSTAL_CODE)}
           />
         </ProfileTippy>

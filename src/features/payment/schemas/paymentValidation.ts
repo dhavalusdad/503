@@ -88,9 +88,9 @@ export const paymentMethodSchema = yup.object().shape({
       }
     ),
   defaultPaymentProfile: yup.boolean(),
-  address: yup.string().required(),
-  city: yup.string().required(),
-  state: yup.string().required(),
-  country: yup.string().required(),
-  zip: yup.string().required(),
+  address: yup.string().required().label('Address'),
+  city: yup.string().required().label('City'),
+  state: yup.string().required().label('State'),
+  country: yup.string().required().label('Country'),
+  zip: yup.string().required().label('Zip Code'),
 });

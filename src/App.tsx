@@ -1,5 +1,5 @@
 import '../sentry.client.config';
-import * as Sentry from '@sentry/react';
+import { withErrorBoundary } from '@sentry/react';
 import { ToastContainer } from 'react-toastify';
 
 import QueryProvider from '@/api/QueryProvider';
@@ -45,6 +45,6 @@ const App = () => {
 };
 
 // Wrap with Sentry's Error Boundary
-export default Sentry.withErrorBoundary(App, {
+export default withErrorBoundary(App, {
   fallback: <p>Something went wrong.</p>,
 });

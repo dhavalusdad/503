@@ -1,4 +1,4 @@
-import PasswordField from './index';
+import PasswordField from '@/stories/Common/PasswordField';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

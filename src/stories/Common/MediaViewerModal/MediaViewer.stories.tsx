@@ -1,9 +1,12 @@
 import '../../../index.css';
 import { useState } from 'react';
 
-import Button from '../Button';
+import Button from '@/stories/Common/Button';
 
-import MediaViewerModal, { type MediaViewerModalProps, type MediaFile } from './index';
+import MediaViewerModal, {
+  type MediaViewerModalProps,
+  type MediaFile,
+} from '@/stories/Common/MediaViewerModal';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

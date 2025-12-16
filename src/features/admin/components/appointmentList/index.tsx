@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import FilterButton from '@/components/layout/Filter/FilterButton';
 import { ROUTES } from '@/constants/routePath';
 import { PermissionType } from '@/enums';
-import AddChargeModal from '@/features/admin/components/appointmentList/components/AddChargeModal';
 import AppointmentEditModal from '@/features/admin/components/appointmentList/components/AppointmentEditModal';
 import { useAppointmentList } from '@/features/admin/components/appointmentList/hooks/useAppointmentList';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
@@ -48,7 +47,9 @@ const AppointmentList = () => {
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       {/* Header */}
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h2 className='text-lg font-bold leading-6 text-blackdark'>Appointment List</h2>
+        <h2 className='text-lg font-bold leading-6 text-blackdark mr-auto order-1 lg:order-none'>
+          Appointment List
+        </h2>
         <InputField
           type='Search'
           placeholder='Search'
@@ -57,17 +58,19 @@ const AppointmentList = () => {
           iconClassName='text-primarygray'
           onChange={handleSearchChange}
           name='search'
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName='w-full lg:w-76 xl:w-360px order-4 lg:order-none'
         />
-        <FilterButton
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-          onClearFilter={onClearFilter}
-          handleApplyFilter={handleApplyFilter}
-          filterFields={filterFields}
-          isLoading={isAppointmentListLoading}
-          defaultValues={filters}
-        />
+        <div className='order-3 lg:order-none'>
+          <FilterButton
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onClearFilter={onClearFilter}
+            handleApplyFilter={handleApplyFilter}
+            filterFields={filterFields}
+            isLoading={isAppointmentListLoading}
+            defaultValues={filters}
+          />
+        </div>
         {hasPermission(PermissionType.APPOINTMENT_ADD) && (
           <Button
             variant='filled'
@@ -75,6 +78,7 @@ const AppointmentList = () => {
             icon={<Icon name='plus' />}
             isIconFirst
             className='rounded-lg'
+            parentClassName='order-2 lg:order-none'
             onClick={() => {
               dispatch(clearAppointmentFilters());
               navigate(ROUTES.ADMIN_BOOK_APPOINTMENT.path);
@@ -107,14 +111,6 @@ const AppointmentList = () => {
           isOpen={modalState.editAppointment}
           onClose={() => openCloseModal('editAppointment', false)}
           selectedAppointment={modalState.appointment}
-        />
-      )}
-
-      {modalState.addCharge && (
-        <AddChargeModal
-          isOpen={modalState.addCharge}
-          onClose={() => openCloseModal('addCharge', false)}
-          selectedAppointment={modalState.appointment || null}
         />
       )}
     </div>

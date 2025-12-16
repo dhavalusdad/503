@@ -14,7 +14,6 @@ export type AppointmentDataType = {
     user_id: string;
     tenant_id: string;
     bio: string | null;
-    years_experience: number | null;
     hourly_rate: number | null;
     token: string | null;
     npi_number: string | null;

@@ -10,6 +10,7 @@ const PendingTaskModal = ({
   showModal,
   setPendingCount,
   tenant_id,
+  role,
 }: {
   userId: string;
   appointmentId: string;
@@ -17,6 +18,7 @@ const PendingTaskModal = ({
   showModal: boolean;
   setPendingCount: Dispatch<SetStateAction<number>>;
   tenant_id: string;
+  role?: string;
 }) => {
   const handleData = (pendingCount: number) => {
     setShowModal(pendingCount > 0);
@@ -38,6 +40,7 @@ const PendingTaskModal = ({
           appointmentId={appointmentId}
           handleData={handleData}
           userId={userId}
+          role={role}
         />
       </Modal>
     </>

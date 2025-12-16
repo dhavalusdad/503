@@ -1,4 +1,4 @@
-import ThirdPartyApiLogsList from './components/ThirdPartyApiLogsList';
+import ThirdPartyApiLogsList from '@/features/admin/components/ThirdPartyApiLogs/components/ThirdPartyApiLogsList';
 
 const ThirdPartyApiLogs = () => {
   return <ThirdPartyApiLogsList />;

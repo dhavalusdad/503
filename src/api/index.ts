@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react';
+import { captureException } from '@sentry/react';
 import {
   type DefaultError,
   type QueryFunction,
@@ -86,7 +86,7 @@ export const useMutation = <
 
           // ✅ Log only non-custom
           if (!isCustomError && axiosError instanceof AxiosError) {
-            Sentry.captureException(axiosError, {
+            captureException(axiosError, {
               tags: {
                 error_type: 'react_query_mutation',
                 http_status: status,

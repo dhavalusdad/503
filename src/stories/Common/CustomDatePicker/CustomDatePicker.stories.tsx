@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import CustomDatePicker from '.';
+import CustomDatePicker from '@/stories/Common/CustomDatePicker';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

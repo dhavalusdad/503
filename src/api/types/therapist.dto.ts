@@ -1,9 +1,13 @@
+import type {
+  AreaOfFocus,
+  CommonFilterParamsType,
+  Language,
+  TherapyType,
+} from '@/api/types/common.dto';
+import type { OptionType } from '@/api/types/field-option.dto';
 import type { GenderEnum } from '@/enums';
 import type { SpecialtiesDataType } from '@/features/appointment/component/ClientAppointmentsBooking/types';
 import type { TherapistManagementFilterType } from '@/pages/Therapist/TherapistManagement/types';
-
-import type { AreaOfFocus, CommonFilterParamsType, Language, TherapyType } from './common.dto';
-import type { OptionType } from './field-option.dto';
 
 export interface UpdateTherapistBasicDetailsRequest {
   user_id: string;
@@ -57,7 +61,6 @@ interface Availability {
 export interface TherapistBasicDetails {
   id: string;
   bio: string;
-  years_experience: number | null;
   languages: Language[];
   specialties?: SpecialtiesDataType[];
   session_types: string[]; // ["Virtual", "Clinic"]
@@ -71,6 +74,7 @@ export interface TherapistBasicDetails {
   profile_image: string;
   address1: string;
   address2: string;
+  experiences: number;
   email_verified: boolean;
   area_of_focus: AreaOfFocus[];
   clinic_address: { name: string; id: string; address: string }[];

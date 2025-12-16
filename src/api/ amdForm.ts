@@ -1,13 +1,8 @@
 import { useQuery, useQueryClient, type QueryFunctionContext } from '@tanstack/react-query';
 
 import { axiosGet, axiosPost, axiosPut } from '@/api/axios';
-import type { ApiResponse } from '@/api/types/common.dto';
-import type { FormStatusAMD } from '@/features/dashboard/components/IncompleteClincalNotes';
-
-import { amdFormQueryKeys } from './common/amd.query';
-
-import { useInfiniteQuery, useMutation } from '.';
-
+import { amdFormQueryKeys } from '@/api/common/amd.query';
+import { useInfiniteQuery, useMutation } from '@/api/index';
 import type {
   AssignAmdAppointmentId,
   CreateAmdIntakeForm,
@@ -15,7 +10,9 @@ import type {
   GetAmdFormResponse,
   ProblemListItem,
   UpdateAmdIntakeFormRequest,
-} from './types/amd.dto';
+} from '@/api/types/amd.dto';
+import type { ApiResponse } from '@/api/types/common.dto';
+import type { FormStatusAMD } from '@/features/dashboard/components/IncompleteClincalNotes';
 
 const BASE_PATH = '/amd-form';
 
@@ -31,7 +28,7 @@ export const useCreateAmdIntakeForm = ({ close }: { close: () => void }) => {
     onSuccess: (_, variables) => {
       // Invalidate specific form query
       queryClient.invalidateQueries({
-        queryKey: amdFormQueryKeys.unsignedForms(variables.patient_id),
+        queryKey: amdFormQueryKeys.unsignedForms(variables.patient_id, {}),
       });
       close();
     },
@@ -59,7 +56,7 @@ export const useUpdateAmdIntakeFormResponse = () => {
       // Invalidate specific form query
 
       queryClient.invalidateQueries({
-        queryKey: amdFormQueryKeys.unsignedForms(variables.patient_id),
+        queryKey: amdFormQueryKeys.unsignedForms(variables.patient_id, {}),
       });
     },
     showToast: true,
@@ -215,7 +212,7 @@ export const useAssignAmdForm = ({ close }: { close: () => void }) => {
     onSuccess: (_, variables) => {
       // Invalidate specific form query
       queryClient.invalidateQueries({
-        queryKey: amdFormQueryKeys.unsignedForms(variables.patient_id),
+        queryKey: amdFormQueryKeys.unsignedForms(variables.patient_id, {}),
       });
 
       close();

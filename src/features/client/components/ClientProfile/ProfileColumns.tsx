@@ -19,77 +19,44 @@ export const useGetClientDependentColumns = ({
       id: 'full_name',
       accessorKey: 'full_name',
       enableSorting: true,
-      header: () => (
-        <div className='flex items-center gap-1 cursor-pointer'>
-          <div className='overflow-hidden text-ellipsis whitespace-nowrap font-bold'>Full Name</div>
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className='font-medium text-gray-900'>{row.original.user.full_name || '-'}</div>
-      ),
+      header: 'Full Name',
+      cell: ({ row }) => <>{row.original.user.full_name || '-'}</>,
     },
     {
       id: 'email',
       accessorKey: 'email',
       enableSorting: true,
-      header: () => (
-        <div className='flex items-center gap-1 cursor-pointer'>
-          <div className='overflow-hidden text-ellipsis whitespace-nowrap font-bold'>Email</div>
-        </div>
-      ),
-      cell: ({ row }) => <div className='font-medium text-gray-900'>{row.original.user.email}</div>,
+      header: 'Email',
+      cell: ({ row }) => <>{row.original.user.email}</>,
     },
     {
       id: 'phone',
       accessorKey: 'phone',
       enableSorting: true,
-      header: () => (
-        <div className='flex items-center gap-1 cursor-pointer'>
-          <div className='overflow-hidden text-ellipsis whitespace-nowrap font-bold'>Phone</div>
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className='font-medium text-gray-900'>{row.original.user.phone || '-'}</div>
-      ),
+      header: 'Phone',
+      cell: ({ row }) => <>{row.original.user.phone || '-'}</>,
     },
     {
       id: 'relationship',
       accessorKey: 'relationship',
       enableSorting: true,
-      header: () => (
-        <div className='flex items-center gap-1 cursor-pointer'>
-          <div className='overflow-hidden text-ellipsis whitespace-nowrap font-bold'>
-            Relationship
-          </div>
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className='font-medium text-gray-900'>{row.original.relationship}</div>
-      ),
+      header: 'Relationship',
+      cell: ({ row }) => <>{row.original.relationship}</>,
     },
     {
       id: 'dob',
       accessorKey: 'dob',
       enableSorting: true,
-      header: () => (
-        <div className='flex items-center gap-1 cursor-pointer'>
-          <div className='overflow-hidden text-ellipsis whitespace-nowrap font-bold'>
-            Date of Birth
-          </div>
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className='font-medium text-gray-900'>
-          {moment(row.original.user.dob).format('MMM DD, YYYY')}
-        </div>
-      ),
+      header: ' Date of Birth',
+      cell: ({ row }) => <>{moment(row.original.user.dob).format('MMM DD, YYYY')}</>,
     },
     {
       accessorKey: 'action',
       header: 'Action',
       enableSorting: false,
       meta: {
-        headerClassName: '!text-center !pr-5',
+        headerClassName: '!text-center',
+        cellClassName: 'text-center',
       },
       cell: ({ row }) => {
         const dependent_id = row?.original?.user_id;

@@ -52,7 +52,7 @@ export const dependentValidationSchema = yup.object().shape({
 
         if ([RelationEnum.COUPLE, RelationEnum.FAMILY].includes(relationship) && age < 16) {
           return this.createError({
-            message: 'For couple/family, age must be 16 years or older',
+            message: 'For couple / family, age must be 16 years or older',
           });
         }
 

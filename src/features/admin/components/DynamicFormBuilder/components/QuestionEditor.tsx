@@ -26,7 +26,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({
   return (
     <div className={clsx('border border-solid border-surface rounded-xl p-5 bg-white')}>
       <div className='flex items-center justify-between mb-2.5'>
-        <h2 className='text-base font-normal text-blackdarklight'>
+        <h2 className='text-base font-normal text-blackdarklight leading-5'>
           {question.question_text} {question.is_required && <span className='text-red-500'>*</span>}
         </h2>
         {hasPermission(PermissionType.ASSESSMENT_FORM_EDIT) && (
@@ -39,7 +39,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({
           />
         )}
         {/* <Button
-            variant='none'
+            variant='none'`
             icon={<Icon name='dropdownUpArrow' />}
             onClick={onMoveUp}
             isDisabled={!canMoveUp}

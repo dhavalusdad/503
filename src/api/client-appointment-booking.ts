@@ -1,9 +1,7 @@
+import { useQuery } from '@/api';
 import { axiosGet } from '@/api/axios.ts';
+import { clientAppointmentBookingQueryKey } from '@/api/common/clientAppointment.queryKey';
 import type { ClientAppointmentBookingParamsType } from '@/api/types/user.dto';
-
-import { clientAppointmentBookingQueryKey } from './common/clientAppointment.queryKey';
-
-import { useQuery } from '.';
 
 const BASE_PATH = '/appointments';
 

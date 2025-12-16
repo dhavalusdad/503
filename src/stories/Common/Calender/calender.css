@@ -123,10 +123,6 @@
   transform: translateY(-1px);
 }
 
-.calendar-container {
-  transform: translateZ(0);
-}
-
 /* Additional specific elements that should not be selectable */
 .calendar-container button,
 .calendar-container input,

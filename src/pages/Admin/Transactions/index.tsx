@@ -8,6 +8,7 @@ import type { CommonFilterField } from '@/components/layout/Filter';
 import FilterButton from '@/components/layout/Filter/FilterButton';
 import { FIELD_TYPE } from '@/constants/CommonConstant';
 import { SessionType, TransactionAction, TransactionStatus, TransactionType } from '@/enums';
+import { ProcessRefundModal } from '@/features/admin/components/transaction/components/ProcessRefundModal';
 import useTransaction, {
   type TransactionFilterType,
 } from '@/features/admin/components/transaction/hooks';
@@ -27,6 +28,7 @@ const SESSION_TYPE_OPTION = [
 const TRANSACTION_TYPE_OPTION = [
   { value: TransactionType.CHARGE, label: 'Charge' },
   { value: TransactionType.REFUND, label: 'Refund' },
+  { value: TransactionType.VOID, label: 'Void' },
 ];
 const TRANSACTION_STATUS_OPTION = [
   { value: TransactionStatus.SUCCESS, label: 'Success' },
@@ -59,6 +61,8 @@ const Transactions = () => {
     setToggleDeclineModal,
     toggleApprovalModal,
     setToggleApprovalModal,
+    setToggleRefundModal,
+    toggleRefundModal,
   } = useTransaction(filters);
 
   const filterFields: CommonFilterField<TransactionFilterType>[] = useMemo(
@@ -235,6 +239,17 @@ const Transactions = () => {
           Do you want to decline this transaction? <br /> This action cannot be undone"
         </p>
       </Modal>
+      {toggleRefundModal.isModalOpen && (
+        <ProcessRefundModal
+          isOpen={toggleRefundModal.isModalOpen}
+          onClose={() => setToggleRefundModal({ transaction_id: null, isModalOpen: false })}
+          transaction={
+            (data as Transaction[]).find(
+              t => t.transaction_id === toggleRefundModal.transaction_id
+            ) || null
+          }
+        />
+      )}
     </div>
   );
 };

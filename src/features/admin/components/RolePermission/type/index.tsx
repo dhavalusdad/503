@@ -1,6 +1,6 @@
 export interface RolesColumnsProps {
   onDelete: (id: string) => void;
-  onEdit: (id: Role) => void;
+  onEdit: (id: string) => void;
   onView: (id: Role) => void;
 }
 
@@ -13,7 +13,7 @@ export interface Role {
 
 export interface RolePayload {
   roleName: string;
-  permissions: { selected: string[]; notSelected: string[] } | { selected: string[] };
+  permissions: string[];
   roleType?: string;
 }
 
@@ -33,11 +33,7 @@ export interface RootState {
 
 export type RoleFormData = {
   name: string;
-  permissions: {
-    selected: string[];
-    notSelected: string[];
-  };
-  assignForm: boolean;
+  permissions: string[];
 };
 
 export type RoleSubmitData = RoleFormData & {
@@ -45,7 +41,6 @@ export type RoleSubmitData = RoleFormData & {
   name: string;
   permissions: {
     selection?: string[];
-    notSelection?: string[];
   };
   isEditing?: boolean;
 };

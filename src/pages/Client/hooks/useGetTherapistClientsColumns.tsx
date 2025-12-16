@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routePath';
+import { PermissionType } from '@/enums';
 import { formatDate } from '@/helper';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import type { TherapistClientsListDataType } from '@/pages/Client/types';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
@@ -12,13 +14,15 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 const useGetTherapistClientsColumns = () => {
   const navigate = useNavigate();
+  const { hasPermission } = useRoleBasedRouting();
+
   const columns: ColumnDef<TherapistClientsListDataType>[] = [
     {
       accessorKey: 'full_name',
       header: 'Client Name',
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:underline cursor-pointer underline-offset-2 block'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() => navigate(ROUTES.MY_CLIENT_DETAIL.navigatePath(row.original.id))}
         >
           {row.getValue('full_name')}
@@ -39,18 +43,22 @@ const useGetTherapistClientsColumns = () => {
       header: 'Session Completed',
       meta: { sortingThClassName: 'justify-center', cellClassName: 'text-center' },
     },
-    {
-      accessorKey: 'tags',
-      enableSorting: false,
-      header: 'Alert Tags',
-      meta: {
-        cellClassName: 'max-w-464px min-w-450px !whitespace-normal',
-      },
-      cell: ({ row }) => {
-        if (row.original.tags.length === 0) return <>Not Assigned</>;
-        return <TagsCell tags={row.original.tags as unknown as TagsDataType[]} />;
-      },
-    },
+    ...(hasPermission(PermissionType.ALERT_TAGS_VIEW)
+      ? [
+          {
+            accessorKey: 'tags',
+            enableSorting: false,
+            header: 'Alert Tags',
+            meta: {
+              cellClassName: 'max-w-464px min-w-450px !whitespace-normal',
+            },
+            cell: ({ row }) => {
+              if (row.original.tags.length === 0) return <>Not Assigned</>;
+              return <TagsCell tags={row.original.tags as unknown as TagsDataType[]} />;
+            },
+          },
+        ]
+      : []),
     {
       accessorKey: 'action',
       header: 'Action',

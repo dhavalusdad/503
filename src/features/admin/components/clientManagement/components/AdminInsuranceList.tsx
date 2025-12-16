@@ -31,10 +31,9 @@ export const AdminInsuranceList = () => {
 
   return (
     <>
-      <div className='flex items-center justify-between mb-5'>
-        <h3 className='text-xl font-bold text-blackdark'>Insurance</h3>
-        {(hasPermission(PermissionType.PATIENT_ADD) ||
-          hasPermission(PermissionType.PATIENT_EDIT)) && (
+      <div className='flex items-center flex-wrap gap-5 mb-5'>
+        <h3 className='text-xl font-bold text-blackdark mr-auto'>Insurance</h3>
+        {hasPermission(PermissionType.PATIENT_EDIT) && (
           <Button
             variant='filled'
             title='Add Insurance'

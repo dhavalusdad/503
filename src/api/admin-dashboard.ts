@@ -1,8 +1,6 @@
+import { useInfiniteQuery, useQuery } from '@/api';
 import { axiosGet } from '@/api/axios.ts';
-
-import { adminQueryKey } from './common/admin.query';
-
-import { useInfiniteQuery, useQuery } from '.';
+import { adminQueryKey } from '@/api/common/admin.query';
 
 import type { QueryFunctionContext } from '@tanstack/react-query';
 
@@ -25,7 +23,6 @@ export interface User {
 export interface Therapist {
   id: string;
   bio: string | null;
-  years_experience: number | null;
   user: User;
 }
 

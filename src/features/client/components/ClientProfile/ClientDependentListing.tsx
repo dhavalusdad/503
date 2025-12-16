@@ -83,6 +83,7 @@ export const ClientDependentListing = () => {
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           loaderRef={loaderRef}
+          className='max-h-[calc(100dvh-297px)]'
         />
       </div>
 

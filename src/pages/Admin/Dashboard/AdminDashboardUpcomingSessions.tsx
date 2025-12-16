@@ -232,6 +232,7 @@ const AdminDashboardUpcomingSessions: React.FC = () => {
             onClick={() => handleMonthChange('prev')}
             isDisabled={!canGoPrevMonth()}
             className='!p-0'
+            parentClassName='h-5'
             icon={
               <Icon
                 name='previousArrow'
@@ -252,18 +253,20 @@ const AdminDashboardUpcomingSessions: React.FC = () => {
             variant='none'
             onClick={() => handleMonthChange('next')}
             className='!p-0'
+            parentClassName='h-5'
             icon={<Icon name='nextArrow' className='icon-wrapper w-5 h-5 text-blackdark' />}
           />
         </div>
       </div>
 
       {/* Week navigation */}
-      <div className='flex justify-between items-center bg-Gray p-18px rounded-2xl'>
+      <div className='flex justify-between items-center bg-Gray py-4 px-4 xl:px-2 2xl:p-18px rounded-2xl'>
         <Button
           variant='none'
           onClick={() => handleWeekChange('prev')}
           isDisabled={!canGoPrevWeek()}
           className='!p-0'
+          parentClassName='h-5'
           icon={
             <Icon
               name='previousArrow'
@@ -275,7 +278,7 @@ const AdminDashboardUpcomingSessions: React.FC = () => {
           }
           isIconFirst
         />
-        <div className='flex items-center gap-2.5'>
+        <div className='flex items-center gap-2.5 xl:gap-2 2xl:gap-2.5'>
           {currentWeek.map(({ date, inCurrentMonth }) => {
             const formatted = date.getDate().toString().padStart(2, '0');
             const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -296,7 +299,7 @@ const AdminDashboardUpcomingSessions: React.FC = () => {
                 key={date.toISOString()}
                 onClick={() => !isDisabled && handleDateSelect(date, inCurrentMonth)}
                 className={clsx(
-                  'flex-col w-16 h-16 rounded-lg !p-0 group font-normal inline-flex items-center sm:text-base text-sm justify-center gap-2 sm:py-3.5 py-2.5 sm:px-3.5 px-2 leading-none cursor-pointer',
+                  'flex-col h-16 w-16 xl:w-12 xl:h-12 2xl:w-16 2xl:h-16 rounded-lg !p-0 group font-normal inline-flex items-center sm:text-base text-sm justify-center gap-1 2xl:gap-2 sm:py-3.5 py-2.5 sm:px-3.5 px-2 leading-none cursor-pointer',
                   isDisabled ? '!cursor-not-allowed opacity-60' : 'hover:bg-gray-200',
 
                   isSelected && 'bg-greendarklight text-blackdark',
@@ -317,6 +320,7 @@ const AdminDashboardUpcomingSessions: React.FC = () => {
           variant='none'
           onClick={() => handleWeekChange('next')}
           className='!p-0'
+          parentClassName='h-5'
           icon={<Icon name='nextArrow' className='icon-wrapper w-5 h-5 text-blackdark' />}
         />
       </div>
@@ -329,7 +333,7 @@ const AdminDashboardUpcomingSessions: React.FC = () => {
             containerElement={'div'}
             hasMoreTop={hasNextPage}
             triggerOnHasMoreTop={fetchNextPage}
-            containerClassName='flex flex-col gap-3.5 mt-3.5 max-h-[688px] overflow-y-auto scroll-disable'
+            containerClassName='flex flex-col gap-3.5 mt-3.5 max-h-535px xl:max-h-735px overflow-y-auto scroll-disable'
           >
             {upcomingSessionData.map((session: SessionDataType) =>
               renderComponent(session, timezone)

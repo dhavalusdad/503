@@ -1,8 +1,7 @@
 import * as yup from 'yup';
 
+import type { CommonFilterField } from '@/components/layout/Filter';
 import { FIELD_TYPE } from '@/constants/CommonConstant';
-
-import type { CommonFilterField } from '..';
 
 const filterDateRangeSchema = yup
   .object({

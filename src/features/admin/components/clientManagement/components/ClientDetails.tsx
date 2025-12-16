@@ -7,10 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { useGetClientManagementDetailsQuery, useUpdateClientData } from '@/api/clientManagement';
 import { UserRole } from '@/api/types/user.dto';
 import { ROUTES } from '@/constants/routePath';
+import { PermissionType } from '@/enums';
 import AddTagsModal from '@/features/admin/components/clientManagement/components/AddTagsModal';
 import { isAdminPanelRole } from '@/helper';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
+import CheckboxField from '@/stories/Common/CheckBox';
 import Icon from '@/stories/Common/Icon';
 import Image from '@/stories/Common/Image';
 import Spinner from '@/stories/Common/Loader/Spinner.tsx';
@@ -39,6 +42,7 @@ const ClientDetails = ({ clientId, isTherapistPanel = false }: Props) => {
   );
 
   const updateClientData = useUpdateClientData();
+  const { hasPermission } = useRoleBasedRouting();
 
   if (isLoading) {
     return (
@@ -82,7 +86,7 @@ const ClientDetails = ({ clientId, isTherapistPanel = false }: Props) => {
         <div className='flex flex-col gap-3.5'>
           <div className='flex flex-wrap gap-5 items-center'>
             <h5 className='text-lg font-bold leading-6 text-blackdark mr-auto'>Client Details</h5>
-            {!isTherapistPanel && (
+            {!isTherapistPanel && hasPermission(PermissionType.PATIENT_EDIT) && (
               <Button
                 variant='filled'
                 title='Edit'
@@ -94,13 +98,15 @@ const ClientDetails = ({ clientId, isTherapistPanel = false }: Props) => {
             {isTherapistPanel && (
               <>
                 {role === UserRole.THERAPIST && (
-                  <Button
-                    variant='filled'
-                    title={`${clientData?.is_long_term_patient ? 'Unmark' : 'Mark'} As Long Term Patient`}
-                    className='rounded-10px min-h-50px'
-                    onClick={handleLongTermStatusToggle}
+                  <CheckboxField
+                    id='longTermPatient'
+                    isDefaultChecked={clientData?.is_long_term_patient}
+                    label='Mark as long term patient'
+                    labelClass='whitespace-nowrap !text-base !font-bold'
+                    parentClassName='!gap-3'
+                    onChange={handleLongTermStatusToggle}
                     isDisabled={updateClientData.isPending}
-                    isLoading={updateClientData.isPending}
+                    labelPlacement='start'
                   />
                 )}
                 <Button
@@ -210,11 +216,13 @@ const ClientDetails = ({ clientId, isTherapistPanel = false }: Props) => {
                       </div>
                     );
                   })}
-                  {!isTherapistPanel && (
-                    <div onClick={toggleAddTagsModal} className='cursor-pointer'>
-                      <Icon name='roundedplus' className='text-blackdark' />
-                    </div>
-                  )}
+                  {!isTherapistPanel &&
+                    (hasPermission(PermissionType.PATIENT_EDIT) ||
+                      hasPermission(PermissionType.PATIENT_ADD)) && (
+                      <div onClick={toggleAddTagsModal} className='cursor-pointer'>
+                        <Icon name='roundedplus' className='text-blackdark' />
+                      </div>
+                    )}
                 </div>
               )}
             </div>

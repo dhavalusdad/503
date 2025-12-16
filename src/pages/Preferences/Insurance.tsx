@@ -4,12 +4,11 @@ import { useSelector } from 'react-redux';
 
 import { useGetClientInsurances, type InsuranceData } from '@/api/insurance';
 import { InsuranceList } from '@/features/insurance/components/InsuranceList';
+import AddInsuranceModal from '@/pages/Preferences/components/AddInsuranceModal';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import Skeleton from '@/stories/Common/Skeleton';
-
-import AddInsuranceModal from './components/AddInsuranceModal';
 
 const Insurance = () => {
   const { client_id } = useSelector(currentUser);
@@ -40,6 +39,7 @@ const Insurance = () => {
           <h3 className='text-lg font-bold text-blackdark leading-6'>My Insurance</h3>
           <Button
             variant='filled'
+            id='tour-addInsurance-btn'
             title='Add Insurance'
             icon={<Icon name='plus' />}
             isIconFirst

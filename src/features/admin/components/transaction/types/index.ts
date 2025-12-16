@@ -1,5 +1,7 @@
 import type React from 'react';
 
+import type { TransactionStatus } from '@/enums';
+
 // export interface Transaction {
 //   id: string;
 //   select: React.ReactNode;
@@ -16,20 +18,23 @@ import type React from 'react';
 export interface Transaction {
   id: string;
   transaction_id?: string;
-  transaction_type?: 'Charge' | 'Refund';
+  transaction_type?: 'Charge' | 'Refund' | 'Void';
   client_id?: string;
   appointment_id?: string;
   amount?: string;
-  status?: 'Success' | 'Failed' | 'Pending';
+  status?: 'Success' | 'Failed' | 'Pending' | 'Void';
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  is_settled?: boolean;
+  refunded_amount?: string;
   appointment?: {
     id: string;
     session_type: string;
   };
   client?: {
     id: string;
+    customer_profile_id: string;
     user?: {
       id: string;
       first_name: string;
@@ -98,11 +103,14 @@ export interface TransactionData {
   client_id: string;
   appointment_id: string;
   amount: string;
-  status: string;
+  status: TransactionStatus;
   is_partial_payment: boolean;
   is_settled: boolean;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
   response_info?: ResponseInfo;
+  reason?: string;
+  note?: string;
+  childTransactions?: TransactionData[];
 }

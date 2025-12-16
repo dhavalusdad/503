@@ -6,6 +6,7 @@ import useStaffManagement from '@/pages/Admin/StaffManagement/hooks';
 import { AlertModal } from '@/stories/Common/AlertModal';
 import Button from '@/stories/Common/Button';
 import { DeleteModal } from '@/stories/Common/DeleteModal';
+import Icon from '@/stories/Common/Icon';
 import InputField from '@/stories/Common/Input';
 import Spinner from '@/stories/Common/Loader/Spinner.tsx';
 import Table from '@/stories/Common/Table';
@@ -43,7 +44,9 @@ const StaffManagement = () => {
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Staff Management</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          Staff Management
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -52,23 +55,26 @@ const StaffManagement = () => {
           iconClassName='text-primarygray'
           onChange={handleSearchChange}
           value={searchQuery}
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName='w-full lg:w-76 xl:w-360px order-4 lg:order-none'
         />
-        <FilterButton
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-          onClearFilter={onClearFilter}
-          handleApplyFilter={handleApplyFilter}
-          filterFields={filterFields}
-          isLoading={isGetStaffListApiPending}
-          defaultValues={filters}
-        />
+        <div className='order-3 lg:order-none'>
+          <FilterButton
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onClearFilter={onClearFilter}
+            handleApplyFilter={handleApplyFilter}
+            filterFields={filterFields}
+            isLoading={isGetStaffListApiPending}
+            defaultValues={filters}
+          />
+        </div>
         <Button
           variant='filled'
           title='Add New'
           icon={<Icon name='plus' />}
           isIconFirst
           className='rounded-lg'
+          parentClassName='order-2 lg:order-none'
           onClick={() => navigate(ROUTES.ADD_STAFF_MEMBER.path)}
         />
       </div>

@@ -2,14 +2,12 @@ import React from 'react';
 
 import clsx from 'clsx';
 
-import type { Transaction } from '@/features/admin/components/transaction/types';
-
 interface StatusBadgeProps {
-  status: Transaction['status'];
+  status: string;
 }
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  const getStatusColor = (status: Transaction['status']) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'Success':
         return 'bg-Green';
@@ -17,6 +15,8 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
         return 'bg-red';
       case 'Pending':
         return 'bg-yellow';
+      case 'Void':
+        return 'bg-gray-500';
     }
   };
 
@@ -30,4 +30,20 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
+};
+
+export const TransactionStatusBadge: React.FC<{ status: string }> = ({ status }) => {
+  const baseClass =
+    'px-3 py-1 text-xs font-medium rounded-full inline-flex items-center justify-center min-w-20';
+
+  const statusMap: Record<string, string> = {
+    Success: 'bg-green-100 text-green-600',
+    Charge: 'bg-lime-500/40 text-lime-800',
+    Refund: 'bg-orange-200 text-orange-700',
+    Unsettled: 'bg-yellow-500/30 text-yellow-700',
+    Settled: 'bg-green-600/30 text-green-800',
+    Void: 'bg-blackdark/30 text-blackdark',
+  };
+
+  return <span className={`${baseClass} ${statusMap[status] || ''}`}>{status}</span>;
 };

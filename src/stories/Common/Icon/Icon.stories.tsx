@@ -1,6 +1,6 @@
 // src/components/common/Icon/Icon.stories.tsx
 
-import Icon from './index';
+import Icon from '@/stories/Common/Icon';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

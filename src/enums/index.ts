@@ -149,6 +149,7 @@ export enum PermissionType {
 
   // Transactions
   TRANSACTIONS_VIEW = 'TRANSACTIONS_PERMISSION_READ',
+  TRANSACTIONS_UPDATE = 'TRANSACTIONS_PERMISSION_UPDATE',
 
   // Appointment Types
   APPOINTMENT_TYPES_VIEW = 'APPOINTMENT_TYPES_PERMISSION_READ',
@@ -204,10 +205,14 @@ export enum TransactionStatus {
   SUCCESS = 'Success',
   FAILED = 'Failed',
   PENDING = 'Pending',
+  CANCELLED = 'Cancelled',
+  EXPIRED = 'Expired',
+  VOID = 'Void',
 }
 export enum TransactionType {
   CHARGE = 'Charge',
   REFUND = 'Refund',
+  VOID = 'Void',
 }
 
 export enum PaymentMethodEnum {
@@ -227,4 +232,9 @@ export enum AmdFormDocNames {
   CHILD_ADOL_PROG_NOTE_FOLLOW_UP = 'New Child/Adol Prog Note Follow UP 12.18',
   ADULT_PROG_NOTE_FOLLOW_UP = 'New Adult Prog Note Follow Up 12.18.23',
   SAFETY_PLAN = 'Safety Plan',
+}
+
+export enum PERMISSION_OPERATOR {
+  AND = 'AND',
+  OR = 'OR',
 }

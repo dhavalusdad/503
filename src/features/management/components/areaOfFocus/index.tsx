@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { PermissionType } from '@/enums';
 import AddEditAreaOfFocusModal from '@/features/management/components/areaOfFocus/addEditAreaOfFocusModal';
 import useAreaOfFocus from '@/features/management/components/areaOfFocus/hooks';
@@ -39,7 +41,9 @@ const AreaOfFocus = () => {
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Area of Focus</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          Area of Focus
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -48,7 +52,11 @@ const AreaOfFocus = () => {
           iconClassName='text-primarygray'
           onChange={handleSearchChange}
           value={searchQuery}
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName={clsx(
+            hasPermission(PermissionType.AREA_OF_FOCUS_ADD)
+              ? 'w-full lg:w-76 xl:w-360px order-3 lg:order-none'
+              : 'w-76 xl:w-360px order-2 lg:order-none'
+          )}
         />
         {hasPermission(PermissionType.AREA_OF_FOCUS_ADD) && (
           <Button
@@ -57,6 +65,7 @@ const AreaOfFocus = () => {
             icon={<Icon name='plus' />}
             isIconFirst={true}
             className='rounded-lg'
+            parentClassName='order-2 lg:order-none'
             onClick={() => {
               setId('');
               toggleAddEditAreaOfFocusModal();

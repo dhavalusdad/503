@@ -1,15 +1,9 @@
+import { useInfiniteQuery, useMutation, useQuery } from '@/api';
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
 import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
-// import { fieldOptionsQueryKey } from '@/api/common/rolePermission.queryKey';
-import {
-  //  useInvalidateQuery,
-  useRemoveQueries,
-} from '@/hooks/data-fetching';
-
-import { therapyGoalQueryKey } from './common/therapyGoals.queryKey';
-import { userQueryKey } from './common/user.queryKey';
-
-import { useInfiniteQuery, useMutation, useQuery } from '.';
+import { therapyGoalQueryKey } from '@/api/common/therapyGoals.queryKey';
+import { userQueryKey } from '@/api/common/user.queryKey';
+import { useRemoveQueries } from '@/hooks/data-fetching';
 
 import type { QueryFunctionContext } from '@tanstack/react-query';
 

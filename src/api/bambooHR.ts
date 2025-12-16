@@ -1,6 +1,5 @@
+import { useMutation } from '@/api';
 import { axiosGet } from '@/api/axios';
-
-import { useMutation } from '.';
 
 const BASE_PATH = '/bamboohr';
 

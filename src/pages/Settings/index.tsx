@@ -6,7 +6,7 @@ import ClientSettings from '@/pages/Preferences/GeneralSetting';
 import TherapistSettings from '@/pages/Therapist/Settings';
 import { currentUser } from '@/redux/ducks/user';
 
-const Dashboard = () => {
+const Settings = () => {
   const user = useSelector(currentUser);
   const userRole = user.role || UserRole.CLIENT;
 
@@ -24,4 +24,4 @@ const Dashboard = () => {
   }
 };
 
-export default Dashboard;
+export default Settings;

@@ -1,6 +1,5 @@
+import Button from '@/stories/Common/Button';
 import Modal, { type ModalSizeType } from '@/stories/Common/Modal';
-
-import Button from '../Button';
 
 type PropsType = {
   isOpen: boolean;

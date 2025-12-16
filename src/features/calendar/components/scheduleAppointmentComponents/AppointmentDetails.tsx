@@ -13,12 +13,6 @@ import { amdAppointmentsTypesQueryKey } from '@/api/common/amdAppointmentsTypesQ
 import { useGetTherapistBasicDetails } from '@/api/therapist';
 import type { AppointmentDetailsResponse } from '@/api/types/calendar.dto';
 import { SessionType, TherapyType } from '@/enums';
-import { currentUser } from '@/redux/ducks/user';
-import Button from '@/stories/Common/Button';
-import CustomDatePicker from '@/stories/Common/CustomDatePicker';
-import Icon from '@/stories/Common/Icon';
-import Select, { CustomAsyncSelect } from '@/stories/Common/Select';
-
 import type {
   AppointmentDetailsProps,
   fieldOptionType,
@@ -27,7 +21,13 @@ import type {
   SelectOption,
   SlotData,
   TimeSlotValue,
-} from '../../types';
+} from '@/features/calendar/types';
+import { currentUser } from '@/redux/ducks/user';
+import Button from '@/stories/Common/Button';
+import CustomDatePicker from '@/stories/Common/CustomDatePicker';
+import Icon from '@/stories/Common/Icon';
+import Select, { CustomAsyncSelect } from '@/stories/Common/Select';
+
 import type { MultiValue } from 'react-select';
 
 const recurringAppointmentOptions: RecurringAppointmentOption[] = [

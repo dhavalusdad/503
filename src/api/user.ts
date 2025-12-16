@@ -1,21 +1,10 @@
-import { axiosGet, axiosPost, axiosPut } from '@/api/axios.ts';
-import { isDefined } from '@/api/utils';
-import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { agreementQueryKey } from './common/agreement.queryKey';
-import { CLIENT_KEYS_NAME } from './common/client.queryKey';
-import { STAFF_KEYS_NAME } from './common/staff.queryKey';
-import { THERAPIST_KEYS_NAME } from './common/therapist.queryKey';
-import { USER_KEYS_NAME, userQueryKey } from './common/user.queryKey';
-
-import {
-  useMutation,
-  useQuery,
-  type CustomUseMutationOptions,
-  type UseQueryRestParamsType,
-} from '.';
-
-import type { ApiResponse } from './types/common.dto';
+import { axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { agreementQueryKey } from '@/api/common/agreement.queryKey';
+import { CLIENT_KEYS_NAME } from '@/api/common/client.queryKey';
+import { STAFF_KEYS_NAME } from '@/api/common/staff.queryKey';
+import { THERAPIST_KEYS_NAME } from '@/api/common/therapist.queryKey';
+import { USER_KEYS_NAME, userQueryKey } from '@/api/common/user.queryKey';
+import type { ApiResponse } from '@/api/types/common.dto';
 import type {
   CreatePatientRequest,
   CreatePatientResponse,
@@ -24,7 +13,17 @@ import type {
   PatientData,
   TherapistClientListParamsType,
   UserRole,
-} from './types/user.dto';
+} from '@/api/types/user.dto';
+import { isDefined } from '@/api/utils';
+import { useInvalidateQuery } from '@/hooks/data-fetching';
+
+import {
+  useMutation,
+  useQuery,
+  type CustomUseMutationOptions,
+  type UseQueryRestParamsType,
+} from '.';
+
 import type { AxiosError } from 'axios';
 
 const BASE_PATH = '/user';
@@ -361,5 +360,22 @@ export const useUpdateUserAgreementPublic = ({ onSuccess }: { onSuccess?: () => 
     onSuccess: () => {
       if (onSuccess) onSuccess();
     },
+  });
+};
+
+export const useCompleteTour = () => {
+  const { invalidate } = useInvalidateQuery();
+
+  return useMutation({
+    mutationFn: async (tourKey: string) => {
+      const response = await axiosPost(`${BASE_PATH}/complete-tour`, {
+        data: { tour_key: tourKey },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      invalidate(userQueryKey.getUserDetails());
+    },
+    showToast: false,
   });
 };

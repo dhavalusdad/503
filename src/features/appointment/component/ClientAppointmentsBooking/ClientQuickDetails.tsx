@@ -2,14 +2,20 @@ import { useEffect, useState } from 'react';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import moment from 'moment';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldValues, type UseFormRegister } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { getAmdAppointmentsTypesAsync } from '@/api/advancedMd';
 import { useCreateClientFromDashboard } from '@/api/clientManagement';
 import { therapistQueryKey } from '@/api/common/therapist.queryKey';
+import { getTherapistClinicAsync } from '@/api/therapist-clinic';
 import type { TherapistBasicDetails } from '@/api/types/therapist.dto';
 import { SessionType, TherapyType } from '@/enums';
+import type {
+  AppointmentBookedResponse,
+  AppointmentDateTimeProps,
+  ClientQuickDetailsProps,
+} from '@/features/appointment/component/ClientAppointmentsBooking/types';
 import { clientQuickDetailsSchema } from '@/features/appointment/component/ClientAppointmentsBooking/validationSchema';
 import type { FilterState } from '@/features/appointment/types';
 import type { SelectOption } from '@/features/calendar/types';
@@ -22,17 +28,11 @@ import InputField from '@/stories/Common/Input';
 import PhoneField from '@/stories/Common/PhoneNumberInput';
 import { CustomAsyncSelect } from '@/stories/Common/Select';
 import TextArea from '@/stories/Common/Textarea';
-import { getTherapistClinicAsync } from '@/therapist-clinic';
 
-import type {
-  AppointmentBookedResponse,
-  AppointmentDateTimeProps,
-  ClientQuickDetailsProps,
-} from './types';
 import type { MultiValue } from 'react-select';
 
 interface ClientDetailsProps {
-  onContinue: (mode: string) => void;
+  onContinue: (mode: 'create' | 'view' | 'edit') => void;
   onBack?: () => void;
   dependentData: DependentFormValues[];
   appointmentDetails?: AppointmentDateTimeProps;
@@ -72,6 +72,7 @@ const ClientQuickDetails = ({
     formState: { errors, isValid },
     watch,
   } = methods;
+  const formRegister = register as unknown as UseFormRegister<FieldValues>;
 
   useEffect(() => {
     const subscription = methods.watch(values => {
@@ -125,6 +126,7 @@ const ClientQuickDetails = ({
           dependents_ids: [],
           appointment_type_ids: data?.appointment_type?.map(at => at.value),
           appointment_reason: data?.reason_for_visit,
+          payment_method_id: filter?.paymentMethod?.value,
         },
         dependentData: dependentData,
         clientData: clientData,
@@ -155,7 +157,7 @@ const ClientQuickDetails = ({
           inputClass='!text-base !leading-5'
           placeholder='First Name'
           name='first_name'
-          register={register}
+          register={formRegister}
           error={errors.first_name?.message}
         />
 
@@ -167,7 +169,7 @@ const ClientQuickDetails = ({
           inputClass='!text-base !leading-5'
           placeholder='Last Name'
           name='last_name'
-          register={register}
+          register={formRegister}
           error={errors.last_name?.message}
         />
         {/* Date Picker - Disabled */}
@@ -181,7 +183,7 @@ const ClientQuickDetails = ({
               : ''
           }
           onChange={date => {
-            setValue('dob', moment(date), { shouldValidate: true, shouldDirty: true });
+            setValue('dob', date as Date, { shouldValidate: true, shouldDirty: true });
           }}
           error={errors.dob?.message}
           maxDate={new Date()}
@@ -198,7 +200,7 @@ const ClientQuickDetails = ({
           parentClassName=''
           placeholder='Email'
           name='email'
-          register={register}
+          register={formRegister}
           error={errors.email?.message}
         />
 
@@ -219,16 +221,23 @@ const ClientQuickDetails = ({
                 fontSize: '16px',
               }),
             }}
-            onChange={(e: { value: string; label: string }) => {
-              setValue(
-                'clinic',
-                { id: e?.value, name: e?.label },
-                {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                }
-              );
-            }}
+            onChange={
+              ((option: { value: string; label: string } | null) => {
+                setValue(
+                  'clinic',
+                  option
+                    ? { id: option.value, name: option.label }
+                    : { id: undefined, name: undefined },
+                  {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  }
+                );
+              }) as unknown as (
+                newValue: { value: string; label: string } | null,
+                actionMeta: unknown
+              ) => void
+            }
             error={errors.clinic?.id?.message || errors.clinic?.name?.message}
           />
         )}
@@ -262,7 +271,7 @@ const ClientQuickDetails = ({
           value={getValues('appointment_type')}
           onChange={value => {
             const selectedValues = value as unknown as MultiValue<SelectOption>;
-            setValue('appointment_type', selectedValues, {
+            setValue('appointment_type', [...selectedValues], {
               shouldValidate: true,
               shouldDirty: true,
             });
@@ -300,11 +309,10 @@ const ClientQuickDetails = ({
           id='acceptTerms'
           name='acceptTerms'
           isDefaultChecked={getValues('acceptTerms')}
-          register={register}
+          register={formRegister}
           label={<p>By ticking this box I agree that I have read the privacy Policy.</p>}
           parentClassName=''
           labelClass='text-black'
-          error={errors.acceptTerms?.message}
         />
         {isDependent && (
           <Button

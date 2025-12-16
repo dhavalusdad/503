@@ -5,8 +5,7 @@ import moment from 'moment-timezone';
 
 import defaultUserPng from '@/assets/images/default-user.webp';
 import type { AppointmentCardProps } from '@/stories/Common/Calender/types';
-
-import Image from '../../Image';
+import Image from '@/stories/Common/Image';
 
 const THERAPY_TYPE_COLORS = (isPast: boolean) => ({
   'Couples Therapy': !isPast ? 'bg-[#80558C]' : 'bg-[#9186A1]',
@@ -144,7 +143,7 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = memo(
           <div
             className={clsx(
               'flex w-full flex-col',
-              (appointmentTimes?.duration ?? 0) <= 55 ? '' : 'gap-1'
+              (appointmentTimes?.duration ?? 0) <= 55 ? '' : 'gap-2'
             )}
           >
             <h6
@@ -155,13 +154,13 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = memo(
             >
               {appointment?.therapy_type?.name}{' '}
               {(appointmentTimes?.nextDayCont || appointmentTimes?.previousDay) && (
-                <span className='text-[12px]  font-medium'>
+                <span className='text-xs  font-medium'>
                   ({appointment.client?.user?.first_name} {appointment.client?.user?.last_name})
                 </span>
               )}
             </h6>
             {!(appointmentTimes?.nextDayCont || appointmentTimes?.previousDay) && (
-              <div className='flex items-center gap-3'>
+              <div className='flex items-center gap-1.5'>
                 <Image
                   imgPath={
                     appointment.client?.user?.profile_image
@@ -175,9 +174,9 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = memo(
                   alt='profile'
                   imageClassName='rounded-full object-cover object-center w-full h-full'
                   className='w-6 h-6 bg-surface rounded-full flex items-center justify-center'
-                  initialClassName='!text-xs'
+                  initialClassName='!text-10px'
                 />
-                <span className='text-sm  font-medium'>
+                <span className='text-sm font-medium truncate flex-1'>
                   {appointment.client?.user?.first_name} {appointment.client?.user?.last_name}
                 </span>
               </div>
@@ -190,12 +189,7 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = memo(
                   : 'flex-wrap'
               )}
             >
-              <span
-                className={clsx(
-                  'text-sm font-medium truncate',
-                  (appointmentTimes?.duration ?? 0) <= 55 ? 'text-xs' : ''
-                )}
-              >
+              <span className={clsx('text-xs font-medium truncate')}>
                 {appointmentTimes?.timeRange || ''}
               </span>
               {(appointmentTimes?.nextDayCont || appointmentTimes?.previousDay) &&

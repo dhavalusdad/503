@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
+import clsx from 'clsx';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -49,14 +50,23 @@ const Notification = () => {
     popupRef: notificationRef as React.RefObject<HTMLElement>,
   });
 
-  const toggleNotification = () => setNotificationVisible(v => !v);
+  // const toggleNotification = () => setNotificationVisible(v => !v);
+
+  const toggleNotification = () => {
+    if (isNotificationVisible) return;
+    setNotificationVisible(true);
+  };
 
   const {
     data: { items: notificationList = [], totalUnread = 0 } = {},
     fetchNextPage,
     hasNextPage,
     isLoading: isNotificationLoading,
-  } = useInfiniteNotifications({ limit: 10, status: isViewAllActive ? 'all' : 'unread' });
+  } = useInfiniteNotifications({
+    limit: 10,
+    status: isViewAllActive ? 'all' : 'unread',
+    timezone: user.timezone,
+  });
 
   const handleChatNavigation = (sessionId: string, notificationId: string) => {
     markChatAsRead({ sessionId });
@@ -115,12 +125,15 @@ const Notification = () => {
     }
   };
 
-  const renderGenericNotification = (noti: NotificationItemType) => {
+  const renderGenericNotification = (noti: NotificationItemType, isLast: boolean) => {
     const meta = noti.metadata;
 
     const handleClick = () => {
-      if (!meta.clickable) return;
       markParticularNotificationRead(noti.id);
+      if (!meta.navigateTo) return;
+      if (noti.event === NotificationEvent.MESSAGE_RECEIVED && noti.metadata.sessionId) {
+        markChatAsRead({ sessionId: noti.metadata.sessionId });
+      }
       handleGenericNavigation(meta);
       setNotificationVisible(false);
     };
@@ -137,8 +150,10 @@ const Notification = () => {
     return (
       <li
         key={noti.id}
-        className={`flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3
-        ${meta.clickable ? 'cursor-pointer' : 'cursor-default'}`}
+        className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3 cursor-pointer', {
+          'pb-4 mb-4 border-b border-solid border-surface': !isLast,
+          'pb-0 mb-0 border-none': isLast,
+        })}
         onClick={handleClick}
       >
         <div className='flex items-start gap-4'>
@@ -169,7 +184,13 @@ const Notification = () => {
   };
 
   // Render notification item based on type
-  const renderNotificationItem = (notification: NotificationItemType) => {
+  const renderNotificationItem = (
+    notification: NotificationItemType,
+    index: number,
+    total: number
+  ) => {
+    const isLast = index === total - 1;
+
     switch (notification.category) {
       case NotificationCategory.CHAT:
         return (
@@ -178,7 +199,10 @@ const Notification = () => {
               handleChatNavigation(notification.metadata.sessionId as string, notification.id)
             }
             key={notification.id}
-            className='flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3 cursor-pointer'
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3 cursor-pointer', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
           >
             <div className='flex items-start gap-4'>
               <div
@@ -287,15 +311,18 @@ const Notification = () => {
           );
         };
 
-        const liClassName =
-          'flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3';
-
         const textClassName = isInitiator
           ? 'text-sm font-normal text-blackdark w-[calc(100%-56px)]'
           : 'text-sm font-normal text-primarygray w-[calc(100%-56px)]';
 
         return (
-          <li key={notification.id} className={liClassName}>
+          <li
+            key={notification.id}
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
+          >
             <div className='flex items-start gap-4'>
               <div
                 className={`relative ${
@@ -319,7 +346,10 @@ const Notification = () => {
         return (
           <li
             key={notification.id}
-            className='flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3 cursor-pointer'
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3 cursor-pointer', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
             onClick={() => handleSlotRequestClick(notification)}
           >
             <div className='flex items-start gap-4'>
@@ -361,7 +391,10 @@ const Notification = () => {
           <li
             onClick={() => handleJoinSession(notification)}
             key={notification.id}
-            className='cursor-pointer flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3'
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3 cursor-pointer', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
           >
             <div className='flex items-start gap-4'>
               <div
@@ -388,6 +421,41 @@ const Notification = () => {
           </li>
         );
 
+      case NotificationCategory.WAITING_ROOM:
+        return (
+          <li
+            onClick={() => handleJoinSession(notification)}
+            key={notification.id}
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3 cursor-pointer', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
+          >
+            <div className='flex items-start gap-4'>
+              <div
+                className={`relative ${
+                  notification.status == NotificationReadStatus.UNREAD
+                    ? 'before:absolute md:before:-left-5 before:-left-3 before:top-2/4 before:-translate-y-2/4 before:bg-primary before:w-1.5 before:h-1.5 before:rounded-full'
+                    : ''
+                }`}
+              >
+                <Icon name='reminder' className='text-red' />
+              </div>
+              <div className='flex flex-col gap-1 w-[calc(100%-56px)]'>
+                <h6 className='text-base font-bold text-blackdark leading-22px'>
+                  Reminder Appointment
+                </h6>
+                <p className='text-sm font-normal text-primarygray'>
+                  {`${notification.sender.display_name} is waiting for you to join the session. Click here to join.`}
+                </p>
+              </div>
+            </div>
+            <span className='whitespace-nowrap text-xs font-normal text-blackdark'>
+              {getRelativeTime(notification.created_at)}
+            </span>
+          </li>
+        );
+
       case NotificationCategory.SYSTEM:
         if (
           notification.event === NotificationEvent.NEW_CLIENT_JOINED ||
@@ -396,7 +464,10 @@ const Notification = () => {
           return (
             <li
               key={notification.id}
-              className='flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3 cursor-pointer'
+              className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3', {
+                'pb-4 mb-4 border-b border-surface': !isLast,
+                'pb-0 mb-0 border-none': isLast,
+              })}
             >
               <div className='flex items-start gap-4'>
                 <div
@@ -442,7 +513,10 @@ const Notification = () => {
           return (
             <li
               key={notification.id}
-              className='cursor-pointer flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3'
+              className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3', {
+                'pb-4 mb-4 border-b border-surface': !isLast,
+                'pb-0 mb-0 border-none': isLast,
+              })}
             >
               <div className='flex items-start gap-4'>
                 <div
@@ -469,11 +543,69 @@ const Notification = () => {
         }
         return null;
 
+      case NotificationCategory.FORM_ASSIGNMENT:
+        return (
+          <li
+            key={notification.id}
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3 cursor-pointer', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
+            onClick={() => {
+              markParticularNotificationRead(notification.id);
+              navigate(ROUTES.SESSION_DOCUMENTS.path);
+              setNotificationVisible(false);
+            }}
+          >
+            <div className='flex items-start gap-4'>
+              <div
+                className={`relative ${
+                  notification.status === NotificationReadStatus.UNREAD
+                    ? 'before:absolute md:before:-left-5 before:-left-3 before:top-2/4 before:-translate-y-2/4 before:bg-primary before:w-1.5 before:h-1.5 before:rounded-full'
+                    : ''
+                }`}
+              >
+                <div className='w-10 h-10 rounded-full overflow-hidden'>
+                  <Image
+                    imgPath={
+                      notification.sender.profile_image
+                        ? `${SERVER_URL}${notification.sender.profile_image}`
+                        : ''
+                    }
+                    firstName={notification.sender.first_name}
+                    lastName={notification.sender.last_name}
+                    alt='therapist Avatar'
+                    imageClassName='rounded-full object-cover object-center w-full h-full'
+                    className='w-full h-full bg-surface'
+                    initialClassName='!text-base'
+                  />
+                </div>
+              </div>
+
+              <div className='flex flex-col gap-1 w-[calc(100%-56px)]'>
+                <h6 className='text-base font-bold text-blackdark leading-22px'>
+                  {notification.title || 'Form Assigned'}
+                </h6>
+                <p className='text-sm font-normal text-primarygray' title={notification.message}>
+                  {notification.message}
+                </p>
+              </div>
+            </div>
+
+            <span className='whitespace-nowrap text-xs font-normal text-blackdark'>
+              {getRelativeTime(notification.created_at)}
+            </span>
+          </li>
+        );
+
       case NotificationCategory.INSURANCE:
         return (
           <li
             key={notification.id}
-            className='flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3 cursor-pointer'
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
           >
             <div className='flex items-start gap-4'>
               <div
@@ -507,7 +639,10 @@ const Notification = () => {
         return (
           <li
             key={notification.id}
-            className='flex items-start justify-between gap-4 pb-4 mb-4 border-b border-solid border-surface md:pl-5 pl-3 cursor-pointer'
+            className={clsx('flex items-start justify-between gap-4 md:pl-5 pl-3 cursor-pointer', {
+              'pb-4 mb-4 border-b border-surface': !isLast,
+              'pb-0 mb-0 border-none': isLast,
+            })}
             onClick={() => {
               markParticularNotificationRead(notification.id);
               // Navigate to the backoffice queue detail page
@@ -559,12 +694,12 @@ const Notification = () => {
         );
 
       default:
-        return renderGenericNotification(notification);
+        return renderGenericNotification(notification, isLast);
     }
   };
 
   return (
-    <div className='relative'>
+    <div className='relative' ref={notificationRef}>
       <div
         className='cursor-pointer border border-surface rounded-10px w-10 h-10 flex items-center justify-center'
         onClick={toggleNotification}
@@ -577,10 +712,7 @@ const Notification = () => {
         )}
       </div>
       {isNotificationVisible && (
-        <div
-          ref={notificationRef}
-          className='absolute sm:-right-4 z-50  mt-2 bg-white rounded-20px  shadow-dropdown border border-solid border-surface md:w-423px sm:w-[350px] w-[270px]'
-        >
+        <div className='absolute -translate-x-3/4 lg:translate-x-0 left-3/4 lg:left-auto lg:-right-4 z-50 mt-2 bg-white rounded-20px shadow-dropdown border border-solid border-surface w-423px'>
           <div className='p-5 pb-3 flex flex-wrap gap-2 items-center justify-between border-b border-surface'>
             <h5 className='text-base font-bold text-blackdark'>Notifications</h5>
             <div className='flex items-center gap-2.5 ml-auto'>
@@ -612,7 +744,9 @@ const Notification = () => {
               loading={isNotificationLoading}
               containerClassName='md:p-5 py-5 px-2 max-h-100 overflow-y-auto'
             >
-              {notificationList.map(notification => renderNotificationItem(notification))}
+              {notificationList.map((notification, index) =>
+                renderNotificationItem(notification, index, notificationList.length)
+              )}
               {hasNextPage && (
                 <Spinner size='w-10 h-10' color='text-red-600' className='mx-auto my-4' />
               )}

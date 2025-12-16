@@ -1,11 +1,10 @@
+import { useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPut } from '@/api/axios';
+import { PermissionQueryKey } from '@/api/common/permissions.queryKey';
+import type { UpdateUserPermissionRequestBodyType } from '@/api/types/permissions.dto';
 import { dispatchSetPermissions } from '@/redux/dispatch/permission.dispatch';
 
-import { PermissionQueryKey } from './common/permissions.queryKey';
-
-import { useMutation, useQuery } from '.';
-
-import type { UpdateUserPermissionRequestBodyType } from './types/permissions.dto';
+import { rolePermissionsQueryKey } from './common/rolePermission.queryKey';
 
 const BASE_PATH = '/permissions';
 
@@ -48,5 +47,16 @@ export const useGetUserPermission = ({ isEnabled = false }: { isEnabled: boolean
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     placeholderData: [],
+  });
+};
+
+export const useGetAllPermissions = () => {
+  return useQuery({
+    queryKey: rolePermissionsQueryKey.getPermissionsList(),
+    queryFn: async () => {
+      const res = await axiosGet(`${BASE_PATH}/list`);
+      return res.data;
+    },
+    staleTime: 1000 * 60 * 60,
   });
 };

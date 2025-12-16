@@ -1,12 +1,6 @@
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios.ts';
+import { rolesQueryKey } from '@/api/common/roles.queryKey';
 import { STAFF_KEYS_NAME, staffQueryKey } from '@/api/common/staff.queryKey.ts';
-import type { ApiResponse } from '@/api/types/common.dto';
-import { UserRole } from '@/api/types/user.dto';
-import { useInvalidateQuery } from '@/hooks/data-fetching';
-import type { AddStaffMemberFormData } from '@/pages/Admin/StaffManagement/types';
-
-import { rolesQueryKey } from './common/roles.queryKey';
-
 import {
   useInfiniteQuery,
   useMutation,
@@ -14,8 +8,8 @@ import {
   type CustomUseMutationOptions,
   type CustomUseQueryOptions,
   type UseQueryRestParamsType,
-} from '.';
-
+} from '@/api/index';
+import type { ApiResponse } from '@/api/types/common.dto';
 import type {
   CreateOrUpdateStaffMemberReturnType,
   CreateStaffMemberRequest,
@@ -23,7 +17,11 @@ import type {
   QueueStaffResponse,
   StaffListParamsType,
   UpdateStaffMemberRequest,
-} from './types/staff.dto';
+} from '@/api/types/staff.dto';
+import { UserRole } from '@/api/types/user.dto';
+import { useInvalidateQuery } from '@/hooks/data-fetching';
+import type { AddStaffMemberFormData } from '@/pages/Admin/StaffManagement/types';
+
 import type { QueryFunctionContext, UseInfiniteQueryOptions } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
@@ -296,7 +294,7 @@ export const useInfiniteRolesQuery = ({ limit, roleName = '' }: UseInfiniteRoles
         },
       });
       return {
-        roles: res.data.data.roles,
+        roles: res.data.data.data,
         total: res.data.data.total,
       };
     },

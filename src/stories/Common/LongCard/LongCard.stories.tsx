@@ -1,4 +1,4 @@
-import LongCard from '.';
+import LongCard from '@/stories/Common/LongCard';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

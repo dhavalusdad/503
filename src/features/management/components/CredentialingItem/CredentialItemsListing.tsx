@@ -1,7 +1,10 @@
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 
 import { UserRole } from '@/api/types/user.dto';
 import { PermissionType } from '@/enums';
+import useCredentialListing from '@/features/management/components/CredentialingItem/hooks';
+import { isAdminPanelRole } from '@/helper';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
@@ -9,8 +12,6 @@ import { DeleteModal } from '@/stories/Common/DeleteModal';
 import Icon from '@/stories/Common/Icon';
 import InputField from '@/stories/Common/Input';
 import Table from '@/stories/Common/Table';
-
-import useCredentialListing from './hooks';
 
 const CredentialItemsListing = () => {
   const { role } = useSelector(currentUser);
@@ -39,7 +40,9 @@ const CredentialItemsListing = () => {
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Credential Items</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          Credential Items
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -48,16 +51,22 @@ const CredentialItemsListing = () => {
           iconClassName='text-primarygray'
           onChange={handleSearchChange}
           value={searchQuery}
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName={clsx(
+            '',
+            role === UserRole.ADMIN ||
+              (role === UserRole.BACKOFFICE && hasPermission(PermissionType.THERAPIST_EDIT))
+              ? 'w-full lg:w-76 xl:w-360px order-3 lg:order-none'
+              : 'w-76 xl:w-360px order-2 lg:order-none'
+          )}
         />
-        {(role === UserRole.ADMIN ||
-          (role === UserRole.BACKOFFICE && hasPermission(PermissionType.THERAPIST_EDIT))) && (
+        {isAdminPanelRole(role) && hasPermission(PermissionType.THERAPIST_EDIT) && (
           <Button
             variant='filled'
             title='Add Credential Items'
             icon={<Icon name='plus' />}
             isIconFirst={true}
             className='rounded-lg'
+            parentClassName='order-2 lg:order-none'
             onClick={() => {
               setId('');
               toggleAddEdit();

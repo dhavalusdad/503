@@ -80,7 +80,7 @@ const PatientFormCompletionRate = () => {
         </div>
       ) : (
         <>
-          <div className='flex justify-center p-5'>
+          <div className='flex justify-center'>
             <HighchartsReact highcharts={Highcharts} options={options} />
             <div className='flex flex-col justify-center ml-6 gap-3'>
               <div className='flex items-center text-lg text-blackdark'>
@@ -99,7 +99,7 @@ const PatientFormCompletionRate = () => {
               </div>
             </div>
           </div>
-          <div className='p-3 h-1/4 flex flex-col gap-2'>
+          <div className='flex flex-col gap-2'>
             <div className='flex items-center justify-between text-sm'>
               <span className='text-blackdark text-lg font-semibold'>{completedLabel}</span>
               <span className='font-bold text-lg' style={{ color: completedColor }}>

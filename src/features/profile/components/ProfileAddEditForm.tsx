@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { Controller, FormProvider, type Resolver, useForm } from 'react-hook-form';
+import { Controller, FormProvider, type Resolver } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -28,9 +28,12 @@ import { ROUTES } from '@/constants/routePath';
 import { FieldOptionType, SessionType } from '@/enums';
 import { QUEUE_REQUEST_METADATA_FIELD_NAME } from '@/features/admin/components/backofficeQueue/constant';
 import { therapistProfileSchema } from '@/features/profile/components/ProfileValidationSchema';
+import TherapistAddress from '@/features/profile/components/TherapistAddress';
+import ProfileTippy from '@/features/profile/components/TherapistProfileTippy';
 import { PANEL_TYPE, THERAPIST_PROFILE_REQUIRED_FIELDS } from '@/features/profile/constants';
 import type { TherapistProfileFormData } from '@/features/profile/types';
 import { getDashboardPath, isAdminPanelRole } from '@/helper';
+import { useForm } from '@/hooks/useForm';
 import { SessionTypeLabelEnum } from '@/pages/Profile/enums';
 import { dispatchSetUser } from '@/redux/dispatch/user.dispatch';
 import { currentUser } from '@/redux/ducks/user';
@@ -48,9 +51,6 @@ import { NumberField } from '@/stories/Common/NumberField';
 import PhoneField from '@/stories/Common/PhoneNumberInput';
 import Select, { CustomAsyncSelect } from '@/stories/Common/Select';
 import TextArea from '@/stories/Common/Textarea';
-
-import TherapistAddress from './TherapistAddress';
-import ProfileTippy from './TherapistProfileTippy';
 
 interface OldDataRefType
   extends Omit<
@@ -734,19 +734,19 @@ export const ProfileForm = () => {
             <div className='relative'>
               <h3 className='text-lg font-bold text-blackdark leading-6 mb-5'>Information</h3>
               {/* Name, Email, Phone */}
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-x-25px gap-y-5 mb-5 items-start'>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-25px gap-y-5 mb-5 items-start'>
                 <ProfileTippy
                   enable={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.FIRST_NAME)}
                 >
                   <InputField
                     type='text'
                     label='First Name'
-                    labelClass='!text-base !leading-22px'
+                    labelClass='!text-base'
                     placeholder='Enter first name'
                     register={register}
                     name='first_name'
                     error={errors.first_name?.message}
-                    inputClass={'!text-base !leading-6 !p-3'}
+                    inputClass={'!text-base !leading-5'}
                     isRequired={checkIsRequiredField('first_name')}
                     isDisabled={checkIfFieldIsDisabled(
                       QUEUE_REQUEST_METADATA_FIELD_NAME.FIRST_NAME
@@ -759,12 +759,12 @@ export const ProfileForm = () => {
                   <InputField
                     type='text'
                     label='Last Name'
-                    labelClass='!text-base !leading-22px'
+                    labelClass='!text-base'
                     placeholder='Enter last name'
                     register={register}
                     name='last_name'
                     error={errors.last_name?.message}
-                    inputClass={'!text-base !leading-6 !p-3'}
+                    inputClass={'!text-base !leading-5'}
                     isRequired={checkIsRequiredField('last_name')}
                     isDisabled={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.LAST_NAME)}
                   />
@@ -776,12 +776,12 @@ export const ProfileForm = () => {
                   <InputField
                     type='email'
                     label='Email Address'
-                    labelClass='!text-base !leading-22px'
+                    labelClass='!text-base'
                     placeholder='Enter email address'
                     register={register}
                     name='email'
                     error={errors.email?.message}
-                    inputClass={'!text-base !leading-6 !p-3'}
+                    inputClass={'!text-base !leading-5'}
                     isDisabled={!isAdmin || (isAdmin && !!therapist_id)}
                     isRequired={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.EMAIL)}
                   />
@@ -797,7 +797,7 @@ export const ProfileForm = () => {
                     control={control}
                     name='phone'
                     label={'Contact Number'}
-                    labelClass='!text-base !leading-22px'
+                    labelClass='!text-base'
                     isRequired={checkIsRequiredField('phone')}
                     parentClassName='w-full border-primarylight'
                     inputClass={` !text-base !leading-6 !p-3 ${errors.phone && errors.phone.message ? 'border-red-500' : ''} `}
@@ -822,7 +822,7 @@ export const ProfileForm = () => {
                       >
                         <CustomDatePicker
                           label='Date of Birth'
-                          labelClass='!text-base !leading-22px'
+                          labelClass='!text-base'
                           placeholderText='Select date of birth'
                           error={fieldState.error?.message}
                           selected={field.value}
@@ -837,7 +837,7 @@ export const ProfileForm = () => {
                   />
                 </div>
               </div>
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-x-25px gap-y-5 mb-5 items-start'>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-25px gap-y-5 mb-5 items-start'>
                 <ProfileTippy
                   enable={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.GENDER)}
                 >
@@ -859,7 +859,7 @@ export const ProfileForm = () => {
                         fontSize: '16px',
                       }),
                     }}
-                    labelClassName='!text-base !leading-22px'
+                    labelClassName='!text-base'
                     isRequired={checkIsRequiredField('gender')}
                     isDisabled={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.GENDER)}
                   />
@@ -874,7 +874,7 @@ export const ProfileForm = () => {
                     placeholder='Select marital status'
                     error={errors.marital_status?.message}
                     name='marital_status'
-                    labelClassName='!text-base !leading-22px'
+                    labelClassName='!text-base'
                     StylesConfig={{
                       control: () => ({
                         minHeight: '50px',
@@ -899,12 +899,12 @@ export const ProfileForm = () => {
                   <InputField
                     type='text'
                     label='NPI Number'
-                    labelClass='!text-base !leading-22px'
+                    labelClass='!text-base'
                     placeholder='Enter NPI number'
                     register={register}
                     name='npi_number'
                     error={errors.npi_number?.message}
-                    inputClass={'!text-base !leading-6 !p-3'}
+                    inputClass={'!text-base !leading-5'}
                     maxLength={10}
                     onInput={e => {
                       e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '');
@@ -922,11 +922,11 @@ export const ProfileForm = () => {
                 >
                   <NumberField
                     label='Minimum Patient Age'
-                    labelClass='!text-base !leading-22px'
+                    labelClass='!text-base'
                     placeholder='Enter age'
                     register={register}
                     name='min_patient_age'
-                    inputClass={'!text-base !leading-6 !p-3'}
+                    inputClass={'!text-base !leading-5'}
                     error={errors.min_patient_age?.message}
                     isRequired={checkIsRequiredField('min_patient_age')}
                     isDisabled={checkIfFieldIsDisabled(
@@ -939,11 +939,11 @@ export const ProfileForm = () => {
                 >
                   <NumberField
                     label='Maximum Patient Age'
-                    labelClass='!text-base !leading-22px'
+                    labelClass='!text-base'
                     placeholder='Enter age'
                     register={register}
                     name='max_patient_age'
-                    inputClass='!text-base !leading-6 !p-3'
+                    inputClass='!text-base !leading-5'
                     error={errors.max_patient_age?.message}
                     isRequired={checkIsRequiredField('max_patient_age')}
                     isDisabled={checkIfFieldIsDisabled(
@@ -963,7 +963,7 @@ export const ProfileForm = () => {
                     >
                       <CustomAsyncSelect
                         label='Languages'
-                        labelClassName='!text-base !leading-22px'
+                        labelClassName='!text-base'
                         loadOptions={getLanguagesAsync}
                         queryKey={languageQueryKey.getLanguagesKey()}
                         pageSize={10}
@@ -1006,7 +1006,7 @@ export const ProfileForm = () => {
                     >
                       <CustomAsyncSelect
                         label={'Specialized In'}
-                        labelClassName='!text-base !leading-22px'
+                        labelClassName='!text-base'
                         loadOptions={(page, searchTerm) =>
                           getFieldOptionsAsyncByTherapistId(
                             FieldOptionType.AREA_OF_FOCUS,
@@ -1057,7 +1057,7 @@ export const ProfileForm = () => {
                     >
                       <CustomAsyncSelect
                         label={'Therapy Type'}
-                        labelClassName='!text-base !leading-22px'
+                        labelClassName='!text-base'
                         loadOptions={(page, searchTerm) =>
                           getFieldOptionsAsyncByTherapistId(
                             FieldOptionType.THERAPY_TYPE,
@@ -1171,7 +1171,7 @@ export const ProfileForm = () => {
                       >
                         <CustomAsyncSelect
                           label={'Clinic Addresses'}
-                          labelClassName='!text-base !leading-22px'
+                          labelClassName='!text-base'
                           loadOptions={(page, searchTerm) =>
                             getClinicAddressesListAsync(page, searchTerm)
                           }
@@ -1229,8 +1229,8 @@ export const ProfileForm = () => {
                     placeholder='Enter your bio (max 3000 characters)'
                     error={errors.bio && errors.bio.message}
                     label='Bio'
-                    labelClass='!text-base !leading-22px'
-                    className='!text-base !leading-6 !p-3 bg-white'
+                    labelClass='!text-base'
+                    className='!text-base !leading-5 bg-white'
                     isRequired={checkIsRequiredField('bio')}
                     isDisabled={checkIfFieldIsDisabled(QUEUE_REQUEST_METADATA_FIELD_NAME.BIO)}
                   />

@@ -12,12 +12,13 @@ import { getFieldOptionsAsync } from '@/api/field-option';
 import { useGetAllCredentialedStates } from '@/api/state';
 import { selectStyles, SESSION_OPTIONS } from '@/constants/CommonConstant';
 import { ROUTES } from '@/constants/routePath';
-import { PaymentMethodEnum } from '@/enums';
+import { PaymentMethodEnum, PermissionType } from '@/enums';
 import { useBookSlot } from '@/features/appointment/component/ClientAppointmentsBooking/hooks/useBookSlot';
 import type { NavigationState } from '@/features/appointment/component/ClientAppointmentsBooking/types';
 import AdminPatientSelection from '@/features/calendar/components/scheduleAppointmentComponents/AdminPatientSelection';
 import AdminTherapistSelection from '@/features/calendar/components/scheduleAppointmentComponents/AdminTherapistSelection';
 import { isAdminPanelRole } from '@/helper';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
@@ -35,6 +36,7 @@ const AdminBookAppointment = () => {
   const [carrier, setCarrier] = useState<SelectOption | null>(null);
   const [sessionType, setSessionType] = useState<SelectOption | null>(null);
 
+  const { hasPermission } = useRoleBasedRouting();
   const {
     timezone,
     therapist,
@@ -210,34 +212,38 @@ const AdminBookAppointment = () => {
             StylesConfig={selectStyles}
           />
 
-          <AdminPatientSelection
-            isDisabled={isTherapistOrPatientDisabled}
-            patient={patient}
-            onPatientSelect={setPatient}
-            carrier={carrier?.value as string}
-            paymentMethod={paymentMethod?.value as string}
-            isRequired={true}
-          />
+          {hasPermission(PermissionType.PATIENT_VIEW) && (
+            <AdminPatientSelection
+              isDisabled={isTherapistOrPatientDisabled}
+              patient={patient}
+              onPatientSelect={setPatient}
+              carrier={carrier?.value as string}
+              paymentMethod={paymentMethod?.value as string}
+              isRequired={true}
+            />
+          )}
 
-          <AdminTherapistSelection
-            therapist={therapistDetail}
-            onTherapistSelect={setTherapist}
-            isDisabled={isTherapistOrPatientDisabled}
-            filters={{
-              carrier: (carrier?.value as string) || '',
-              ...(city?.value && { city: city.value }),
-              ...(state?.value && { state: state.value }),
-              ...(sessionType?.value && { session_type: sessionType.value }),
-            }}
-            isRequired={true}
-            refetchOnChangeValue={[
-              carrier?.value,
-              city?.value,
-              state?.value,
-              sessionType?.value,
-              paymentMethod?.value,
-            ]}
-          />
+          {hasPermission(PermissionType.THERAPIST_VIEW) && (
+            <AdminTherapistSelection
+              therapist={therapistDetail}
+              onTherapistSelect={setTherapist}
+              isDisabled={isTherapistOrPatientDisabled}
+              filters={{
+                carrier: (carrier?.value as string) || '',
+                ...(city?.value && { city: city.value }),
+                ...(state?.value && { state: state.value }),
+                ...(sessionType?.value && { session_type: sessionType.value }),
+              }}
+              isRequired={true}
+              refetchOnChangeValue={[
+                carrier?.value,
+                city?.value,
+                state?.value,
+                sessionType?.value,
+                paymentMethod?.value,
+              ]}
+            />
+          )}
         </div>
         <div className='flex items-center gap-5 justify-end'>
           <Button
@@ -339,7 +345,7 @@ const AdminBookAppointment = () => {
 
         {/* Book Appointment button moved below all forms */}
         {showBookingInterface && patient?.value && therapistDetail?.value && (
-          <div className='flex flex-wrap items-center justify-end gap-5 pt-30px border-t border-solid border-surface'>
+          <div className='flex flex-wrap items-center justify-end gap-5 pt-5 border-t border-solid border-surface'>
             <Button
               variant='filled'
               title='Continue'

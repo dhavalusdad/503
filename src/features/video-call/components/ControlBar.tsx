@@ -5,13 +5,12 @@ import clsx from 'clsx';
 import type { UserRole } from '@/api/types/user.dto';
 import { MoreOptionsDropdown } from '@/features/video-call/components/MoreOptionsDropdown';
 import { useVideoCall } from '@/features/video-call/store/useVideoCall';
+import { createAudioTrack, createVideoTrack } from '@/features/video-call/utils/media';
 import { usePopupClose } from '@/hooks/usePopupClose';
 import { setLocalTracks } from '@/redux/ducks/videoCall';
 import Button from '@/stories/Common/Button';
 import ButtonWithTooltip from '@/stories/Common/ButtonWithTooltip';
 import Icon from '@/stories/Common/Icon';
-
-import { createAudioTrack, createVideoTrack } from '../utils/media';
 
 import type { LocalAudioTrack, LocalVideoTrack } from 'twilio-video';
 

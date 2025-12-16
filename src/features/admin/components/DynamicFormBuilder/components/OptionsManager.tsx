@@ -122,7 +122,7 @@ const OptionsManager: React.FC<OptionsManagerProps> = ({ options, onUpdate, ques
                   type='text'
                   placeholder='Option label'
                   label={`Option ${index + 1}`}
-                  labelClass='!text-base !leading-5'
+                  labelClass='!text-base'
                   inputClass='!text-base !leading-5 !border-surfacedark'
                   value={localOptions[index].option_text}
                   onChange={e => updateOption(qKey, 'option_text', e.target.value)}
@@ -168,7 +168,7 @@ const OptionsManager: React.FC<OptionsManagerProps> = ({ options, onUpdate, ques
           placeholder='Option label'
           value={newOption.option_text}
           onChange={e => setNewOption({ ...newOption, option_text: e.target.value })}
-          parentClassName='w-full'
+          parentClassName='flex-1'
           inputClass='!text-base !leading-5 !border-surfacedark'
         />
         <Button
@@ -176,7 +176,7 @@ const OptionsManager: React.FC<OptionsManagerProps> = ({ options, onUpdate, ques
           title='Add Option'
           onClick={addOption}
           isDisabled={!newOption.option_text.trim()}
-          className='!p-4 whitespace-nowrap rounded-10px'
+          className='rounded-10px min-h-50px'
         />
       </div>
 

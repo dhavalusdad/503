@@ -164,7 +164,7 @@ const AddNewStaff = () => {
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex flex-col gap-5'>
         <h5 className='text-lg leading-6 font-bold text-blackdark'>{`${id ? 'Update' : 'Add'} Staff Member`}</h5>
-        <div className='grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5'>
+        <div className='grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
           <InputField
             name='first_name'
             register={register}
@@ -172,7 +172,7 @@ const AddNewStaff = () => {
             label='First Name'
             placeholder='First Name'
             isRequired={true}
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             inputClass='!text-base !leading-5'
             error={errors.first_name?.message}
           />
@@ -183,7 +183,7 @@ const AddNewStaff = () => {
             label='Last Name'
             placeholder='Last Name'
             isRequired={true}
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             inputClass='!text-base !leading-5'
             error={errors.last_name?.message}
           />
@@ -196,7 +196,7 @@ const AddNewStaff = () => {
               });
             }}
             label={'Contact Number'}
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             isRequired={true}
             inputClass={`!text-base !leading-5 ${errors.phone && errors.phone.message ? 'border-red-500' : ''} `}
             country='us'
@@ -206,20 +206,21 @@ const AddNewStaff = () => {
             isModal={false}
           />
         </div>
-        <div className='grid md:grid-cols-2 grid-cols-1 gap-5'>
+        <div className='grid gap-5 grid-cols-1 md:grid-cols-2'>
           <InputField
             name='email'
             register={register}
             type='email'
             label='Email'
             placeholder='Email'
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             inputClass='!text-base !leading-5'
             icon='email'
             isRequired={true}
             iconFirst
             error={errors.email?.message}
             autoComplete='email'
+            isDisabled={!!id}
           />
           <Select
             label='Select Role'
@@ -237,7 +238,7 @@ const AddNewStaff = () => {
             }
             placeholder='Select Role'
             error={errors.role?.message}
-            labelClassName='!text-base !leading-5'
+            labelClassName='!text-base'
             isLoading={isLoadingRoles}
             onMenuScrollToBottom={() => {
               if (hasNextPage && !isFetchingNextPage) {
@@ -261,11 +262,11 @@ const AddNewStaff = () => {
             }}
           />
         </div>
-        <div className='flex items-center gap-5 justify-end pt-30px border-t border-solid border-surface'>
+        <div className='flex items-center gap-5 justify-end pt-5 border-t border-solid border-surface'>
           <Button
             variant='outline'
             title='Cancel'
-            className='!px-6 rounded-10px'
+            className='!px-6 rounded-10px min-h-50px'
             onClick={() => {
               if (isDirty) {
                 openCloseModal('discard', true);
@@ -277,7 +278,7 @@ const AddNewStaff = () => {
           <Button
             variant='filled'
             title={`${id ? 'Update' : 'Add'} Now`}
-            className='!px-6 rounded-10px'
+            className='!px-6 rounded-10px min-h-50px'
             isDisabled={id ? !isDirty : false}
             onClick={handleSubmit(createOrUpdateStaffMember)}
             isLoading={isCreateStaffMemberApiPending}

@@ -4,7 +4,9 @@ import _ from 'lodash';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetTherapistBasicDetails } from '@/api/therapist';
-import { formatTitleCase } from '@/helper';
+import { PermissionType } from '@/enums';
+import { formatExperience, formatTitleCase } from '@/helper';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import Image from '@/stories/Common/Image';
@@ -53,7 +55,7 @@ const getTags = (tagData?: string[], formatTags: boolean = false) => {
         </div>
       ) : (
         <>
-          <span></span>
+          <span>-</span>
         </>
       )}
     </>
@@ -73,6 +75,7 @@ const TherapistDetailsPage = () => {
   if (!therapist_id) {
     return <></>;
   }
+  const { hasPermission } = useRoleBasedRouting();
 
   // ** States **
   const [details, setDetails] = useState<DetailsType>();
@@ -94,7 +97,7 @@ const TherapistDetailsPage = () => {
         area_of_focus,
         languages,
         therapy_types,
-        experience,
+        experiences,
         address1,
         address2,
         city,
@@ -112,13 +115,7 @@ const TherapistDetailsPage = () => {
         specializations: extractNames(area_of_focus) || [],
         languages: extractNames(languages) || [],
         therapy_types: extractNames(therapy_types) || [],
-        experience: experience
-          ? experience < 12
-            ? `${experience} month${experience > 1 ? 's' : ''}`
-            : experience % 12 === 0
-              ? `${experience / 12} year${experience / 12 > 1 ? 's' : ''}`
-              : `${Math.floor(experience / 12)}+ years`
-          : '',
+        experience: formatExperience(experiences),
         address: [
           address1,
           address2,
@@ -149,10 +146,10 @@ const TherapistDetailsPage = () => {
                 firstName={details?.first_name}
                 lastName={details?.last_name}
                 className='w-90px h-90px rounded-full'
-                imageClassName='w-full h-full object-cover object-center rounded-full'
-                initialClassName='!text-base'
+                imageClassName='object-cover object-center rounded-full'
+                initialClassName='!text-xl'
               />
-              <div className='flex flex-col gap-1.5'>
+              <div className='flex flex-col gap-2.5'>
                 <div className='flex items-center gap-2.5'>
                   <h4 className='text-lg font-bold leading-6 text-blackdark'>{`Dr. ${details?.full_name}`}</h4>
                   <Button
@@ -185,7 +182,7 @@ const TherapistDetailsPage = () => {
                   </p> */}
                       {/* <span className='bg-primarylight w-1px h-3.5'></span> */}
                       <p className='text-sm font-normal leading-18px text-primarygray'>
-                        {details?.experience} of Experience
+                        {details?.experience}
                       </p>
                     </div>
                   </>
@@ -212,31 +209,37 @@ const TherapistDetailsPage = () => {
                 <Icon name='info' className='icon-wrapper w-5 h-5 text-blackdark' />
                 <h5 className='text-lg font-bold text-blackdark leading-6'>About</h5>
               </div>
-              <p className='text-base font-normal leading-22px text-blackdark'>{details?.bio}</p>
+              <p className='text-base font-normal leading-22px text-blackdark'>
+                {details?.bio || '-'}
+              </p>
             </div>
             <span className='w-full h-1px bg-surface'></span>
-            <div className='flex sm:flex-row flex-col items-start gap-5 relative'>
-              <div className='flex flex-col gap-2.5 sm:max-w-2/4'>
+            <div className='flex lg:flex-row flex-col items-start gap-5 relative'>
+              <div className='flex flex-col gap-2.5 flex-1'>
                 <div className='flex items-center gap-1.5'>
                   <Icon name='personaladdress' className='icon-wrapper w-5 h-5 text-blackdark' />
                   <h5 className='text-lg font-bold text-blackdark leading-6'>Personal Address</h5>
                 </div>
-                {details?.address && (
+                {details?.address ? (
                   <p className='text-base font-normal leading-22px text-blackdark break-all'>
                     {details.address}
                   </p>
+                ) : (
+                  <>-</>
                 )}
               </div>
-              <span className='w-1px h-14 bg-surface sm:max-w-2/4 hidden sm:block'></span>
-              <div className='flex flex-col gap-2.5'>
+              <span className='w-full h-1px lg:h-auto lg:w-1px lg:self-stretch bg-surface'></span>
+              <div className='flex flex-col gap-2.5 flex-1'>
                 <div className='flex items-center gap-1.5'>
                   <Icon name='clinicaddress' className='icon-wrapper w-5 h-5 text-blackdark' />
                   <h5 className='text-lg font-bold text-blackdark leading-6'>Clinic Address</h5>
                 </div>
-                {details?.clinic_address && (
+                {details?.clinic_address ? (
                   <p className='text-base font-normal leading-22px text-blackdark'>
                     {details?.clinic_address}
                   </p>
+                ) : (
+                  <>-</>
                 )}
               </div>
             </div>
@@ -249,16 +252,16 @@ const TherapistDetailsPage = () => {
               {getTags(details?.specializations, true)}
             </div>
             <span className='w-full h-1px bg-surface'></span>
-            <div className='flex sm:flex-row flex-col items-start gap-5 relative'>
-              <div className='flex flex-col gap-2.5 sm:max-w-2/4'>
+            <div className='flex lg:flex-row flex-col items-start gap-5 relative'>
+              <div className='flex flex-col gap-2.5 lg:max-w-2/4'>
                 <div className='flex items-center gap-1.5'>
                   <Icon name='global' className='text-blackdark' />
                   <h5 className='text-lg font-bold text-blackdark leading-6'>Languages Known</h5>
                 </div>
                 {getTags(details?.languages)}
               </div>
-              <span className='w-1px h-14 bg-surface hidden sm:block'></span>
-              <div className='flex flex-col gap-2.5 sm:max-w-2/4'>
+              <span className='w-full h-1px lg:h-auto lg:w-1px lg:self-stretch bg-surface'></span>
+              <div className='flex flex-col gap-2.5'>
                 <div className='flex items-center gap-1.5'>
                   <Icon name='appointment' className='text-blackdark' />
                   <h5 className='text-lg font-bold text-blackdark leading-6'>
@@ -283,43 +286,49 @@ const TherapistDetailsPage = () => {
                 <span className='text-sm font-normal leading-18px text-primarygray'>May 2010</span>
               </div>
             </div> */}
-            <div className='flex sm:flex-row flex-col items-start gap-5 relative'>
-              <div className='flex flex-col gap-2.5 sm:max-w-2/4'>
+            <div className='flex lg:flex-row flex-col items-start gap-5 relative'>
+              <div className='flex flex-col gap-2.5 lg:max-w-2/4'>
                 <div className='flex items-center gap-1.5'>
                   {/* <Icon name='personaladdress' className='icon-wrapper w-5 h-5 text-blackdark' /> */}
                   <h5 className='text-lg font-bold text-blackdark leading-6'>AMD Provider ID</h5>
                 </div>
-                {details?.amd_provider_id && (
+                {details?.amd_provider_id ? (
                   <p className='text-base font-normal leading-22px text-blackdark break-all'>
                     {details?.amd_provider_id}
                   </p>
+                ) : (
+                  <>-</>
                 )}
               </div>
-              <span className='w-1px h-14 bg-surface sm:max-w-2/4 hidden sm:block'></span>
+              <span className='w-full h-1px lg:h-auto lg:w-1px lg:self-stretch bg-surface'></span>
               <div className='flex flex-col gap-2.5'>
                 <div className='flex items-center gap-1.5'>
                   {/* <Icon name='clinicaddress' className='icon-wrapper w-5 h-5 text-blackdark' /> */}
                   <h5 className='text-lg font-bold text-blackdark leading-6'>AMD Provider Name</h5>
                 </div>
 
-                {details?.amd_provider_name && (
+                {details?.amd_provider_name ? (
                   <p className='text-base font-normal leading-22px text-blackdark break-all'>
                     {details?.amd_provider_name}
                   </p>
+                ) : (
+                  <>-</>
                 )}
               </div>
             </div>
-            <div className='text-end pt-30px border-t border-solid border-surface'>
-              <Button
-                variant='filled'
-                title='Go to All Appointment'
-                className='!text-base !leading-22px !px-6 !py-3 rounded-10px'
-                icon={<Icon name='rightArrow' className='icon-wrapper w-4 h-4 text-white' />}
-                onClick={() =>
-                  navigate(`/therapist-management/view-therapist/${therapist_id}/appointments`)
-                }
-              />
-            </div>
+            {hasPermission(PermissionType.APPOINTMENT_VIEW) && (
+              <div className='text-end pt-5 border-t border-solid border-surface'>
+                <Button
+                  variant='filled'
+                  title='Go to All Appointment'
+                  className='!text-base !leading-5 !px-6 rounded-10px'
+                  icon={<Icon name='rightArrow' className='icon-wrapper w-5 h-5 text-white' />}
+                  onClick={() =>
+                    navigate(`/therapist-management/view-therapist/${therapist_id}/appointments`)
+                  }
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

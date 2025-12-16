@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { type ColumnDef, type SortingState } from '@tanstack/react-table';
 import clsx from 'clsx';
@@ -26,7 +26,6 @@ export interface InfiniteTableProps<TData> {
   sorting: SortingState;
   setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
   onSortingChange?: (sorting: SortingState) => void;
-  mainParentClassName?: string;
   isLoading?: boolean;
 }
 
@@ -50,12 +49,16 @@ export const InfiniteTable = <TData,>({
   loadingText = 'Loading more...',
   sorting,
   setSorting,
-  mainParentClassName,
   onSortingChange,
   isLoading,
 }: InfiniteTableProps<TData>) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!loaderRef?.current || !hasNextPage || !onLoadMore) return;
+
+    const scrollContainer = scrollContainerRef.current;
+
     const observer = new IntersectionObserver(
       entries => {
         const [entry] = entries;
@@ -64,10 +67,12 @@ export const InfiniteTable = <TData,>({
         }
       },
       {
-        rootMargin: '100px',
-        threshold: 1.0,
+        root: scrollContainer,
+        rootMargin: '10px',
+        threshold: 0.1,
       }
     );
+
     observer.observe(loaderRef.current);
 
     return () => {
@@ -77,44 +82,46 @@ export const InfiniteTable = <TData,>({
     };
   }, [loaderRef, hasNextPage, isFetchingNextPage, onLoadMore]);
 
+  const infiniteScrollLoader =
+    hasNextPage || isFetchingNextPage ? (
+      <div
+        ref={loaderRef}
+        className={clsx('py-4 flex justify-center items-center text-primarygray')}
+      >
+        {isFetchingNextPage && (
+          <div className='flex items-center gap-2'>
+            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-primarygray'></div>
+            <span>{loadingText}</span>
+          </div>
+        )}
+      </div>
+    ) : null;
+
   return (
-    <div className={clsx('w-full', mainParentClassName)}>
-      <Table<TData>
-        data={data}
-        columns={columns}
-        parentClassName={parentClassName}
-        className={clsx('', className)}
-        tableClassName={tableClassName}
-        theadClassName={theadClassName}
-        activeRowClassName={activeRowClassName}
-        thClassName={thClassName}
-        tdClassName={tdClassName}
-        pagination={false}
-        totalCount={data.length}
-        pageIndex={0}
-        pageSize={data.length}
-        sorting={sorting}
-        setSorting={setSorting}
-        onSortingChange={onSortingChange}
-        onRowClick={onRowClick}
-        selectedRowId={selectedRowId}
-        rowIdAccessor={rowIdAccessor}
-        isLoading={isLoading}
-      />
-      {(hasNextPage || isFetchingNextPage) && (
-        <div
-          ref={loaderRef}
-          className={clsx('py-4 flex justify-center items-center text-gray-500')}
-        >
-          {isFetchingNextPage && (
-            <div className='flex items-center gap-2'>
-              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500'></div>
-              <span>{loadingText}</span>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+    <Table<TData>
+      data={data}
+      columns={columns}
+      parentClassName={clsx(parentClassName)}
+      className={clsx(className)}
+      tableClassName={tableClassName}
+      theadClassName={clsx('sticky top-0 z-10', theadClassName)}
+      activeRowClassName={activeRowClassName}
+      thClassName={thClassName}
+      tdClassName={tdClassName}
+      pagination={false}
+      totalCount={data.length}
+      pageIndex={0}
+      pageSize={data.length}
+      sorting={sorting}
+      setSorting={setSorting}
+      onSortingChange={onSortingChange}
+      onRowClick={onRowClick}
+      selectedRowId={selectedRowId}
+      rowIdAccessor={rowIdAccessor}
+      isLoading={isLoading}
+      scrollContainerRef={scrollContainerRef}
+      infiniteScrollLoader={infiniteScrollLoader}
+    />
   );
 };
 

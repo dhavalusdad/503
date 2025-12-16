@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // import { action } from '@storybook/addon-actions';
-import TagInput, { type TagInputProps } from '.';
+import TagInput, { type TagInputProps } from '@/stories/Common/TagInput';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

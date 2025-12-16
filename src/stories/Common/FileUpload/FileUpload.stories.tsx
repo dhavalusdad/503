@@ -1,4 +1,4 @@
-import FileUpload from '.';
+import FileUpload from '@/stories/Common/FileUpload';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

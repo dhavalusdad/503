@@ -8,6 +8,7 @@ import { RelationEnum } from '@/enums';
 import { AlertModal } from '@/stories/Common/AlertModal';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
+import Icon from '@/stories/Common/Icon';
 import InputField from '@/stories/Common/Input';
 import PhoneField from '@/stories/Common/PhoneNumberInput';
 import Select from '@/stories/Common/Select';
@@ -26,6 +27,7 @@ type DependentItem = FormFieldType & {
   relationship: RelationEnum;
   isNew?: boolean;
   is_active?: boolean;
+  user_id?: string | number;
   backendId?: string | number;
 };
 
@@ -148,7 +150,7 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
     } else {
       setDeleteModal({
         isOpen: true,
-        dependentId: field.backendId,
+        dependentId: field.user_id,
         index: globalIndex,
         type,
       });
@@ -183,7 +185,7 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
             key={`${key}_first_name`}
             type='text'
             label='First Name'
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             register={register}
             error={errors?.dependents?.[globalIndex]?.first_name?.message}
             isRequired
@@ -197,7 +199,7 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
             key={`${key}_last_name`}
             type='text'
             label='Last Name'
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             register={register}
             name={`${prefix}.last_name`}
             error={errors?.dependents?.[globalIndex]?.last_name?.message}
@@ -217,7 +219,7 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
               return (
                 <CustomDatePicker
                   label='Date of Birth'
-                  labelClass='!text-base !leading-5'
+                  labelClass='!text-base'
                   placeholderText='Select date of birth'
                   error={fieldState.error?.message}
                   selected={field.value}
@@ -236,8 +238,8 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
 
           <PhoneField
             key={`${key}_phone`}
-            label='Contact Number'
-            labelClass='!text-base !leading-5'
+            label={type == RelationEnum.MINOR ? 'Emergency Contact' : 'Contact Number'}
+            labelClass='!text-base'
             value={getValues(`${prefix}.phone`) || ''}
             name='phone'
             onChange={val => setValue(`${prefix}.phone`, val, { shouldValidate: true })}
@@ -253,7 +255,7 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
             key={`${key}_email`}
             type='email'
             label='Email'
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             register={register}
             name={`${prefix}.email`}
             error={errors?.dependents?.[globalIndex]?.email?.message}
@@ -292,7 +294,7 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
                 fontSize: '16px',
               }),
             }}
-            labelClassName='!text-base !leading-22px'
+            labelClassName='!text-base'
             isRequired
           />
         </div>
@@ -351,9 +353,11 @@ const AddDependent = ({ isEdit, onDeleteDependent, isDeletingDependent }: AddDep
                       </React.Fragment>
                     ))}
                   </div>
-                  <p className='text-xs text-red mt-1.5'>
-                    {fieldErrorMessage[type as RelationEnum]}
-                  </p>
+                  {fieldErrorMessage[type as RelationEnum] && (
+                    <p className='text-xs text-red mt-1.5'>
+                      {fieldErrorMessage[type as RelationEnum]}
+                    </p>
+                  )}
                 </>
               )}
             </React.Fragment>

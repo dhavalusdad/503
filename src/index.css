@@ -276,3 +276,7 @@ input[type='range']::-moz-range-thumb {
   max-height: calc(100dvh - 348px);
   padding: 20px;
 }
+
+.bullets-parent .swiper-pagination {
+  bottom: 0 !important;
+}

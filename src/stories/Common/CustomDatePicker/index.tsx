@@ -177,20 +177,28 @@ export const CustomDatePicker = React.forwardRef<HTMLDivElement, CustomDatePicke
     }, [placement, open, showTimeSelect]);
 
     useEffect(() => {
-      if (containerRef.current) {
-        const inputEl = containerRef.current.querySelector('input');
-        if (inputEl) {
-          // Set wider calendar width when time picker is enabled
-          const baseWidth = inputEl.offsetWidth;
-          if (window.innerWidth < 640) {
-            // Mobile
-            setCalendarWidth(showTimeSelect ? Math.max(baseWidth, 250) : baseWidth);
-          } else {
-            // Tablet/Desktop
-            setCalendarWidth(showTimeSelect ? Math.max(baseWidth, 480) : baseWidth);
+      const updateWidth = () => {
+        if (containerRef.current) {
+          const inputEl = containerRef.current.querySelector('input');
+          if (inputEl) {
+            // Set wider calendar width when time picker is enabled
+            const baseWidth = inputEl.offsetWidth;
+            if (window.innerWidth < 640) {
+              // Mobile
+              setCalendarWidth(showTimeSelect ? Math.max(baseWidth, 250) : baseWidth);
+            } else {
+              // Tablet/Desktop
+              setCalendarWidth(showTimeSelect ? Math.max(baseWidth, 480) : baseWidth);
+            }
           }
         }
-      }
+      };
+
+      updateWidth();
+
+      window.addEventListener('resize', updateWidth);
+
+      return () => window.removeEventListener('resize', updateWidth);
     }, [open, showTimeSelect]);
 
     return (
@@ -226,7 +234,11 @@ export const CustomDatePicker = React.forwardRef<HTMLDivElement, CustomDatePicke
               showYearDropdown={showYearDropdown}
               scrollableYearDropdown={scrollableYearDropdown}
               dropdownMode={dropdownMode}
-              className={clsx(className, showTimeSelect ? 'time-picker-enabled' : '')}
+              className={clsx(
+                className,
+                showTimeSelect ? 'time-picker-enabled' : '',
+                error ? 'error' : ''
+              )}
               isClearable={isClearable}
               disabled={disabled}
               name={name}

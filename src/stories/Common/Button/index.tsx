@@ -50,7 +50,7 @@ export const Button = ({
 }: ButtonProps) => {
   const classes = clsx(
     className,
-    'group font-normal inline-flex items-center text-base justify-center gap-2 py-3.5 px-3.5 leading-none rounded transition-all duration-300 cursor-pointer',
+    'group font-normal inline-flex items-center text-base justify-center gap-2 py-3.5 px-3.5 leading-none rounded transition-all duration-300 cursor-pointer focus-visible:outline-0',
     {
       'select-none': isActive || isLoading,
       'bg-primary text-white hover:bg-primary/85 border border-primary hover:border-primary/75':

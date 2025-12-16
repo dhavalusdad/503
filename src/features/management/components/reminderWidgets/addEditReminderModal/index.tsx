@@ -78,7 +78,7 @@ const AddEditRemiderWidgetsModal = ({
         await createReminderWidget({
           data: {
             name: data.name,
-            type: 'WidgetType',
+            type: FieldOptionType.WIDGET_TYPE,
           },
         });
       }
@@ -122,7 +122,7 @@ const AddEditRemiderWidgetsModal = ({
         error={errors.name?.message}
         type='text'
         placeholder='Enter Reminder Widget Name'
-        labelClass='!text-base !leading-5'
+        labelClass='!text-base'
         inputClass='!text-base !leading-5'
       />
     </Modal>

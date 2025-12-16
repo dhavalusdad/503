@@ -1,8 +1,8 @@
 import type {
-  GetClientListForAdminRequest,
   TherapistListParamsType,
   TherapistOptionsParamsType,
-} from '../types';
+} from '@/api/types/therapist.dto';
+import type { GetClientListForAdminRequest } from '@/api/types/user.dto';
 
 export const THERAPIST_KEYS_NAME = {
   LIST: 'therapist-list',

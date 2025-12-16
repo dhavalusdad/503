@@ -347,7 +347,7 @@ const AdminProfile: React.FC = () => {
               title='Cancel'
               variant='outline'
               onClick={handleCancelModal}
-              className='px-3 py-3 rounded-lg'
+              className='!px-6 rounded-10px min-h-50px'
               isDisabled={isUpdateUserApiPending}
             />
             <Button
@@ -359,7 +359,7 @@ const AdminProfile: React.FC = () => {
                   setSaveModal(true);
                 }
               }}
-              className='px-3 py-3 rounded-lg'
+              className='!px-6 rounded-10px min-h-50px'
               isDisabled={!isDirty || isUpdateUserApiPending}
               isLoading={isUpdateUserApiPending}
             />

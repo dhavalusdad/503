@@ -1,5 +1,5 @@
 import '../../../index.css';
-import StatusTag from './index';
+import StatusTag from '@/stories/Common/StatusTag';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

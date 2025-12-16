@@ -1,15 +1,13 @@
 import _ from 'lodash';
 
 import { MONTHS } from '@/constants/CommonConstant';
-
-import { FIELD_LABELS, FIELD_ORDER } from '../constant';
-
+import { FIELD_LABELS, FIELD_ORDER } from '@/features/admin/components/backofficeQueue/constant';
 import type {
   ExperienceValueType,
   TableDataChange,
   TableNamesType,
   TransformedField,
-} from '../types';
+} from '@/features/admin/components/backofficeQueue/types';
 
 const DEFAULT_VAL = '-';
 

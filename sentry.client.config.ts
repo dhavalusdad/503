@@ -1,9 +1,9 @@
-import * as Sentry from '@sentry/react';
+import { init } from '@sentry/react';
 import { browserTracingIntegration } from '@sentry/react';
 import { AxiosError } from 'axios';
 import { shouldReportToSentry } from '@/api/utils';
 
-Sentry.init({
+init({
   dsn: import.meta.env.VITE_PUBLIC_SENTRY_DSN_KEY,
   environment: import.meta.env.VITE_PUBLIC_SENTRY_ENVIRONMENT,
   integrations: [browserTracingIntegration()],

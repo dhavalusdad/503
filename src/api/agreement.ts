@@ -1,9 +1,8 @@
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios.ts';
+import { agreementQueryKey } from '@/api/common/agreement.queryKey';
 import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
 import type { Agreement } from '@/features/management/components/agreement/hooks';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { agreementQueryKey } from './common/agreement.queryKey';
 
 import { useMutation, useQuery } from '.';
 

@@ -188,8 +188,9 @@ export const CalendarMain = () => {
           <Button
             variant='filled'
             title='Schedule Appointment'
-            className='px-4 py-3.5 bg-green-700 text-white rounded-lg hover:bg-green-800'
+            className='rounded-lg'
             onClick={() => setScheduleAppointment(true)}
+            parentClassName='order-3 xl:order-none'
           />
         }
         {...calendarProps}

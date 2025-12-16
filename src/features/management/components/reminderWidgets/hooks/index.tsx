@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useDeleteFieldOptions, useGetFieldOptionsList } from '@/api/field-option';
-import { PermissionType } from '@/enums';
+import { FieldOptionType, PermissionType } from '@/enums';
 import { showToast } from '@/helper';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import Button from '@/stories/Common/Button';
@@ -62,7 +62,7 @@ const useReminderWidget = () => {
     initialQueryParams: {
       page: 1,
       limit: 10,
-      type: 'WidgetType',
+      type: FieldOptionType.WIDGET_TYPE,
       ...(debouncedQuery ? { search: debouncedQuery } : {}),
     },
   });

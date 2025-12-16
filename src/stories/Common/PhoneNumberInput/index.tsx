@@ -112,7 +112,7 @@ export const PhoneField = forwardRef<HTMLInputElement, PhoneFieldProps<FieldValu
       inputClass: clsx(
         'phonefield_input !h-auto text-sm !leading-5 p-3.5 !rounded-10px text-blackdark',
         inputClass,
-        error && '!border-red-500 shadow-none',
+        error && '!border-red-500 focus:!outline-0',
         isReadOnly
           ? '!cursor-text !w-auto'
           : '!bg-Gray-400 !border !border-solid border-Gray-200 !w-full'
@@ -122,7 +122,7 @@ export const PhoneField = forwardRef<HTMLInputElement, PhoneFieldProps<FieldValu
         buttonClass,
         isReadOnly && '!hidden',
         {
-          'shadow-none': error,
+          '!border-red-500 focus:!outline-0': error,
         },
         disabled ? 'opacity-50 !cursor-not-allowed' : ''
       ),

@@ -1,4 +1,4 @@
-import Tooltip from './Tooltip';
+import Tooltip from '@/stories/Common/Tooltip/Tooltip';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

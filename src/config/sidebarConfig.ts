@@ -1,7 +1,9 @@
 import { UserRole } from '@/api/types/user.dto';
 import { ROUTES } from '@/constants/routePath';
-import { PermissionType } from '@/enums';
+import { PERMISSION_OPERATOR, PermissionType } from '@/enums';
 import type { IconNameType } from '@/stories/Common/Icon';
+
+export type PermissionOperator = PERMISSION_OPERATOR.AND | PERMISSION_OPERATOR.OR;
 
 export interface SidebarMenuItem {
   icon: IconNameType;
@@ -9,23 +11,26 @@ export interface SidebarMenuItem {
   path: string;
   roles: string[];
   childRoute?: SidebarMenuItem[];
-  requiredPermissions?: string[];
+  elementId?: string;
+  requiredPermissions?:
+    | {
+        [role: string]: {
+          permissions: string[];
+          operator?: PermissionOperator;
+        };
+      }
+    | string[];
+  defaultPermissions?: string[];
+  permissionOperator?: PermissionOperator;
 }
 
 export const sidebarMenuItems: SidebarMenuItem[] = [
-  // Dashboard - Available for all roles
-  // {
-  //   icon: 'dashboard',
-  //   label: 'Dashboard',
-  //   path: ROUTES.DASHBOARD.path,
-  //   roles: [UserRole.CLIENT, UserRole.THERAPIST, UserRole.ADMIN],
-  // },
-
   {
     icon: 'dashboard',
     label: 'Dashboard',
     path: ROUTES.CLIENT_DASHBOARD.path,
     roles: [UserRole.CLIENT],
+    elementId: 'tour-sidebar-dashboard',
   },
   {
     icon: 'dashboard',
@@ -38,83 +43,83 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
     label: 'Dashboard',
     path: ROUTES.ADMIN_DASHBOARD.path,
     roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    // requiredPermissions: {
+    //   [UserRole.BACKOFFICE]: {
+    //     permissions: [
+    //       PermissionType.PATIENT_VIEW,
+    //       PermissionType.THERAPIST_VIEW,
+    //       PermissionType.APPOINTMENT_VIEW,
+    //       PermissionType.ASSESSMENT_FORM_VIEW,
+    //     ],
+    //     operator: PERMISSION_OPERATOR.OR,
+    //   },
+    // },
   },
 
-  // admin transaction - Only for admin
   {
     icon: 'transaction',
     label: 'Transactions',
     path: ROUTES.TRANSACTION.path,
-    roles: [UserRole.ADMIN],
-  },
-  {
-    icon: 'transaction',
-    label: 'Transactions',
-    path: ROUTES.TRANSACTION.path,
-    roles: [UserRole.BACKOFFICE],
-    requiredPermissions: [PermissionType.TRANSACTIONS_VIEW],
+    roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    requiredPermissions: {
+      [UserRole.BACKOFFICE]: {
+        permissions: [PermissionType.TRANSACTIONS_VIEW],
+      },
+    },
   },
 
-  // User Management - Only for admin
   {
     icon: 'client',
     label: 'Client Management',
     path: ROUTES.CLIENT_MANAGEMENT.path,
-    roles: [UserRole.ADMIN],
+    roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    requiredPermissions: {
+      [UserRole.BACKOFFICE]: {
+        permissions: [PermissionType.PATIENT_VIEW],
+      },
+    },
   },
 
-  // Therapist Management - Only for admin
   {
     icon: 'therapist',
     label: 'Therapist Management',
     path: ROUTES.THERAPIST_MANAGEMENT.path,
-    roles: [UserRole.ADMIN],
+    roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    requiredPermissions: {
+      [UserRole.BACKOFFICE]: {
+        permissions: [PermissionType.THERAPIST_VIEW],
+      },
+    },
   },
 
   {
     icon: 'list',
     label: 'Appointment List',
     path: ROUTES.APPOINTMENT.path,
-    roles: [UserRole.ADMIN],
+    roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    requiredPermissions: {
+      [UserRole.BACKOFFICE]: {
+        permissions: [PermissionType.APPOINTMENT_VIEW],
+      },
+    },
   },
 
   {
     icon: 'queue',
     label: 'Queue',
     path: ROUTES.ADMIN_BACKOFFICE_QUEUE.path,
-    roles: [UserRole.ADMIN],
-  },
-
-  {
-    icon: 'client',
-    label: 'Client Management',
-    path: ROUTES.CLIENT_MANAGEMENT.path,
-    roles: [UserRole.BACKOFFICE],
-    requiredPermissions: [PermissionType.PATIENT_VIEW],
-  },
-  {
-    icon: 'therapist',
-    label: 'Therapist Management',
-    path: ROUTES.THERAPIST_MANAGEMENT.path,
-    roles: [UserRole.BACKOFFICE],
-    requiredPermissions: [PermissionType.THERAPIST_VIEW],
-  },
-
-  {
-    icon: 'list',
-    label: 'Appointment List',
-    path: ROUTES.APPOINTMENT.path,
-    roles: [UserRole.BACKOFFICE],
-    requiredPermissions: [PermissionType.APPOINTMENT_VIEW],
-  },
-
-  //backoffice route
-  {
-    icon: 'dashboard',
-    label: 'Queue',
-    path: ROUTES.ADMIN_BACKOFFICE_QUEUE.path,
-    roles: [UserRole.BACKOFFICE],
-    requiredPermissions: [PermissionType.BACKOFFICE_QUEUE_VIEW],
+    roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    requiredPermissions: {
+      [UserRole.BACKOFFICE]: {
+        permissions: [PermissionType.BACKOFFICE_QUEUE_VIEW],
+      },
+    },
   },
 
   // Admin Staff  - Only for admin
@@ -149,6 +154,7 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
     label: 'My Appointments',
     path: ROUTES.APPOINTMENT.path,
     roles: [UserRole.CLIENT],
+    elementId: 'tour-sidebar-myappointment',
   },
 
   // manage - Only for admin
@@ -169,81 +175,73 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
         icon: 'brain',
         label: 'Area of Focus',
         path: ROUTES.AREA_OF_FOCUS.path,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+        defaultPermissions: [UserRole.ADMIN],
+        requiredPermissions: {
+          [UserRole.BACKOFFICE]: {
+            permissions: [PermissionType.AREA_OF_FOCUS_VIEW],
+          },
+        },
       },
       {
         icon: 'widget',
         label: 'Widgets',
         path: ROUTES.REMINDER_WIDGETS.path,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+        defaultPermissions: [UserRole.ADMIN],
+        requiredPermissions: {
+          [UserRole.BACKOFFICE]: {
+            permissions: [PermissionType.WIDGETS_VIEW],
+          },
+        },
       },
       {
         icon: 'alertTag',
         label: 'Alert Tags',
         path: ROUTES.TAG.path,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+        defaultPermissions: [UserRole.ADMIN],
+        requiredPermissions: {
+          [UserRole.BACKOFFICE]: {
+            permissions: [PermissionType.ALERT_TAGS_VIEW],
+          },
+        },
       },
       {
         icon: 'sessionTag',
         label: 'Session Tags',
         path: ROUTES.SESSION_TAG.path,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+        defaultPermissions: [UserRole.ADMIN],
+        requiredPermissions: {
+          [UserRole.BACKOFFICE]: {
+            permissions: [PermissionType.SESSION_TAGS_VIEW],
+          },
+        },
       },
       {
         icon: 'clinicaddress',
         label: 'Clinic Addresses',
         path: ROUTES.CLINIC_ADDRESSES.path,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+        defaultPermissions: [UserRole.ADMIN],
+        requiredPermissions: {
+          [UserRole.BACKOFFICE]: {
+            permissions: [PermissionType.CLINIC_ADDRESSES_VIEW],
+          },
+        },
       },
       {
         icon: 'agreement',
         label: 'Agreement',
         path: ROUTES.AGREEMENT.path,
-        roles: [UserRole.ADMIN],
-      },
-      // Backoffice queue routes
-
-      {
-        icon: 'brain',
-        label: 'Area of Focus',
-        path: ROUTES.AREA_OF_FOCUS.path,
-        roles: [UserRole.BACKOFFICE],
-        requiredPermissions: [PermissionType.AREA_OF_FOCUS_VIEW],
-      },
-      {
-        icon: 'widget',
-        label: 'Widgets',
-        path: ROUTES.REMINDER_WIDGETS.path,
-        roles: [UserRole.BACKOFFICE],
-        requiredPermissions: [PermissionType.WIDGETS_VIEW],
-      },
-      {
-        icon: 'alertTag',
-        label: 'Alert Tags',
-        path: ROUTES.TAG.path,
-        roles: [UserRole.BACKOFFICE],
-        requiredPermissions: [PermissionType.ALERT_TAGS_VIEW],
-      },
-      {
-        icon: 'sessionTag',
-        label: 'Session Tags',
-        path: ROUTES.SESSION_TAG.path,
-        roles: [UserRole.BACKOFFICE],
-        requiredPermissions: [PermissionType.SESSION_TAGS_VIEW],
-      },
-      {
-        icon: 'clinicaddress',
-        label: 'Clinic Addresses',
-        path: ROUTES.CLINIC_ADDRESSES.path,
-        roles: [UserRole.BACKOFFICE],
-        requiredPermissions: [PermissionType.CLINIC_ADDRESSES_VIEW],
-      },
-      {
-        icon: 'agreement',
-        label: 'Agreement',
-        path: ROUTES.AGREEMENT.path,
-        roles: [UserRole.BACKOFFICE],
-        requiredPermissions: [PermissionType.AGREEMENTS_VIEW],
+        roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+        defaultPermissions: [UserRole.ADMIN],
+        requiredPermissions: {
+          [UserRole.BACKOFFICE]: {
+            permissions: [PermissionType.AGREEMENTS_VIEW],
+          },
+        },
       },
     ],
   },
@@ -252,15 +250,13 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
     icon: 'note',
     label: 'Assessment Forms',
     path: ROUTES.ASSESSMENT_FORM.path,
-    roles: [UserRole.ADMIN],
-  },
-
-  {
-    icon: 'note',
-    label: 'Assessment Forms',
-    path: ROUTES.ASSESSMENT_FORM.path,
-    roles: [UserRole.BACKOFFICE],
-    requiredPermissions: [PermissionType.ASSESSMENT_FORM_VIEW],
+    roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    requiredPermissions: {
+      [UserRole.BACKOFFICE]: {
+        permissions: [PermissionType.ASSESSMENT_FORM_VIEW],
+      },
+    },
   },
 
   {
@@ -273,21 +269,14 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
         icon: 'staffmanagement',
         label: 'Appointments Types',
         path: ROUTES.AMD_APPOINTMENTS_TYPES.path,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+        defaultPermissions: [UserRole.ADMIN],
+        requiredPermissions: {
+          [UserRole.BACKOFFICE]: {
+            permissions: [PermissionType.APPOINTMENT_TYPES_VIEW],
+          },
+        },
       },
-      {
-        icon: 'staffmanagement',
-        label: 'Appointments Types',
-        path: ROUTES.AMD_APPOINTMENTS_TYPES.path,
-        roles: [UserRole.BACKOFFICE],
-        requiredPermissions: [PermissionType.APPOINTMENT_TYPES_VIEW],
-      },
-      // {
-      //   icon: 'securityUser',
-      //   label: 'Logs',
-      //   path: ROUTES.AMD_LOGS.path,
-      //   roles: [UserRole.ADMIN],
-      // },
     ],
   },
 
@@ -295,16 +284,13 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
     icon: 'thirdPartyLog',
     label: 'Third Party Logs',
     path: ROUTES.THIRD_PARTY_API_LOGS.path,
-    roles: [UserRole.ADMIN],
-  },
-
-  // backoffice routes
-  {
-    icon: 'thirdPartyLog',
-    label: 'Third Party Logs',
-    path: ROUTES.THIRD_PARTY_API_LOGS.path,
-    roles: [UserRole.BACKOFFICE],
-    requiredPermissions: [PermissionType.THIRD_PARTY_LOGS_VIEW],
+    roles: [UserRole.ADMIN, UserRole.BACKOFFICE],
+    defaultPermissions: [UserRole.ADMIN],
+    requiredPermissions: {
+      [UserRole.BACKOFFICE]: {
+        permissions: [PermissionType.THIRD_PARTY_LOGS_VIEW],
+      },
+    },
   },
 
   // My Client - Only for therapist
@@ -329,6 +315,7 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
     label: 'Transactions',
     path: ROUTES.TRANSACTION.path,
     roles: [UserRole.CLIENT],
+    elementId: 'tour-sidebar-transaction',
   },
 
   // Chat - Available for all roles
@@ -352,12 +339,14 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
     label: 'Preferences',
     path: ROUTES.GENERAL_SETTING.path,
     roles: [UserRole.CLIENT],
+    elementId: 'tour-sidebar-preferences',
     childRoute: [
       {
         icon: 'generalsetting',
         label: 'General Setting',
         path: ROUTES.GENERAL_SETTING.path,
         roles: [UserRole.CLIENT],
+        elementId: 'tour-sidebar-generalsetting',
       },
       {
         icon: 'paymentmethod',
@@ -370,12 +359,14 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
         label: 'My Agreements',
         path: ROUTES.MY_AGREEMENTS.path,
         roles: [UserRole.CLIENT],
+        elementId: 'tour-sidebar-myagreement',
       },
       {
         icon: 'sessionducuments',
         label: 'Session Documents',
         path: ROUTES.SESSION_DOCUMENTS.path,
         roles: [UserRole.CLIENT],
+        elementId: 'tour-sidebar-sessionducuments',
       },
     ],
   },
@@ -385,8 +376,36 @@ export const getMenuItemsByRole = (
   userRole: string,
   userPermissions?: string[]
 ): SidebarMenuItem[] => {
-  const hasPermissions = (required?: string[]) =>
-    !required || (userPermissions && required.every(p => userPermissions.includes(p)));
+  const checkPermissions = (item: SidebarMenuItem): boolean => {
+    // Check if user has default permissions
+    if (item.defaultPermissions?.includes(userRole)) {
+      return true;
+    }
+
+    // Check required permissions
+    if (!item.requiredPermissions) {
+      return true;
+    }
+
+    // Handle array format (legacy)
+    if (Array.isArray(item.requiredPermissions)) {
+      const operator = item.permissionOperator || PERMISSION_OPERATOR.AND;
+      return operator === PERMISSION_OPERATOR.AND
+        ? item.requiredPermissions.every(p => userPermissions?.includes(p))
+        : item.requiredPermissions.some(p => userPermissions?.includes(p));
+    }
+
+    // Handle object format with role-specific permissions
+    const rolePermissions = item.requiredPermissions[userRole];
+    if (!rolePermissions) {
+      return true;
+    }
+
+    const { permissions, operator = PERMISSION_OPERATOR.AND } = rolePermissions;
+    return operator === PERMISSION_OPERATOR.AND
+      ? permissions.every(p => userPermissions?.includes(p))
+      : permissions.some(p => userPermissions?.includes(p));
+  };
 
   const filterMenuItems = (items: SidebarMenuItem[]): SidebarMenuItem[] => {
     return items
@@ -395,9 +414,10 @@ export const getMenuItemsByRole = (
         if (item.childRoute) {
           filteredChildren = filterMenuItems(item.childRoute);
         }
+
         const includeItem =
           item.roles.includes(userRole) &&
-          hasPermissions(item.requiredPermissions) &&
+          checkPermissions(item) &&
           (!item.childRoute || (filteredChildren && filteredChildren.length > 0));
 
         if (!includeItem) {

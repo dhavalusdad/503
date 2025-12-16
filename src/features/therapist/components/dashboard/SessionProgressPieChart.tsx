@@ -12,11 +12,11 @@ const KEYS = {
 };
 
 const KEY_LABELS = {
-  [KEYS.LESS]: { label: '11 & Below Sessions', color: '#14B8A6' },
-  [KEYS.MEDIUM]: { label: '12 - 17 Sessions', color: '#FACC15' },
-  [KEYS.MORE]: { label: '18 - 24 Sessions', color: '#F59E0B' },
-  [KEYS.TOO_MUCH]: { label: '25 & Above Sessions', color: '#FF513F' },
-  [KEYS.LONG_TERM]: { label: 'Long Term Clients', color: '#AC87C5' },
+  [KEYS.LESS]: { label: '11 & Below Sessions', color: '#1B8846' },
+  [KEYS.MEDIUM]: { label: '12 - 17 Sessions', color: '#BAD4B7' },
+  [KEYS.MORE]: { label: '18 - 24 Sessions', color: '#BABA9E' },
+  [KEYS.TOO_MUCH]: { label: '25 & Above Sessions', color: '#43573C' },
+  [KEYS.LONG_TERM]: { label: 'Long Term Clients', color: '#A270E3' },
 };
 export const SessionProgressPieChart = () => {
   const { data, isFetching } = useGetTherapistSessionEngagementData();

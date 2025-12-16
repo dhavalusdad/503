@@ -26,10 +26,15 @@ const AdminPatientSelection: React.FC<AdminPatientSelectionProps> = ({
   isRequired = false,
 }) => {
   const loadOptions = useCallback(
-    (page: number, searchTerm: string) =>
-      getClientListForAdmin(page, searchTerm, {
-        carrier: carrier,
-      }),
+    (page: number, searchTerm: string) => {
+      try {
+        return getClientListForAdmin(page, searchTerm, {
+          carrier: carrier,
+        });
+      } catch (error) {
+        console.error({ error });
+      }
+    },
     [carrier]
   );
 

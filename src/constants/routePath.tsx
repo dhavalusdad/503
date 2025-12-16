@@ -1,18 +1,20 @@
 import React from 'react';
 
+import { UserRole } from '@/api/types/user.dto';
+import { PermissionType } from '@/enums';
 import DynamicFormBuilder from '@/features/admin/components/DynamicFormBuilder';
 import CancelAppointment from '@/features/appointment/component/ClientAppointmentsBooking/CancelAppointment';
 import GeneralAgreement from '@/pages/GeneralAgreement';
 import EditFormResponse from '@/pages/Preferences/EditFormResponse';
 import PublicForm from '@/pages/PublicForm';
-import { CreateMeeting } from '@/pages/video-call/CreateMeeting';
+
+import { DEPENDENT_PERMISSIONS } from './permission.constant';
 
 import type { RouteObject } from 'react-router-dom';
 
 const ClientAgreementDetail = React.lazy(
   () => import('@/features/client/components/ClientAgreement/ClientAgreementDetail')
 );
-const CredentialingItemPage = React.lazy(() => import('@/pages/Management/CredentialingItem'));
 const AddEditCredentialingItem = React.lazy(
   () => import('@/pages/Management/CredentialingItem/AddAndEditCredentialLIstingItems')
 );
@@ -24,15 +26,18 @@ const Backoffice = React.lazy(() => import('@/pages/Admin/Backoffice'));
 const Settings = React.lazy(() => import('@/pages/Settings'));
 const Profile = React.lazy(() => import('@/pages/Profile'));
 const ClientListing = React.lazy(() => import('@/pages/Client'));
-const Appointment = React.lazy(() => import('@/pages/Appointment'));
-const BookAppointment = React.lazy(() => import('@/pages/Appointment/BookAppointment'));
+const Appointment = React.lazy(() =>
+  import('@/pages/Appointment').then(module => ({ default: module.Appointment }))
+);
+const BookAppointment = React.lazy(() =>
+  import('@/pages/Appointment').then(module => ({ default: module.BookAppointment }))
+);
 const BookSlot = React.lazy(
   () => import('@/features/appointment/component/ClientAppointmentsBooking/BookSlot')
 );
 const BookAppointmentDetails = React.lazy(
   () => import('@/features/appointment/component/ClientAppointmentsBooking/BookAppointmentDetails')
 );
-const AdminBookAppointment = React.lazy(() => import('@/pages/Admin/Appointment/BookAppointment'));
 const Login = React.lazy(() => import('@/pages/Login'));
 const Register = React.lazy(() => import('@/pages/Login'));
 const Forgot = React.lazy(() => import('@/pages/Login'));
@@ -54,7 +59,6 @@ const GeneralSetting = React.lazy(() => import('@/pages/Preferences/GeneralSetti
 const MyAgreements = React.lazy(() => import('@/pages/Preferences/MyAgreements'));
 const AmdSafetyPlan = React.lazy(() => import('@/pages/Therapist/Myclient/'));
 const SessionDocuments = React.lazy(() => import('@/pages/Preferences/SessionDocuments'));
-const AdminSettings = React.lazy(() => import('@/pages/Admin/Settings'));
 const Transaction = React.lazy(() => import('@/pages/Transaction'));
 const ClientManagement = React.lazy(() => import('@/pages/Admin/ClientManagement'));
 const ViewTherapistDetails = React.lazy(() => import('@/pages/Admin/TherapistDetailsPage'));
@@ -68,9 +72,6 @@ const ViewStaffDetails = React.lazy(() => import('@/pages/Admin/StaffManagement/
 const RolesPermissions = React.lazy(() => import('@/pages/Admin/RolePermission/RolesPermissions'));
 const AppointmentListView = React.lazy(
   () => import('@/pages/Appointment/components/AppointmentView')
-);
-const AssessmentFormDetails = React.lazy(
-  () => import('@/features/admin/components/clientManagement/components/AssessmentFormsDetails')
 );
 const AreaOfFocus = React.lazy(() => import('@/pages/Management/AreaOfFocus'));
 const ReminderWidgets = React.lazy(() => import('@/pages/Management/ReminderWidgets'));
@@ -111,6 +112,33 @@ const ThirdPartyApiLogDetail = React.lazy(
 
 const TransactionDetails = React.lazy(() => import('@/pages/Admin/Transactions/TransactionView'));
 const NotFound = React.lazy(() => import('@/components/common/NotFound/index'));
+const NotAuthorized = React.lazy(() => import('@/pages/NotAuthorized'));
+
+export type RouteObjectValueType = {
+  path: string;
+  headerName?: string;
+  routeType: 'public' | 'un-authenticate' | 'authenticate';
+  isHeaderVisible?: boolean;
+  isFooterVisible?: boolean;
+  element: RouteObject['element'];
+  errorElement?: RouteObject['errorElement'];
+  displayName?: string;
+  permissions?: {
+    list: string[];
+    operator?: 'AND' | 'OR';
+  };
+  breadcrumb?: {
+    label?: string | ((searchParams: URLSearchParams) => string);
+    isActive?: boolean;
+    path?: string;
+    pathIdName?: string;
+  }[];
+  role?: UserRole[];
+};
+
+export const ROUTE_BASE_PATH = {
+  DASHBOARD: '/dashboard',
+};
 
 export type RoutesType = {
   [key in
@@ -129,7 +157,6 @@ export type RoutesType = {
     | 'ADMIN_BOOK_APPOINTMENT_DETAIL'
     | 'BOOK_SLOT'
     | 'BOOK_APPOINTMENTS_DETAILS'
-    | 'CLIENT'
     | 'MY_CLIENT'
     | 'MY_CLIENT_DETAIL'
     | 'WELLNESS_DETAIL'
@@ -162,8 +189,6 @@ export type RoutesType = {
     | 'MY_AGREEMENTS'
     | 'MY_AGREEMENTS_DETAIL'
     | 'SESSION_DOCUMENTS'
-    | 'ADMIN_STAFF'
-    | 'MANAGEMENT'
     | 'ADMIN_SETTINGS'
     | 'VIEW_THERAPIST_DETAILS'
     | 'THERAPIST_MANAGEMENT'
@@ -176,7 +201,6 @@ export type RoutesType = {
     | 'EDIT_STAFF_MEMBER'
     | 'CLIENT_MANAGEMENT_DETAILS'
     | 'ROLE_PERMISSION'
-    | 'ASSESSMENT_FORM_DETAILS'
     | 'EDIT_CLIENT'
     | 'AREA_OF_FOCUS'
     | 'REMINDER_WIDGETS'
@@ -187,7 +211,6 @@ export type RoutesType = {
     | 'APPOINTMENT_VIEW'
     | 'QUEUE_DETAILS_VIEW'
     | 'THERAPIST_APPOINTMENT_LIST'
-    | 'CREATE_MEETING'
     | 'JOIN_APPOINTMENT'
     | 'ROOM'
     | 'MEETING_LEFT'
@@ -198,9 +221,7 @@ export type RoutesType = {
     | 'REQUEST_SLOT'
     | 'ADD_CLIENT'
     | 'SET_STAFF_PASSWORD'
-    | 'REQUEST_SLOT'
     | 'ASSESSMENT_FORM'
-    | 'ADD_ASSESSMENT_FORM'
     | 'EDIT_ASSESSMENT_FORM'
     | 'EDIT_FORM_RESPONSE'
     | 'SUBMIT_FORM_RESPONSE'
@@ -214,31 +235,16 @@ export type RoutesType = {
     | 'CANCEL_APPOINTMENT'
     | 'VIEW_FORM_RESPONSE'
     | 'VIEW_FORM_RESPONSE_ADMIN'
-    | 'CREDENTIALING'
     | 'ADD_CREDENTIALING_ITEM'
     | 'EDIT_CREDENTIALING_ITEM'
     | 'VIEW_FORM_RESPONSE_THERAPIST'
     | 'THIRD_PARTY_API_LOGS'
     | 'THIRD_PARTY_API_LOGS_DETAILS'
-    | 'THERAPIST_ADD_CREDENTIALING_ITEM'
     | 'TRANSACTION_DETAILS'
     | 'STAFF_PROFILE'
-    | 'AMD_SAFETY_PLAN']: {
-    path: string;
-    headerName?: string;
-    routeType: 'public' | 'un-authenticate' | 'authenticate';
-    isHeaderVisible?: boolean;
-    isFooterVisible?: boolean;
-    element: RouteObject['element'];
-    errorElement?: RouteObject['errorElement'];
-    displayName?: string;
-    breadcrumb?: {
-      label?: string | ((searchParams: URLSearchParams) => string);
-      isActive?: boolean;
-      path?: string;
-      pathIdName?: string;
-    }[];
-  };
+    | 'AMD_SAFETY_PLAN'
+    | 'NOT_AUTHORIZED'
+    | 'UNKNOWN']: RouteObjectValueType;
 } & {
   [key in
     | 'STAFF_MANAGEMENT_DETAILS'
@@ -377,7 +383,7 @@ export const ROUTES: RoutesType = {
 
   //PROFILE ROUTES
   CLIENT_PROFILE: {
-    path: '/client/profile',
+    path: '/profile',
     routeType: 'authenticate',
     headerName: 'Profile',
     element: <Profile />,
@@ -387,9 +393,10 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    role: [UserRole.CLIENT],
   },
   THERAPIST_PROFILE: {
-    path: '/therapist/profile',
+    path: '/profile',
     routeType: 'authenticate',
     headerName: 'Profile',
     element: <Profile />,
@@ -399,9 +406,10 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    role: [UserRole.THERAPIST],
   },
   ADMIN_PROFILE: {
-    path: '/admin/profile',
+    path: '/profile',
     routeType: 'authenticate',
     headerName: 'Profile',
     element: <Profile />,
@@ -411,26 +419,31 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    role: [UserRole.ADMIN, UserRole.BACKOFFICE],
   },
 
   //DASHBOARD ROUTES
+
   CLIENT_DASHBOARD: {
-    path: '/client/dashboard',
+    path: ROUTE_BASE_PATH.DASHBOARD,
     routeType: 'authenticate',
     headerName: 'Dashboard',
     element: <Dashboard />,
+    role: [UserRole.CLIENT],
   },
   THERAPIST_DASHBOARD: {
-    path: '/therapist/dashboard',
+    path: ROUTE_BASE_PATH.DASHBOARD,
     routeType: 'authenticate',
     headerName: 'Dashboard',
     element: <Dashboard />,
+    role: [UserRole.THERAPIST],
   },
   ADMIN_DASHBOARD: {
-    path: '/admin/dashboard',
+    path: ROUTE_BASE_PATH.DASHBOARD,
     routeType: 'authenticate',
     headerName: 'Dashboard',
     element: <Dashboard />,
+    role: [UserRole.ADMIN, UserRole.BACKOFFICE],
   },
   ADMIN_BACKOFFICE_QUEUE: {
     path: '/backoffice-queue',
@@ -443,6 +456,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.BACKOFFICE_QUEUE_VIEW],
+    },
   },
 
   APPOINTMENT: {
@@ -456,6 +472,12 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.APPOINTMENT_VIEW,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.APPOINTMENT_VIEW].allow ?? []),
+      ],
+    },
   },
   ASSESSMENT_FORM: {
     path: '/assessment-form',
@@ -468,18 +490,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
-  },
-  ADD_ASSESSMENT_FORM: {
-    path: '/assessment-form/add',
-    routeType: 'authenticate',
-    headerName: 'Assessment Form',
-    element: <DynamicFormBuilder />,
-    breadcrumb: [
-      {
-        label: 'Assessment Form',
-        isActive: true,
-      },
-    ],
+    permissions: {
+      list: [PermissionType.ASSESSMENT_FORM_VIEW],
+    },
   },
   EDIT_ASSESSMENT_FORM: {
     path: '/assessment-form/edit/:id',
@@ -498,44 +511,13 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.ASSESSMENT_FORM_EDIT,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.ASSESSMENT_FORM_EDIT].allow ?? []),
+      ],
+    },
   },
-
-  // CLIENT_APPOINTMENT: {
-  //   path: '/client/appointments',
-  //   routeType: 'authenticate',
-  //   headerName: 'Appointment',
-  //   element: <Appointment />,
-  //   breadcrumb: [
-  //     {
-  //       label: 'Appointment',
-  //       isActive: true,
-  //     },
-  //   ],
-  // },
-  // THERAPIST_APPOINTMENT: {
-  //   path: '/therapist/appointments',
-  //   routeType: 'authenticate',
-  //   headerName: 'Appointment',
-  //   element: <Appointment />,
-  //   breadcrumb: [
-  //     {
-  //       label: 'Appointment',
-  //       isActive: true,
-  //     },
-  //   ],
-  // },
-  // ADMIN_APPOINTMENT: {
-  //   path: '/admin/appointments',
-  //   routeType: 'authenticate',
-  //   headerName: 'Appointment',
-  //   element: <Appointment />,
-  //   breadcrumb: [
-  //     {
-  //       label: 'Appointment',
-  //       isActive: true,
-  //     },
-  //   ],
-  // },
   BOOK_APPOINTMENT: {
     path: '/appointment/book-appointment',
     routeType: 'authenticate',
@@ -552,12 +534,13 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    role: [UserRole.CLIENT],
   },
   ADMIN_BOOK_APPOINTMENT: {
-    path: '/appointment/admin/book-appointment',
+    path: '/appointment/book-appointment',
     routeType: 'authenticate',
     headerName: 'Book Appointment',
-    element: <AdminBookAppointment />,
+    element: <BookAppointment />,
     breadcrumb: [
       {
         label: 'Appointment',
@@ -566,13 +549,19 @@ export const ROUTES: RoutesType = {
       },
       {
         label: 'Book Appointment',
-        isActive: false,
-        path: '/admin/book-appointment',
+        isActive: true,
       },
     ],
+    role: [UserRole.BACKOFFICE, UserRole.ADMIN],
+    permissions: {
+      list: [
+        PermissionType.APPOINTMENT_ADD,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.APPOINTMENT_ADD].allow ?? []),
+      ],
+    },
   },
   ADMIN_BOOK_APPOINTMENT_DETAIL: {
-    path: '/admin/appointment/book-appointments-details',
+    path: '/appointment/book-appointments-details',
     routeType: 'authenticate',
     headerName: 'Book Appointment',
     element: <BookAppointmentDetails />,
@@ -585,13 +574,20 @@ export const ROUTES: RoutesType = {
       {
         label: 'Book an Appointment',
         isActive: false,
-        path: '/admin/book-appointment',
+        path: '/appointment/book-appointment',
       },
       {
         label: 'Book slot',
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.APPOINTMENT_ADD,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.APPOINTMENT_ADD].allow ?? []),
+      ],
+    },
+    role: [UserRole.BACKOFFICE, UserRole.ADMIN],
   },
   BOOK_SLOT: {
     path: '/appointment/book-appointment/book-slot/:id',
@@ -616,7 +612,7 @@ export const ROUTES: RoutesType = {
     ],
   },
   BOOK_APPOINTMENTS_DETAILS: {
-    path: '/appointment/book-slot/book-appointments-details',
+    path: '/appointment/book-appointments-details',
     routeType: 'authenticate',
     headerName: 'Book Appointment',
     element: <BookAppointmentDetails />,
@@ -637,12 +633,7 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
-  },
-  CLIENT: {
-    path: '/client',
-    routeType: 'authenticate',
-    headerName: 'Client',
-    element: <ClientListing />,
+    role: [UserRole.CLIENT],
   },
   MY_CLIENT: {
     path: '/my-client',
@@ -691,7 +682,7 @@ export const ROUTES: RoutesType = {
         isActive: false,
       },
       {
-        label: 'safety plan',
+        label: 'Safety plan',
         isActive: true,
       },
     ],
@@ -882,6 +873,9 @@ export const ROUTES: RoutesType = {
         path: '/client-management',
       },
     ],
+    permissions: {
+      list: [PermissionType.ASSESSMENT_FORM_VIEW],
+    },
   },
   VIEW_FORM_RESPONSE_THERAPIST: {
     path: '/my-client/:id/view-form-response/:editId',
@@ -954,21 +948,26 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    role: [UserRole.THERAPIST, UserRole.CLIENT],
   },
   ADMIN_SETTINGS: {
-    path: '/admin/settings',
+    path: '/settings',
     routeType: 'authenticate',
     headerName: 'Settings',
-    element: <AdminSettings />,
+    element: <Settings />,
+    role: [UserRole.ADMIN, UserRole.BACKOFFICE],
   },
   TRANSACTION: {
     path: '/transaction',
     routeType: 'authenticate',
-    headerName: 'Transaction',
+    headerName: 'Transactions',
     element: <Transaction />,
+    permissions: {
+      list: [PermissionType.TRANSACTIONS_VIEW],
+    },
     breadcrumb: [
       {
-        label: 'Transaction',
+        label: 'Transactions',
         isActive: true,
       },
     ],
@@ -978,27 +977,12 @@ export const ROUTES: RoutesType = {
     routeType: 'authenticate',
     headerName: 'Client Management',
     element: <ClientManagement />,
+    permissions: {
+      list: [PermissionType.PATIENT_VIEW],
+    },
     breadcrumb: [
       {
         label: 'Client Management',
-        isActive: true,
-      },
-    ],
-  },
-  CLIENT_MANAGEMENT_DETAILS: {
-    path: '/client-management/:id',
-    navigatePath: id => `/client-management/${id}`,
-    routeType: 'authenticate',
-    headerName: 'Client Management Details',
-    element: <ClientManagementDetails />,
-    breadcrumb: [
-      {
-        label: 'Client Management',
-        isActive: false,
-        path: '/client-management',
-      },
-      {
-        label: 'Client Details',
         isActive: true,
       },
     ],
@@ -1019,6 +1003,12 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.PATIENT_ADD,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.PATIENT_ADD].allow ?? []),
+      ],
+    },
   },
   EDIT_CLIENT: {
     path: '/client-management/edit-client/:client_id',
@@ -1036,18 +1026,45 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.PATIENT_EDIT,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.PATIENT_EDIT].allow ?? []),
+      ],
+    },
   },
-  ASSESSMENT_FORM_DETAILS: {
-    path: '/user-management-details/assessment-form-details',
+  CLIENT_MANAGEMENT_DETAILS: {
+    path: '/client-management/:id',
+    navigatePath: id => `/client-management/${id}`,
     routeType: 'authenticate',
-    headerName: 'User Management',
-    element: <AssessmentFormDetails />,
+    headerName: 'Client Management Details',
+    element: <ClientManagementDetails />,
+    breadcrumb: [
+      {
+        label: 'Client Management',
+        isActive: false,
+        path: '/client-management',
+      },
+      {
+        label: 'Client Details',
+        isActive: true,
+      },
+    ],
+    permissions: {
+      list: [
+        PermissionType.PATIENT_VIEW,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.PATIENT_VIEW].allow ?? []),
+      ],
+    },
   },
   THERAPIST_MANAGEMENT: {
     path: '/therapist-management',
     routeType: 'authenticate',
     headerName: 'Therapist Management',
     element: <TherapistManagement />,
+    permissions: {
+      list: [PermissionType.THERAPIST_VIEW],
+    },
     breadcrumb: [
       {
         label: 'Therapist Management',
@@ -1088,6 +1105,12 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.THERAPIST_EDIT,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.THERAPIST_EDIT].allow ?? []),
+      ],
+    },
   },
   VIEW_THERAPIST_DETAILS: {
     path: '/therapist-management/view-therapist/:therapist_id',
@@ -1106,6 +1129,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.THERAPIST_VIEW],
+    },
   },
   THERAPIST_APPOINTMENT_LIST: {
     path: '/therapist-management/view-therapist/:therapist_id/appointments',
@@ -1129,20 +1155,13 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.THERAPIST_VIEW, PermissionType.APPOINTMENT_VIEW],
+    },
   },
 
-  MANAGEMENT: {
-    path: '/management',
-    routeType: 'authenticate',
-    headerName: 'Management',
-    element: <>Management</>,
-  },
-  ADMIN_STAFF: {
-    path: '/staff',
-    routeType: 'authenticate',
-    headerName: 'Admin Staff',
-    element: <>Admin Staff</>,
-  },
+  // ================================
+
   STAFF_PROFILE: {
     path: '/staff/profile',
     routeType: 'authenticate',
@@ -1249,6 +1268,12 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.APPOINTMENT_VIEW,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.THIRD_PARTY_LOGS_VIEW].allow ?? []),
+      ],
+    },
   },
   QUEUE_DETAILS_VIEW: {
     headerName: 'Request Details',
@@ -1267,6 +1292,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.BACKOFFICE_QUEUE_VIEW],
+    },
   },
   REQUEST_SLOT: {
     path: '/appointment/request-slot/:id',
@@ -1296,6 +1324,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.AREA_OF_FOCUS_VIEW],
+    },
   },
   TAG: {
     path: '/management/tag',
@@ -1308,6 +1339,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.ALERT_TAGS_VIEW],
+    },
   },
   SESSION_TAG: {
     path: '/management/session-tag',
@@ -1320,6 +1354,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.SESSION_TAGS_VIEW],
+    },
   },
   CLINIC_ADDRESSES: {
     path: '/management/clinic-addresses',
@@ -1332,6 +1369,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.CLINIC_ADDRESSES_VIEW],
+    },
   },
   AGREEMENT: {
     path: '/management/agreement',
@@ -1344,29 +1384,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
-  },
-  CREDENTIALING: {
-    path: '/therapist-management/:therapist_id/credentialing-item',
-    routeType: 'authenticate',
-    headerName: 'Credentialing Item',
-    element: <CredentialingItemPage />,
-    breadcrumb: [
-      {
-        label: 'Therapist Management',
-        isActive: false,
-        path: '/therapist-management',
-      },
-      {
-        label: 'View Therapist',
-        isActive: false,
-        path: '/therapist-management/view-therapist/:therapist_id',
-        pathIdName: 'therapist_id',
-      },
-      {
-        label: 'Credentialing Item',
-        isActive: true,
-      },
-    ],
+    permissions: {
+      list: [PermissionType.AGREEMENTS_VIEW],
+    },
   },
   ADD_CREDENTIALING_ITEM: {
     path: '/therapist-management/edit-therapist/:therapist_id/credentialing-item/add',
@@ -1390,26 +1410,11 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.THERAPIST_EDIT, PermissionType.THERAPIST_VIEW],
+    },
   },
 
-  THERAPIST_ADD_CREDENTIALING_ITEM: {
-    path: '/therapist/profile/credentialing-item/add',
-    routeType: 'authenticate',
-    headerName: 'Credentialing Item',
-    element: <AddEditCredentialingItem />,
-    breadcrumb: [
-      {
-        label: 'Therapist Profile',
-        isActive: false,
-        path: '/therapist/profile?active_tab=Credential Items',
-        pathIdName: 'therapist_id',
-      },
-      {
-        label: 'Add Credentialing Item',
-        isActive: true,
-      },
-    ],
-  },
   EDIT_CREDENTIALING_ITEM: {
     path: '/therapist-management/:therapist_id/credentialing-item/:id',
     navigatePath: (therapist_id: string | number, id: string | number) =>
@@ -1435,60 +1440,10 @@ export const ROUTES: RoutesType = {
         pathIdName: 'id',
       },
     ],
+    permissions: {
+      list: [PermissionType.THERAPIST_EDIT, PermissionType.THERAPIST_VIEW],
+    },
   },
-  // CARRIER_NAME: {
-  //   path: '/management/carrier-name',
-  //   routeType: 'authenticate',
-  //   headerName: 'Carrier Name',
-  //   element: <CarrierNamePage />,
-  // },
-  // STATE_NAME: {
-  //   path: '/management/state-name',
-  //   routeType: 'authenticate',
-  //   headerName: 'State Management',
-  //   element: <StateNamePage />,
-  // },
-  // CREDENTIALING: {
-  //   path: '/therapist-management/credentialing-item',
-  //   routeType: 'authenticate',
-  //   headerName: 'Credentialing Item',
-  //   element: <CredentialingItemPage />,
-  // },
-  // ADD_CREDENTIALING_ITEM: {
-  //   path: '/therapist-management/credentialing-item/add',
-  //   routeType: 'authenticate',
-  //   headerName: 'Credentialing Item',
-  //   element: <AddEditCredentialingItem />,
-  //   breadcrumb: [
-  //     {
-  //       label: 'Therapist Management',
-  //       isActive: false,
-  //       path: '/therapist-management',
-  //     },
-  //     {
-  //       label: 'Add Credentialing Item',
-  //       isActive: true,
-  //     },
-  //   ],
-  // },
-  // EDIT_CREDENTIALING_ITEM: {
-  //   path: '/therapist-management/credentialing-item/:id',
-  //   navigatePath: id => `/therapist-management/credentialing-item/${id}`,
-  //   routeType: 'authenticate',
-  //   headerName: 'Credentialing Item',
-  //   element: <AddEditCredentialingItem />,
-  //   breadcrumb: [
-  //     {
-  //       label: 'Therapist Management',
-  //       isActive: false,
-  //       path: '/therapist-management',
-  //     },
-  //     {
-  //       label: 'Edit Credentialing Item',
-  //       isActive: true,
-  //     },
-  //   ],
-  // },
   REMINDER_WIDGETS: {
     path: '/management/reminder-widgets',
     routeType: 'authenticate',
@@ -1500,12 +1455,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
-  },
-  CREATE_MEETING: {
-    path: '/create-meeting',
-    routeType: 'public',
-    headerName: 'Create Meeting',
-    element: <CreateMeeting />,
+    permissions: {
+      list: [PermissionType.WIDGETS_VIEW],
+    },
   },
   JOIN_APPOINTMENT: {
     path: '/join-appointment/:roomId',
@@ -1582,6 +1534,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.APPOINTMENT_TYPES_VIEW],
+    },
   },
   INTAKE_FORM: {
     path: '/my-client/:id/amd',
@@ -1643,6 +1598,12 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [
+        PermissionType.THIRD_PARTY_LOGS_VIEW,
+        ...(DEPENDENT_PERMISSIONS[PermissionType.THIRD_PARTY_LOGS_VIEW].allow ?? []),
+      ],
+    },
   },
   // THIRD_PARTY_API_LOGS_DETAILS: {
   //   path: '/third-party-api-logs/:id',
@@ -1680,6 +1641,9 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.THIRD_PARTY_LOGS_VIEW],
+    },
   },
 
   TRANSACTION_DETAILS: {
@@ -1699,8 +1663,21 @@ export const ROUTES: RoutesType = {
         isActive: true,
       },
     ],
+    permissions: {
+      list: [PermissionType.TRANSACTIONS_VIEW],
+    },
+  },
+  NOT_AUTHORIZED: {
+    path: '/not-authorized',
+    routeType: 'public',
+    element: <NotAuthorized />,
   },
   NOT_FOUND: {
+    path: '/not-found',
+    routeType: 'public',
+    element: <NotFound />,
+  },
+  UNKNOWN: {
     path: '*',
     routeType: 'public',
     element: <NotFound />,

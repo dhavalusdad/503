@@ -10,19 +10,17 @@ import {
   type Path,
   type PathValue,
 } from 'react-hook-form';
-import { useSelector } from 'react-redux';
 
-import { getInfiniteStaffAsync } from '@/api/staff';
-import { UserRole } from '@/api/types/user.dto';
 import { getFilterValidationSchema } from '@/components/layout/Filter/validation-schema';
 import { FIELD_TYPE } from '@/constants/CommonConstant';
 import type { OptionType } from '@/features/calendar/types';
-import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
 import Image from '@/stories/Common/Image';
 import InputField from '@/stories/Common/Input';
+import { NumberField } from '@/stories/Common/NumberField';
 import Select, { CustomAsyncSelect } from '@/stories/Common/Select';
+
 export type CommonFilterField<T extends FieldValues> =
   | {
       type: typeof FIELD_TYPE.DATE_RANGE;
@@ -118,8 +116,6 @@ const CommonFilter = <T extends FieldValues>({
   onClose,
   buttonRef,
 }: CommonFilterProps<T>) => {
-  const { role } = useSelector(currentUser);
-
   // ** Validation Schema **
   const filterSchema = useMemo(() => {
     const schema = getFilterValidationSchema(fields);
@@ -187,7 +183,7 @@ const CommonFilter = <T extends FieldValues>({
   return (
     <div
       ref={ref}
-      className='absolute md:right-0 left-0 md:left-auto z-10 mt-2 sm:min-w-438px min-w-260px bg-white rounded-lg sm:p-5 px-3 py-5 border border-solid border-surface shadow-dropdown'
+      className='absolute md:right-0 left-0 md:left-auto z-10 mt-2 sm:min-w-438px min-w-260px bg-white rounded-20px sm:p-5 px-3 py-5 border border-solid border-surface shadow-dropdown'
     >
       <div className='flex flex-col gap-5'>
         {fields.map(field => {
@@ -250,67 +246,6 @@ const CommonFilter = <T extends FieldValues>({
                   value={values[field.name]}
                 />
               );
-
-            case FIELD_TYPE.REQUEST_TYPE:
-              return (
-                <Select
-                  key={field.name}
-                  name={field.name}
-                  label={field.label}
-                  options={field.options}
-                  isMulti={field.isMulti}
-                  onChange={selected => {
-                    setFormValue(field.name, selected);
-                  }}
-                  placeholder={`Select ${field.label}`}
-                  labelClassName='!text-base'
-                  StylesConfig={{
-                    control: () => ({
-                      minHeight: '50px',
-                    }),
-                    singleValue: () => ({
-                      fontSize: '16px',
-                    }),
-                    option: () => ({
-                      fontSize: '16px',
-                    }),
-                  }}
-                  isClearable
-                  value={values[field.name]}
-                />
-              );
-            case FIELD_TYPE.ASSIGNEE: {
-              return (
-                role === UserRole.ADMIN && (
-                  <CustomAsyncSelect
-                    key={field.name}
-                    name={field.name}
-                    label={field.label}
-                    queryKey={'backoffice-staff-list'}
-                    loadOptions={(page, searchTerm) => getInfiniteStaffAsync(page, searchTerm)}
-                    isMulti={field.isMulti}
-                    onChange={selected => {
-                      setFormValue(field.name, selected);
-                    }}
-                    placeholder={`Select ${field.label}`}
-                    labelClassName='!text-base'
-                    StylesConfig={{
-                      control: () => ({
-                        minHeight: '50px',
-                      }),
-                      singleValue: () => ({
-                        fontSize: '16px',
-                      }),
-                      option: () => ({
-                        fontSize: '16px',
-                      }),
-                    }}
-                    isClearable
-                    value={values[field.name]}
-                  />
-                )
-              );
-            }
 
             case FIELD_TYPE.TEXT:
               return (
@@ -400,9 +335,8 @@ const CommonFilter = <T extends FieldValues>({
                     {field.label}
                   </span>
                   <div className='flex items-center gap-2'>
-                    <InputField
+                    <NumberField
                       key={`${field.name}_min`}
-                      type='number'
                       min={0}
                       placeholder='Enter Min'
                       value={values[field.name]?.min ?? ''}
@@ -421,17 +355,13 @@ const CommonFilter = <T extends FieldValues>({
                     <span className='text-blackdark text-base font-normal mb-1.5 block leading-22px'>
                       to
                     </span>
-                    <InputField
+                    <NumberField
                       key={`${field.name}_max`}
-                      type='number'
                       placeholder='Enter Max'
                       min={values[field.name]?.min + 1 || 0}
                       value={values[field.name]?.max ?? ''}
                       onChange={e => {
-                        const maxVal =
-                          e.target.value === '' || e.target.value < values[field.name]?.min
-                            ? null
-                            : Number(e.target.value);
+                        const maxVal = e.target.value === '' ? null : Number(e.target.value);
                         setFormValue(field.name, {
                           ...values[field.name],
                           max: maxVal,
@@ -443,7 +373,6 @@ const CommonFilter = <T extends FieldValues>({
                   <p className='text-red-500 text-xs mt-1'>{errors?.[field?.name]?.message}</p>
                 </div>
               );
-
             default:
               return null;
           }

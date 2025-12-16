@@ -25,7 +25,7 @@ export const ActionMenu = ({
   if (textType) {
     return (
       <span
-        className='hover:text-primary hover:underline cursor-pointer underline-offset-2 block'
+        className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
         onClick={() => navigate(`${ROUTES_BASE_PATH.APPOINTMENT_VIEW.path}/${appointmentId}`)}
       >
         {appointmentId}

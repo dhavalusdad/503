@@ -1,2 +1,2 @@
-export { LeftContent } from './Login/LeftContent';
-export { RightContent } from './Login/RightContent';
+export { LeftContent } from '@/features/therapist/components/Login/LeftContent';
+export { RightContent } from '@/features/therapist/components/Login/RightContent';

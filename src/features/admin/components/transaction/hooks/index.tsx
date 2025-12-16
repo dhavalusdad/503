@@ -9,11 +9,15 @@ import { useTransactionList } from '@/api/transaction';
 import { UserRole } from '@/api/types/user.dto';
 import type { DateRangeFilterObjType } from '@/components/layout/Filter/types';
 import { ROUTES } from '@/constants/routePath';
-import { TransactionStatus } from '@/enums';
-import { StatusBadge } from '@/features/admin/components/transaction/components/StatusBadge';
+import { TransactionStatus, TransactionType, PermissionType } from '@/enums';
+import {
+  StatusBadge,
+  TransactionStatusBadge,
+} from '@/features/admin/components/transaction/components/StatusBadge';
 import type { Transaction } from '@/features/admin/components/transaction/types';
 import type { OptionType } from '@/features/calendar/types';
 import { isAdminPanelRole } from '@/helper';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { currentUser } from '@/redux/ducks/user';
 import { ActionDropDown } from '@/stories/Common/ActionDropDown';
 import { useTableManagement } from '@/stories/Common/Table/hook';
@@ -37,6 +41,7 @@ interface approvalModalType {
 const useTransaction = (filters: TransactionFilterType = {}) => {
   const { timezone, role, client_id = '' } = useSelector(currentUser);
   const navigate = useNavigate();
+  const { hasPermission } = useRoleBasedRouting();
 
   const [toggleDeclineModal, setToggleDeclineModal] = useState<approvalModalType>({
     isModalOpen: false,
@@ -44,6 +49,11 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
   });
 
   const [toggleApprovalModal, setToggleApprovalModal] = useState<approvalModalType>({
+    isModalOpen: false,
+    transaction_id: null,
+  });
+
+  const [toggleRefundModal, setToggleRefundModal] = useState<approvalModalType>({
     isModalOpen: false,
     transaction_id: null,
   });
@@ -129,21 +139,52 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
         ]
       : []),
     {
-      accessorKey: 'transaction_type',
-      header: 'Type',
-      cell: ({ row }) => <>{row.original.transaction_type}</>,
-    },
-    {
       accessorKey: 'amount',
       header: 'Amount',
       cell: ({ row }) => <>{row.original.amount}</>,
     },
     {
+      accessorKey: 'transaction_type',
+      header: 'Type',
+      meta: {
+        sortingThClassName: '!justify-center',
+        cellClassName: 'text-center',
+      },
+      cell: ({ row }) => {
+        return <TransactionStatusBadge status={row.original.transaction_type} />;
+      },
+    },
+
+    {
       accessorKey: 'status',
       header: 'Status',
+      meta: {
+        sortingThClassName: '!justify-center',
+        cellClassName: 'text-center',
+      },
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
       // enableSorting: false,
     },
+    ...(isAdminPanelRole(role)
+      ? [
+          {
+            accessorKey: 'is_settled',
+            header: 'Settlement Status',
+            meta: {
+              sortingThClassName: '!justify-center',
+              cellClassName: 'text-center',
+            },
+            cell: ({ row }) => {
+              return (
+                <TransactionStatusBadge
+                  status={row.original.is_settled ? 'Settled' : 'Unsettled'}
+                />
+              );
+            },
+          },
+        ]
+      : []),
+
     {
       accessorKey: 'created_at',
       header: 'Date & Time',
@@ -181,7 +222,7 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
                     {
                       label: 'View',
                       icon: 'eye',
-                      show: true,
+                      show: hasPermission(PermissionType.TRANSACTIONS_VIEW),
                       onClick: () =>
                         navigate(ROUTES.TRANSACTION_DETAILS.navigatePath(row.original.id)),
                     },
@@ -190,7 +231,7 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
                       icon: 'approve',
                       show:
                         row.original.status === TransactionStatus.PENDING &&
-                        role === UserRole.ADMIN,
+                        hasPermission(PermissionType.TRANSACTIONS_UPDATE),
                       onClick: () =>
                         setToggleApprovalModal({
                           isModalOpen: true,
@@ -202,13 +243,29 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
                       icon: 'close',
                       show:
                         row.original.status === TransactionStatus.PENDING &&
-                        role === UserRole.ADMIN,
+                        hasPermission(PermissionType.TRANSACTIONS_UPDATE),
                       onClick: () =>
                         setToggleDeclineModal({
                           isModalOpen: true,
                           transaction_id: row.original.transaction_id,
                         }),
                     },
+                    ...(row.original.status === TransactionStatus.SUCCESS &&
+                    row.original.transaction_type === TransactionType.CHARGE &&
+                    row.original.amount > row.original.refunded_amount
+                      ? [
+                          {
+                            label: 'Process Refund',
+                            icon: 'sync',
+                            onClick: () =>
+                              setToggleRefundModal({
+                                isModalOpen: true,
+                                transaction_id: row.original.transaction_id,
+                              }),
+                            show: hasPermission(PermissionType.TRANSACTIONS_UPDATE),
+                          },
+                        ]
+                      : []),
                   ]}
                 />
               );
@@ -224,22 +281,44 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
       header: 'Transaction ID',
       cell: ({ row }) => <>{row.original.transaction_id}</>,
     },
-
-    {
-      accessorKey: 'transaction_type',
-      header: 'Type',
-      cell: ({ row }) => <>{row.original.transaction_type}</>,
-    },
     {
       accessorKey: 'amount',
       header: 'Amount',
       cell: ({ row }) => <>{row.original.amount}</>,
     },
     {
+      accessorKey: 'transaction_type',
+      header: 'Type',
+      meta: {
+        sortingThClassName: 'justify-center',
+        cellClassName: 'text-center',
+      },
+      cell: ({ row }) => {
+        return <TransactionStatusBadge status={row.original.transaction_type} />;
+      },
+    },
+    {
       accessorKey: 'status',
       header: 'Status',
+      meta: {
+        sortingThClassName: 'justify-center',
+        cellClassName: 'text-center',
+      },
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
       // enableSorting: false,
+    },
+    {
+      accessorKey: 'is_settled',
+      header: 'Settlement Status',
+      meta: {
+        sortingThClassName: 'justify-center',
+        cellClassName: 'text-center',
+      },
+      cell: ({ row }) => {
+        return (
+          <TransactionStatusBadge status={row.original.is_settled ? 'Settled' : 'Unsettled'} />
+        );
+      },
     },
     {
       accessorKey: 'created_at',
@@ -279,6 +358,7 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
                       icon: 'eye',
                       onClick: () =>
                         navigate(ROUTES.TRANSACTION_DETAILS.navigatePath(row.original.id)),
+                      show: hasPermission(PermissionType.TRANSACTIONS_VIEW),
                     },
                     {
                       label: 'Approve',
@@ -290,7 +370,7 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
                         }),
                       show:
                         row.original.status === TransactionStatus.PENDING &&
-                        role === UserRole.ADMIN,
+                        hasPermission(PermissionType.TRANSACTIONS_UPDATE),
                     },
                     {
                       label: 'Decline',
@@ -302,8 +382,25 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
                         }),
                       show:
                         row.original.status === TransactionStatus.PENDING &&
-                        role === UserRole.ADMIN,
+                        hasPermission(PermissionType.TRANSACTIONS_UPDATE),
                     },
+                    ...(row.original.status === TransactionStatus.SUCCESS &&
+                    row.original.transaction_type === TransactionType.CHARGE &&
+                    row.original.amount > row.original.refunded_amount
+                      ? [
+                          {
+                            label: 'Process Refund',
+                            icon: 'sync',
+                            iconClassName: '!w-4 !h-4',
+                            onClick: () =>
+                              setToggleRefundModal({
+                                isModalOpen: true,
+                                transaction_id: row.original.transaction_id,
+                              }),
+                            show: hasPermission(PermissionType.THERAPIST_EDIT),
+                          },
+                        ]
+                      : []),
                   ]}
                 />
               );
@@ -333,6 +430,8 @@ const useTransaction = (filters: TransactionFilterType = {}) => {
     setToggleDeclineModal,
     toggleApprovalModal,
     setToggleApprovalModal,
+    toggleRefundModal,
+    setToggleRefundModal,
   };
 };
 

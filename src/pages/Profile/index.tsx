@@ -5,11 +5,10 @@ import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
 import { UserRole } from '@/api/types/user.dto';
-import { ClientDependentListing } from '@/features/client/components/ClientProfile';
+import { ClientDependentListing } from '@/features/client/components/ClientProfile/ClientDependentListing';
 import CredentialItemsListing from '@/features/management/components/CredentialingItem/CredentialItemsListing';
 import Education from '@/features/profile/components/Education';
 import Experience from '@/features/profile/components/Experience';
-import { License } from '@/features/profile/components/License';
 import { ProfileForm } from '@/features/profile/components/ProfileAddEditForm';
 import AdminProfile from '@/pages/Profile/AdminProfile';
 import ClientProfile from '@/pages/Profile/ClientProfile';
@@ -25,7 +24,6 @@ type Props = {
 const TAB_NAME = {
   BASIC_DETAILS: 'Basic Details',
   EXPERIENCE: 'Experience',
-  LICENSE: 'License',
   CLIENT_PROFILE: 'Client Profile',
   DEPENDENT_FORM: 'Dependent Form',
   ADMIN_PROFILE: 'Admin Profile',
@@ -38,7 +36,6 @@ const NAVIGATION_TAB: Partial<Record<AllowedRole, string[]>> = {
   [UserRole.THERAPIST]: [
     TAB_NAME.BASIC_DETAILS,
     TAB_NAME.EXPERIENCE,
-    TAB_NAME.LICENSE,
     TAB_NAME.CREDENTIAL_ITEMS,
     TAB_NAME.EDUCATION,
   ],
@@ -96,14 +93,12 @@ const Profile = (props: Props) => {
             return <ProfileForm />;
           case TAB_NAME.EXPERIENCE:
             return <Experience />;
-          case TAB_NAME.LICENSE:
-            return <License />;
           case TAB_NAME.CREDENTIAL_ITEMS:
             return <CredentialItemsListing />;
           case TAB_NAME.EDUCATION:
             return <Education />;
           default:
-            return <ProfileForm />;
+            return <></>;
         }
       case UserRole.CLIENT:
         switch (clientActiveTab) {

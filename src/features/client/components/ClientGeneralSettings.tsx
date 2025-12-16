@@ -35,6 +35,7 @@ export const ClientGeneralSettings = () => {
             <p className='text-base font-bold leading-22px text-blackdark'>Time-Zone</p>
           </div>
           <Select
+            id='tour-timezone-select'
             options={TIMEZONE_OPTIONS}
             value={TIMEZONE_OPTIONS.find(option => option.value === data?.timezone)}
             onChange={value => {
@@ -58,7 +59,8 @@ export const ClientGeneralSettings = () => {
           />
         </div>
       </div>
-      <div className='bg-white rounded-20px p-5 flex flex-col gap-5'>
+
+      <div className='bg-white rounded-20px p-5 flex flex-col gap-5' id='tour-notification-section'>
         <div className='flex flex-col gap-2'>
           <h5 className='text-lg font-bold leading-6 text-blackdark'>Notifications</h5>
           <p className='text-base font-normal leading-22px text-primarygray'>
@@ -132,6 +134,7 @@ export const ClientGeneralSettings = () => {
           </div>
         </div>
       </div>
+
       <div className='bg-white rounded-20px p-5 flex flex-col gap-5'>
         <div className='flex flex-col gap-2'>
           <h5 className='text-lg font-bold leading-6 text-blackdark'>Additional Notifications</h5>

@@ -1,23 +1,20 @@
 import { type UseMutationOptions } from '@tanstack/react-query';
 
+import { type UseQueryRestParamsType, useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPost } from '@/api/axios';
-import { jwtUtils } from '@/api/utils/jwtUtlis';
-import { tokenStorage } from '@/api/utils/tokenStorage';
-import type { LoginCredentials } from '@/features/login';
-import type { RegisterCredentials } from '@/features/therapist/types';
-
-import { authQueryKey } from './common/auth.queryKey';
+import { authQueryKey } from '@/api/common/auth.queryKey';
 import {
-  type ApiResponse,
   type AuthTokens,
   type LoginResponse,
   type MessageResponse,
   type OTPResponse,
   type RegisterResponse,
-  type User,
-} from './types';
-
-import { type UseQueryRestParamsType, useMutation, useQuery } from '.';
+} from '@/api/types/auth.dto';
+import { jwtUtils } from '@/api/utils/jwtUtlis';
+import { tokenStorage } from '@/api/utils/tokenStorage';
+import type { ApiResponse } from '@/features/appointment/types';
+import type { LoginCredentials, User } from '@/features/login/types';
+import type { RegisterCredentials } from '@/features/therapist/types';
 
 import type { AxiosError } from 'axios';
 

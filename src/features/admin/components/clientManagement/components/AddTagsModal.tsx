@@ -98,6 +98,17 @@ const AddTagsModal: React.FC<AddTagsModalProps> = ({
         return;
       }
 
+      if (userTags.toAssign.length) {
+        userTags.toAssign = userTags.toAssign?.filter(
+          d => !data?.assigned?.some((e: TagsDataType) => e.id === d)
+        );
+      }
+      // data.assigned
+      if (userTags.toRemove.length) {
+        userTags.toRemove = userTags.toRemove?.filter(
+          d => !data?.unassigned?.some((e: TagsDataType) => e.id === d)
+        );
+      }
       const res = await assignRemoveTag({
         user_id: clientId,
         selectedTagIds: userTags.toAssign, // Tags to assign

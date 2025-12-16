@@ -1,4 +1,4 @@
-import { AlertTag } from '.';
+import { AlertTag } from '@/stories/Common/AlertTag';
 
 // Storybook configuration
 export default {

@@ -111,7 +111,7 @@ export const useAmdAssignTable = () => {
       },
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:underline cursor-pointer underline-offset-2 block'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() =>
             navigate(ROUTES.APPOINTMENT_VIEW.navigatePath(row.original.appointment.id))
           }

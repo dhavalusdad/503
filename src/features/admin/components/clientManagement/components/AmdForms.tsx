@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
+import AddAmdFormsModal from '@/features/admin/components/clientManagement/components/AddAmdForm';
 import { useAmdAssignTable } from '@/features/admin/components/clientManagement/components/hooks/useAmdAssignTable';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
+import Spinner from '@/stories/Common/Spinner';
 import Table from '@/stories/Common/Table';
-
-import AddAmdFormsModal from './AddAmdForm';
 
 const AmdForms = ({ clientId }: { clientId: string }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +25,7 @@ const AmdForms = ({ clientId }: { clientId: string }) => {
   } = useAmdAssignTable();
 
   return (
-    <div className='flex flex-col gap-5'>
+    <div className='flex flex-col gap-5 min-h-[380px]'>
       <div className=' flex items-center flex-wrap gap-5'>
         <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto'>Clinical Notes</h5>
         <Button
@@ -37,20 +37,27 @@ const AmdForms = ({ clientId }: { clientId: string }) => {
           onClick={() => setIsModalOpen(true)}
         />
       </div>
-      <Table
-        data={data}
-        columns={columns}
-        className={'w-full'}
-        totalCount={total ?? 0}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        sorting={sorting}
-        setSorting={setSorting}
-        onSortingChange={onSortingChange}
-        onPageChange={setPageIndex}
-        onPageSizeChange={setPageSize}
-        isLoading={isLoading}
-      />
+      {isLoading ? (
+        <div className='flex justify-center py-8 min-h-[320px]'>
+          <Spinner />
+        </div>
+      ) : (
+        <Table
+          data={data}
+          columns={columns}
+          className={'w-full min-h-[320px]'}
+          parentClassName='min-h-[320px]'
+          totalCount={total ?? 0}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          sorting={sorting}
+          setSorting={setSorting}
+          onSortingChange={onSortingChange}
+          onPageChange={setPageIndex}
+          onPageSizeChange={setPageSize}
+          isLoading={isLoading}
+        />
+      )}
       {/* update modal  */}
       {isModalOpen && (
         <AddAmdFormsModal

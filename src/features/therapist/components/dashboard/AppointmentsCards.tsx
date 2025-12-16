@@ -5,11 +5,15 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { useInfiniteTherapistAppointmentQuery } from '@/api/appointment';
-import ProfileImage from '@/assets/images/Rectangle1.webp';
 import { ROUTES } from '@/constants/routePath';
 import { SessionType } from '@/enums';
 import CancelTherapistAppointmentModal from '@/features/calendar/components/CancelTherapistAppointmentModal';
 import { RescheduleAppointmentModal } from '@/features/calendar/components/RescheduleAppointmentModal';
+import SwiperComponentTherapistCards from '@/features/therapist/components/dashboard/SwiperCardsTherapistAppointment';
+import type {
+  InfiniteTherapistAppointmentResponse,
+  TherapistAppointment,
+} from '@/features/therapist/types';
 import { showToast } from '@/helper';
 import { redirectTo } from '@/helper/redirect';
 import { usePopupClose } from '@/hooks/usePopupClose';
@@ -21,11 +25,8 @@ import Select, { type SelectOption } from '@/stories/Common/Select';
 import Spinner from '@/stories/Common/Spinner';
 import Tooltip from '@/stories/Common/Tooltip/Tooltip';
 
-import SwiperComponentTherapistCards from './SwiperCardsTherapistAppointment';
-
-import type { InfiniteTherapistAppointmentResponse, TherapistAppointment } from '../../types';
 import type { SingleValue, MultiValue } from 'react-select';
-
+const SERVER_URL = import.meta.env.VITE_BASE_URL;
 const AppointmentsCards = () => {
   const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState<SelectOption>({
@@ -323,138 +324,151 @@ const AppointmentsCards = () => {
               },
             }}
           >
-            {appointments.map((appointment: TherapistAppointment) => (
-              <div
-                key={appointment.id}
-                className='bg-white border border-solid border-surface rounded-2xl p-3.5 w-full'
-              >
-                <div className='flex sm:flex-row flex-col items-start gap-3 justify-between'>
-                  <div className='flex items-start gap-2.5'>
-                    <Image
-                      imgPath={ProfileImage}
-                      className='w-12 min-w-12 h-12 rounded-full'
-                      imageClassName='w-full h-full object-cover object-center rounded-full'
-                    />
-                    <div className='flex flex-col gap-1.5'>
-                      <h6 className='text-base font-bold text-blackdark leading-22px'>
-                        {appointment.client.user.first_name} {appointment.client.user.last_name}
-                      </h6>
-                      <div className='flex flex-col gap-1'>
-                        <div className='flex flex-wrap items-start gap-1'>
-                          <p className='text-sm font-bold text-blackdark leading-18px'>
-                            Treatment:{' '}
-                          </p>
-                          <span className='text-sm font-medium text-blackdark leading-18px'>
-                            {appointment.appointment_area_of_focus[0]?.area_of_focus?.name || 'N/A'}
-                          </span>
-                        </div>
-
-                        <div className='flex items-center gap-1.5 '>
-                          <Icon name='calendar' className='text-primarygra' />
-                          <span className='text-13px xl:text-sm font-medium text-primarygray whitespace-nowrap '>
-                            {moment(appointment.slot.start_time)
-                              .tz(timezone || 'UTC')
-                              .format('MMM DD, YYYY')}
-                          </span>
-                          <div className='bg-primarylight w-1px h-18px mx-1 xl:mx-2'></div>
-                          <div className='flex items-center gap-1.5'>
-                            <Icon name='todotimer' className='text-primarygray' />
-                            <span className='text-13px xl:text-sm font-medium text-primarygray whitespace-nowrap'>
-                              {formatTime(appointment.slot.start_time)}
+            {appointments.map((appointment: TherapistAppointment) => {
+              const userProfileImage = appointment?.client?.user?.profile_image
+                ? SERVER_URL + appointment?.client.user?.profile_image
+                : '';
+              return (
+                <div
+                  key={appointment.id}
+                  className='bg-white border border-solid border-surface rounded-2xl p-3.5 w-full'
+                >
+                  <div className='flex sm:flex-row flex-col items-start gap-3 justify-between'>
+                    <div className='flex items-start gap-2.5'>
+                      <Image
+                        imgPath={userProfileImage}
+                        firstName={appointment.client.user.first_name}
+                        lastName={appointment.client.user.last_name}
+                        className='w-12 min-w-12 h-12   rounded-full'
+                        imageClassName='w-full h-full object-cover object-center rounded-full'
+                        initialClassName='!text-base'
+                      />
+                      <div className='flex flex-col gap-1.5'>
+                        <h6 className='text-base font-bold text-blackdark leading-22px'>
+                          {appointment.client.user.first_name} {appointment.client.user.last_name}
+                        </h6>
+                        <div className='flex flex-col gap-1'>
+                          <div className='flex flex-wrap items-start gap-1'>
+                            <p className='text-sm font-bold text-blackdark leading-18px'>
+                              Treatment:{' '}
+                            </p>
+                            <span className='text-sm font-medium text-blackdark leading-18px'>
+                              {appointment.appointment_area_of_focus[0]?.area_of_focus?.name ||
+                                'N/A'}
                             </span>
+                          </div>
+
+                          <div className='flex items-center gap-1.5 '>
+                            <Icon name='calendar' className='text-primarygra' />
+                            <span className='text-13px xl:text-sm font-medium text-primarygray whitespace-nowrap '>
+                              {moment(appointment.slot.start_time)
+                                .tz(timezone || 'UTC')
+                                .format('MMM DD, YYYY')}
+                            </span>
+                            <div className='bg-primarylight w-1px h-18px mx-1 xl:mx-2'></div>
+                            <div className='flex items-center gap-1.5'>
+                              <Icon name='todotimer' className='text-primarygray' />
+                              <span className='text-13px xl:text-sm font-medium text-primarygray whitespace-nowrap'>
+                                {formatTime(appointment.slot.start_time)}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                    {getStatusButton(
+                      appointment.status,
+                      appointment.id,
+                      appointment.slot.start_time
+                    )}
                   </div>
-                  {getStatusButton(appointment.status, appointment.id, appointment.slot.start_time)}
-                </div>
-                <div className='flex flex-wrap items-center gap-1.5 my-3'>
-                  <div className='flex flex-wrap gap-1'>
-                    <div className='flex items-center gap-1.5 overflow-hidden'>
-                      <p className='text-sm font-bold text-blackdark whitespace-nowrap'>
-                        Therapy Type:{' '}
-                      </p>
-                      <span className='text-sm font-semibold text-blackdark truncate'>
-                        {appointment.therapy_type.name}
-                      </span>
+                  <div className='flex flex-wrap items-center gap-1.5 my-3'>
+                    <div className='flex flex-wrap gap-1'>
+                      <div className='flex items-center gap-1.5 overflow-hidden'>
+                        <p className='text-sm font-bold text-blackdark whitespace-nowrap'>
+                          Therapy Type:{' '}
+                        </p>
+                        <span className='text-sm font-semibold text-blackdark truncate'>
+                          {appointment.therapy_type.name}
+                        </span>
+                      </div>
+                      <div className='bg-primarylight w-1px h-18px mx-2'></div>
+                      <div className='flex items-center gap-1.5 overflow-hidden'>
+                        <p className='text-sm font-bold text-blackdark whitespace-nowrap'>
+                          Session Type:{' '}
+                        </p>
+                        <span className='text-sm font-semibold text-blackdark truncate'>
+                          {appointment.session_type === SessionType.VIRTUAL
+                            ? SessionType.VIRTUAL
+                            : SessionType.CLINIC}
+                        </span>
+                      </div>
                     </div>
-                    <div className='bg-primarylight w-1px h-18px mx-2'></div>
-                    <div className='flex items-center gap-1.5 overflow-hidden'>
-                      <p className='text-sm font-bold text-blackdark whitespace-nowrap'>
-                        Session Type:{' '}
-                      </p>
-                      <span className='text-sm font-semibold text-blackdark truncate'>
-                        {appointment.session_type === SessionType.VIRTUAL
-                          ? SessionType.VIRTUAL
-                          : SessionType.CLINIC}
+                  </div>
+                  <div className='flex items-center gap-5 justify-between'>
+                    <div className='relative bg-surface rounded-3px h-1.5 w-full'>
+                      <div
+                        style={{
+                          width: `${parseInt(appointment.sessions_count) > 15 ? 100 : (parseInt(appointment.sessions_count) / 15) * 100}%`,
+                        }}
+                        className='absolute left-0 h-1.5 rounded-3px bg-primary'
+                      ></div>
+                    </div>
+                    <div className='flex items-center gap-1'>
+                      <span className='text-sm font-normal text-blackdark'>
+                        {appointment.sessions_count}
                       </span>
+
+                      <span className='text-sm font-normal text-blackdark'>/</span>
+                      <span className='text-sm font-bold text-blackdark'>15</span>
                     </div>
                   </div>
-                </div>
-                <div className='flex items-center gap-5 justify-between'>
-                  <div className='relative bg-surface rounded-3px h-1.5 w-full'>
-                    <div
-                      style={{
-                        width: `${parseInt(appointment.sessions_count) > 15 ? 100 : (parseInt(appointment.sessions_count) / 15) * 100}%`,
-                      }}
-                      className='absolute left-0 h-1.5 rounded-3px bg-primary'
-                    ></div>
-                  </div>
-                  <div className='flex items-center gap-1'>
-                    <span className='text-sm font-normal text-blackdark'>
-                      {appointment.sessions_count}
-                    </span>
-
-                    <span className='text-sm font-normal text-blackdark'>/</span>
-                    <span className='text-sm font-bold text-blackdark'>15</span>
-                  </div>
-                </div>
-                {appointment.session_type === SessionType.CLINIC && (
-                  <div className='flex items-start gap-1.5 mt-3.5'>
-                    <Icon name='location' className='text-primary' />
-                    <span className='text-sm font-medium text-blackdark leading-18px'>
-                      {appointment?.clinic_address?.name} :{' '}
-                      {[
-                        appointment?.clinic_address?.address,
-                        appointment?.clinic_address?.state?.name,
-                        appointment?.clinic_address?.city?.name,
-                      ]
-                        .filter(Boolean)
-                        .join(', ')}
-                    </span>
-                  </div>
-                )}
-
-                <div className='flex sm:flex-nowrap flex-wrap items-center gap-3.5 mt-3.5 relative'>
-                  {appointment.session_type === 'Virtual' && (
-                    <div className='group sm:w-2/4'>
-                      {getActionButton(
-                        appointment.status,
-                        appointment.slot.start_time,
-                        appointment.slot.end_time,
-                        appointment.id,
-                        appointment.video_room_name
-                      )}
+                  {appointment.session_type === SessionType.CLINIC && (
+                    <div className='flex items-start gap-1.5 mt-3.5'>
+                      <Icon name='location' className='text-primary' />
+                      <span className='text-sm font-medium text-blackdark leading-18px'>
+                        {appointment?.clinic_address?.name} :{' '}
+                        {[
+                          appointment?.clinic_address?.address,
+                          appointment?.clinic_address?.state?.name,
+                          appointment?.clinic_address?.city?.name,
+                        ]
+                          .filter(Boolean)
+                          .join(', ')}
+                      </span>
                     </div>
                   )}
 
-                  <Button
-                    variant='none'
-                    title='Add Memo'
-                    icon={<Icon name='sessionducuments' />}
-                    isIconFirst
-                    parentClassName={`${appointment.session_type === 'Virtual' ? 'sm:w-2/4' : 'w-full'}`}
-                    className='border-surface border rounded-lg py-3 px-5 w-full !font-bold !text-sm text-blackdark'
-                    onClick={() =>
-                      navigate(ROUTES.APPOINTMENT_VIEW.navigatePath(appointment.id), {
-                        state: { openNotes: true },
-                      })
-                    }
-                  />
+                  <div className='flex sm:flex-nowrap flex-wrap items-center gap-3.5 mt-3.5 relative'>
+                    {appointment.session_type === 'Virtual' && (
+                      <div className='group sm:w-2/4'>
+                        {getActionButton(
+                          appointment.status,
+                          appointment.slot.start_time,
+                          appointment.slot.end_time,
+                          appointment.id,
+                          appointment.video_room_name
+                        )}
+                      </div>
+                    )}
+
+                    <Button
+                      variant='none'
+                      title='Add Memo'
+                      icon={<Icon name='sessionducuments' />}
+                      isIconFirst
+                      parentClassName={`${appointment.session_type === 'Virtual' ? 'sm:w-2/4' : 'w-full'}`}
+                      className='border-surface border rounded-lg py-3 px-5 w-full !font-bold !text-sm text-blackdark'
+                      onClick={() =>
+                        navigate(ROUTES.APPOINTMENT_VIEW.navigatePath(appointment.id), {
+                          state: { openNotes: true },
+                        })
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </SwiperComponentTherapistCards>
         </div>
       </div>

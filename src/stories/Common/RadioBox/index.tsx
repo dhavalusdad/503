@@ -7,7 +7,7 @@ export interface RadioOption {
 
 export interface RadioFieldProps {
   id: string;
-  label?: string;
+  label?: string | React.ReactNode;
   name?: string;
   value?: string;
   isChecked?: boolean;
@@ -43,7 +43,7 @@ export const RadioField: React.FC<RadioFieldProps> = ({
       <label
         htmlFor={htmlFor}
         className={clsx(
-          'text-base text-blackdark leading-22px font-normal cursor-pointer',
+          'text-base text-blackdark leading-5 font-normal cursor-pointer',
           labelClass
         )}
       >

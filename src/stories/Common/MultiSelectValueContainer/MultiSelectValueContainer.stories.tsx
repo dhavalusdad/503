@@ -2,10 +2,9 @@ import { useState } from 'react';
 
 import { type MultiValue } from 'react-select';
 
-import MultiSelectValueContainer from '.';
-
 import type { Meta, StoryObj } from '@storybook/react';
-import Select from '../Select';
+import MultiSelectValueContainer from '@/stories/Common/MultiSelectValueContainer';
+import Select from '@/stories/Common/Select';
 
 interface OptionType {
   label: string;

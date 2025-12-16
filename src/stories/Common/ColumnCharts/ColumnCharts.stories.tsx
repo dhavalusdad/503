@@ -1,4 +1,4 @@
-import ColumnCharts from '.';
+import ColumnCharts from '@/stories/Common/ColumnCharts';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

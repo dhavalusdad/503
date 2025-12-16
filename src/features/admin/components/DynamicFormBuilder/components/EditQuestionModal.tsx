@@ -93,21 +93,31 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
       isOpen={isOpen}
       title='Edit Question'
       parentTitleClassName='!p-5'
-      footerClassName='!p-5'
+      footerClassName='!p-5 flex items-center justify-end gap-5'
       contentClassName='!p-5'
       closeButton={false}
       footer={
-        <div className='flex items-center justify-end gap-5'>
-          <Button variant='outline' title='Cancel' onClick={onClose} className='!px-8 rounded-lg' />
-          <Button variant='filled' title='Save' onClick={handleSave} className='!px-8 rounded-lg' />
-        </div>
+        <>
+          <Button
+            variant='outline'
+            title='Cancel'
+            onClick={onClose}
+            className='!px-8 rounded-lg min-h-50px'
+          />
+          <Button
+            variant='filled'
+            title='Save'
+            onClick={handleSave}
+            className='!px-8 rounded-lg min-h-50px'
+          />
+        </>
       }
     >
       <div className='w-full flex flex-col gap-5'>
         <InputField
           label='Question Text'
           isRequired
-          labelClass='!text-base !leading-5'
+          labelClass='!text-base'
           inputClass='!text-base !leading-5 !border-surfacedark'
           type='text'
           {...register('question_text')}
@@ -115,7 +125,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
         <Select
           label='Question Type'
           isRequired
-          labelClassName='!text-base !leading-5'
+          labelClassName='!text-base'
           options={ASSESSMENT_QUESTION_OPTIONS}
           {...register('question_type')}
           value={ASSESSMENT_QUESTION_OPTIONS.find(
@@ -143,7 +153,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
         {[QuestionTypeEnum.SHORT_ANSWER].includes(questionType) && (
           <InputField
             label='Placeholder'
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
             type='text'
             {...register('placeholder')}
             inputClass='!text-base !leading-5 !border-surfacedark'
@@ -157,7 +167,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
             isChecked={watch('is_required')}
             onChange={e => setValue('is_required', e.target.checked)}
             label='Required'
-            labelClass='!text-base !leading-5'
+            labelClass='!text-base'
           />
         </div>
 
@@ -179,7 +189,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
             isChecked={isQuestionDependent}
             onChange={e => setIsQuestionDependent(e.target.checked)}
             label='Is field dependent?'
-            labelClass='!text-base !leading-5 whitespace-nowrap'
+            labelClass='!text-base'
           />
         </div>
         {isQuestionDependent && (
@@ -187,7 +197,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
             <Select
               label='Dependent Question'
               isRequired
-              labelClassName='!text-base !leading-5'
+              labelClassName='!text-base'
               options={mappedQuestionOption}
               value={mappedQuestionOption.find(q => q.value == dependentQuestionId)}
               onChange={value => {
@@ -218,7 +228,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
               <Select
                 label='Dependent Option'
                 isRequired
-                labelClassName='!text-base !leading-5'
+                labelClassName='!text-base'
                 options={optionsAvailable}
                 value={optionsAvailable.find(opt => opt.value == dependentOption)}
                 onChange={value => {

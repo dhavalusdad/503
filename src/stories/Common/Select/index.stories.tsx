@@ -1,4 +1,4 @@
-import { Select } from './index';
+import { Select } from '@/stories/Common/Select';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

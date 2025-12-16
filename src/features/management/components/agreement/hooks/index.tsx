@@ -124,11 +124,11 @@ const useAgreement = () => {
       header: 'Created Date',
       enableSorting: true,
       cell: (info: CellContext<Agreement, unknown>) => (
-        <span>
+        <>
           {moment(info?.getValue() as Date)
             .tz(timezone)
             .format('MMM DD, YYYY')}
-        </span>
+        </>
       ),
     },
     {
@@ -136,11 +136,11 @@ const useAgreement = () => {
       header: 'Updated Date',
       enableSorting: true,
       cell: (info: CellContext<Agreement, unknown>) => (
-        <span>
+        <>
           {moment(info?.getValue() as Date)
             .tz(timezone)
             .format('MMM DD, YYYY')}
-        </span>
+        </>
       ),
     },
     {
@@ -166,8 +166,7 @@ const useAgreement = () => {
         );
       },
     },
-    ...(hasPermission(PermissionType.AGREEMENTS_EDIT) ||
-    hasPermission(PermissionType.AGREEMENTS_DELETE)
+    ...(hasPermission(PermissionType.AGREEMENTS_EDIT)
       ? [
           {
             accessorKey: 'actions',

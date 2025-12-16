@@ -45,7 +45,7 @@ const ClientAgreementList = () => {
       enableSorting: true,
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:underline cursor-pointer underline-offset-2 block'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() => navigate(ROUTES.MY_AGREEMENTS_DETAIL.navigatePath(row.original.id))}
         >
           {row.getValue('title')}

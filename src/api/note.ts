@@ -1,24 +1,22 @@
 import { useQueryClient, type QueryFunctionContext } from '@tanstack/react-query';
 
-import { axiosGet, axiosPost, axiosPut } from '@/api/axios.ts';
-import type { SessionNote } from '@/features/appointment';
+import { useInfiniteQuery, useMutation, useQuery } from '@/api';
+import { axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
+import { notesOptionsQueryKey } from '@/api/common/notes.queryKey';
+import type { SessionNote } from '@/features/appointment/types';
 import { useInvalidateQuery, useResetQueries } from '@/hooks/data-fetching';
-
-import { mutationsQueryKey } from './common/mutations.queryKey';
-import { notesOptionsQueryKey } from './common/notes.queryKey';
-
-import { useInfiniteQuery, useMutation, useQuery } from '.';
 
 const BASE_PATH = '/notes';
 
-export const useCreateNote = (appointment_id: string, note_type: string) => {
+export const useCreateNote = (appointment_id: string, note_type: string, tenant_id: string) => {
   const { resetQuery } = useResetQueries();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: mutationsQueryKey.createNote(),
     mutationFn: async (data: object) => {
-      const response = await axiosPost(`${BASE_PATH}`, data);
+      const response = await axiosPost(`${BASE_PATH}`, { ...data, params: { tenant_id } });
       return response.data;
     },
     onSuccess: () => {
@@ -44,6 +42,7 @@ export const useInfiniteNotesByAppointment = ({
   sortColumn,
   sortOrder,
   search,
+  tenant_id,
 }: {
   appointment_id: string;
   note_type: string;
@@ -52,6 +51,7 @@ export const useInfiniteNotesByAppointment = ({
   sortColumn?: string;
   sortOrder?: string;
   search?: string;
+  tenant_id?: string;
 }) => {
   return useInfiniteQuery({
     queryKey: notesOptionsQueryKey.getNotesByAppointment(appointment_id, note_type, {
@@ -66,6 +66,7 @@ export const useInfiniteNotesByAppointment = ({
           note_type,
           page: pageParam,
           limit,
+          tenant_id,
           ...(sortColumn && { sortColumn }),
           ...(sortOrder && { sortOrder }),
           ...(search && { search }),

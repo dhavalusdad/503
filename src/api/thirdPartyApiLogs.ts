@@ -1,8 +1,6 @@
+import { useMutation, useQuery } from '@/api';
+import { axiosGet, axiosPost } from '@/api/axios';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { axiosGet, axiosPost } from './axios';
-
-import { useMutation, useQuery } from '.';
 
 const BASE_PATH = '/third-party-api-logs';
 

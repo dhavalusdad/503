@@ -55,7 +55,7 @@ const useGetTherapistManagementColumns = ({
       },
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:font-bold hover:underline cursor-pointer underline-offset-2 block'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() => navigate(`/therapist-management/view-therapist/${row.original.id}`)}
         >
           {row.getValue('full_name')}
@@ -89,6 +89,9 @@ const useGetTherapistManagementColumns = ({
       accessorKey: 'status',
       header: 'Status',
       enableSorting: false,
+      meta: {
+        headerClassName: '!text-center',
+      },
       cell: ({ row }) => {
         const isActive = row.original?.active;
         return (
@@ -111,6 +114,9 @@ const useGetTherapistManagementColumns = ({
     {
       accessorKey: 'specialty',
       header: 'Specialties',
+      meta: {
+        cellClassName: '!whitespace-normal min-w-76 max-w-76',
+      },
       cell: ({ row }) => {
         const options = row.original.specialties;
         if (Array.isArray(options)) {

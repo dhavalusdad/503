@@ -56,7 +56,7 @@ const useGetClientManagementColumns = ({
   const handleAppointmentDetails = (id: string) => {
     navigate(`${ROUTES_BASE_PATH.APPOINTMENT_VIEW.path}/${id}`);
   };
-  const handleAssessmentFormDetails = () => navigate(ROUTES.ASSESSMENT_FORM_DETAILS.path);
+  const handleAssessmentFormDetails = () => navigate(ROUTES.ASSESSMENT_FORM.path);
 
   const handleFlag = async (id: string, isFlag: boolean) => {
     try {
@@ -79,35 +79,36 @@ const useGetClientManagementColumns = ({
     {
       accessorKey: 'full_name',
       header: 'Client Name',
-      meta: {
-        cellClassName: 'w-36',
-      },
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:font-bold hover:underline cursor-pointer underline-offset-2 block w-full'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() => handleUserManagementDetails(row.original.id)}
         >
           {row.getValue('full_name')}
         </span>
       ),
     },
-    {
-      accessorKey: 'isFlag',
-      header: '',
-      enableSorting: false,
-      cell: ({ row }) => {
-        const isFlagged = row.getValue<boolean>('isFlag');
-        const id = row.original.id;
-        return (
-          <div className='group cursor-pointer' onClick={() => handleFlag(id, !isFlagged)}>
-            <Icon
-              name={isFlagged ? 'flagfill' : 'flag'}
-              className={`text-black ${!isFlagged && 'opacity-0 group-hover:opacity-100'}`}
-            />
-          </div>
-        );
-      },
-    },
+    ...(hasPermission(PermissionType.PATIENT_EDIT)
+      ? [
+          {
+            accessorKey: 'isFlag',
+            header: '',
+            enableSorting: false,
+            cell: ({ row }) => {
+              const isFlagged = row.getValue<boolean>('isFlag');
+              const id = row.original.id;
+              return (
+                <div className='group cursor-pointer' onClick={() => handleFlag(id, !isFlagged)}>
+                  <Icon
+                    name={isFlagged ? 'flagfill' : 'flag'}
+                    className={`text-black ${!isFlagged && 'opacity-0 group-hover:opacity-100'}`}
+                  />
+                </div>
+              );
+            },
+          },
+        ]
+      : []),
     {
       accessorKey: 'created_at',
       header: 'Joined Date',
@@ -117,12 +118,9 @@ const useGetClientManagementColumns = ({
     {
       accessorKey: 'email',
       header: 'Email Address',
-      meta: {
-        cellClassName: 'w-36',
-      },
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:font-bold hover:underline cursor-pointer underline-offset-2 block w-full'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() => handleUserManagementDetails(row.original.id)}
         >
           {row.getValue('email')}
@@ -139,18 +137,25 @@ const useGetClientManagementColumns = ({
       header: 'Cancelled',
       meta: { sortingThClassName: 'justify-center', cellClassName: 'text-center' },
     },
-    {
-      accessorKey: 'tags',
-      header: 'Alert Tags',
-      enableSorting: false,
-      cell: ({ row }) => {
-        return row.original.tags && row.original.tags.length > 0 ? (
-          <TagsCell tags={row.original.tags as unknown as TagsDataType[]} />
-        ) : (
-          'Not assigned'
-        );
-      },
-    },
+    ...(hasPermission(PermissionType.ALERT_TAGS_VIEW)
+      ? [
+          {
+            accessorKey: 'tags',
+            header: 'Alert Tags',
+            enableSorting: false,
+            meta: {
+              cellClassName: 'max-w-464px min-w-450px !whitespace-normal',
+            },
+            cell: ({ row }) => {
+              return row.original.tags && row.original.tags.length > 0 ? (
+                <TagsCell tags={row.original.tags as unknown as TagsDataType[]} />
+              ) : (
+                'Not assigned'
+              );
+            },
+          },
+        ]
+      : []),
     ...(isAdminPanelRole(role)
       ? [
           {
@@ -251,12 +256,9 @@ const useGetClientManagementColumns = ({
       id: {
         accessorKey: 'id',
         header: 'Appointment ID',
-        meta: {
-          cellClassName: '',
-        },
         cell: ({ row }) => (
           <span
-            className='hover:text-primary hover:underline cursor-pointer underline-offset-2 block'
+            className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
             onClick={() => navigate(ROUTES.APPOINTMENT_VIEW.navigatePath(row.getValue('id')))}
           >
             {`AP${row.getValue('id')}`}
@@ -285,7 +287,7 @@ const useGetClientManagementColumns = ({
               actions={[
                 {
                   icon: 'eye',
-                  show: true,
+                  show: hasPermission(PermissionType.APPOINTMENT_VIEW),
                   onClick: () => handleAppointmentDetails(row.getValue('id')),
                   label: '',
                 },
@@ -416,7 +418,7 @@ const useGetClientManagementColumns = ({
       accessorKey: 'form_title',
       header: 'Form Name',
       meta: {
-        cellClassName: 'w-80 min-w-80 !whitespace-normal',
+        cellClassName: '!whitespace-normal min-w-56',
       },
       cell: ({ row }) => <>{row.getValue('form_title')}</>,
     },
@@ -440,7 +442,7 @@ const useGetClientManagementColumns = ({
         const time = row.original?.created_at;
         return (
           <div className='flex gap-3'>
-            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'},</span>
+            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'} , </span>
             <span>{moment(time).tz(timezone).format('h:mm A')}</span>
           </div>
         );
@@ -473,7 +475,7 @@ const useGetClientManagementColumns = ({
         const endTime = moment.tz(end, timezone);
         return (
           <div className='flex gap-3'>
-            <span>{startTime.format('MMM DD, YYYY')},</span>
+            <span>{startTime.format('MMM DD, YYYY')} ,</span>
             <span>
               {startTime.format('hh:mm A')} - {endTime.format('hh:mm A')}
             </span>
@@ -489,7 +491,6 @@ const useGetClientManagementColumns = ({
       },
     },
   ];
-
   if (role !== UserRole.CLIENT) {
     assessmentFormsColumnsForClient.push({
       accessorKey: 'action',
@@ -507,21 +508,28 @@ const useGetClientManagementColumns = ({
               {
                 label: 'View',
                 icon: 'eye',
-                show: !!isSubmitted,
-                onClick: () =>
-                  isAdminPanelRole(role)
-                    ? navigate(ROUTES.VIEW_FORM_RESPONSE_ADMIN.navigatePath(row.original.id))
-                    : navigate(
+                iconClassName: `${isSubmitted ? 'text-primary' : 'text-gray-500 cursor-not-allowed'}`,
+                onClick: () => {
+                  if (isSubmitted) {
+                    if (isAdminPanelRole(role)) {
+                      navigate(ROUTES.VIEW_FORM_RESPONSE_ADMIN.navigatePath(row.original.id));
+                    } else {
+                      navigate(
                         ROUTES.VIEW_FORM_RESPONSE_THERAPIST.navigatePath(
                           clientId as string,
                           row.original.id
                         )
-                      ),
+                      );
+                    }
+                  }
+                },
               },
               {
                 label: 'Remove',
                 icon: 'delete',
-                show: row.original.status === FormStatusType.PENDING,
+                show:
+                  row.original.status === FormStatusType.PENDING &&
+                  hasPermission(PermissionType.PATIENT_EDIT),
                 onClick: () => {
                   setFormId(row.original.id);
                   setDeleteAssessmentFormsModal(true);

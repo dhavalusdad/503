@@ -1,9 +1,8 @@
+import { useMutation, useQuery } from '@/api';
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios.ts';
 import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
 import { tagQueryKey } from '@/api/common/tag.query';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { useMutation, useQuery } from '.';
 
 const BASE_PATH = '/tag';
 

@@ -1,4 +1,4 @@
-import Otp from '.';
+import Otp from '@/stories/Common/Otp';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

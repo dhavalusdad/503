@@ -99,13 +99,17 @@ const Landing = () => {
   } = useBookAppointment(savedFilters as FilterState);
 
   const loaderRef = useRef<HTMLDivElement>(null);
+  const searchResultsRef = useRef<HTMLElement>(null);
+  const [searchCount, setSearchCount] = useState<number>(0);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [startDate, endDate] = dateRange;
   const [label, setLabel] = useState<string>('Availability');
   const [open, setOpen] = useState(false);
   const [modalStep, setModalStep] = useState<number>(1);
-  const [dependentData, setDependentData] = useState<Partial<DependentFormValues[]>>([]);
-  const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDateTimeProps>();
+  const [dependentData, setDependentData] = useState<DependentFormValues[]>([]);
+  const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDateTimeProps | null>(
+    null
+  );
   const [appointmentBookedResponse, setAppointmentBookedResponse] =
     useState<AppointmentBookedResponse>();
   const [savedValues, setSavedValues] = useState<ClientQuickDetailsProps>(clientFormInitialValue);
@@ -179,25 +183,6 @@ const Landing = () => {
     }
   }, [appliedFilters, dateRange]);
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     const target = event.target as HTMLElement;
-
-  //     if (target.closest('.react-datepicker')) return;
-
-  //     if (popoverRef.current && !popoverRef.current.contains(target)) {
-  //       setOpen(false);
-  //     }
-  //   };
-  //   getAreaOfFocusAsync().then(res => {
-  //     console.log('res---->', res);
-  //     setAreaOfFocusList(res.data);
-  //   });
-
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => document.removeEventListener('mousedown', handleClickOutside);
-  // }, []);
-
   const updateFilter = (key: keyof Filters, value: string) => {
     setAppliedFilters(prev => ({ ...prev, [key]: value }));
   };
@@ -242,8 +227,8 @@ const Landing = () => {
   };
   const handleClearLocalFilter = () => {
     handleSelectChange('language', null);
-    handleSelectChange('availability_start_date', '');
-    handleSelectChange('availability_end_date', '');
+    handleSelectChange('availability_start_date', null);
+    handleSelectChange('availability_end_date', null);
     handleSelectChange('therapistGender', null);
     setAppliedFilters({
       gender: '',
@@ -303,13 +288,21 @@ const Landing = () => {
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    if (isSeachButtonClicked && searchResultsRef.current) {
+      searchResultsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [isSeachButtonClicked, searchCount]);
+
+  type FilterItem = { value?: string | number; label?: string | number } | string | number;
+
   const FilterTagList = ({
     filters = [],
     labelKey,
     removeKey,
     label,
   }: {
-    filters: object[];
+    filters: FilterItem[];
     labelKey?: string;
     removeKey: keyof FilterState;
     label?: string;
@@ -317,6 +310,21 @@ const Landing = () => {
     if (filters.length == 0) {
       return <></>;
     }
+
+    const extractValue = (item: FilterItem) => {
+      if (typeof item === 'string' || typeof item === 'number') return item;
+      return item.value ?? item.label ?? '';
+    };
+
+    const extractLabel = (item: FilterItem) => {
+      if (typeof item === 'string' || typeof item === 'number') return String(item);
+      if (labelKey)
+        return String(
+          (item as Record<string, string | number | undefined>)[labelKey] ?? item.label ?? ''
+        );
+      return String(item.label ?? item.value ?? '');
+    };
+
     return (
       <div className='flex flex-wrap gap-2.5 items-center'>
         <span className='text-blackdark text-base font-bold'>
@@ -324,9 +332,9 @@ const Landing = () => {
         </span>
         {filters?.map(filterItem => (
           <Button
-            key={filterItem.value || filterItem}
+            key={String(extractValue(filterItem))}
             variant='none'
-            title={labelKey ? filterItem[labelKey] : filterItem.label || filterItem}
+            title={extractLabel(filterItem)}
             icon={
               <Icon
                 name='close'
@@ -405,7 +413,7 @@ const Landing = () => {
                     isRequired={true}
                     isClearable={true}
                     labelClassName='!text-base'
-                    options={citiesData?.length ? citiesData : []}
+                    options={Array.isArray(citiesData) && citiesData?.length ? citiesData : []}
                     placeholder='Select City'
                     onChange={selected => {
                       handleSelectChange('city', selected as SelectOption);
@@ -526,6 +534,7 @@ const Landing = () => {
                   onClick={() => {
                     setClearAll(false);
                     setIsSeachButtonClicked(true);
+                    setSearchCount(prev => prev + 1);
                     onSearch();
                   }}
                   isLoading={isLoading && activeSearch}
@@ -640,7 +649,7 @@ const Landing = () => {
         </div>
       </section>
       {isSeachButtonClicked && !clearAll && (
-        <section className='my-5 lg:my-10 xl:my-20 2xl:my-100px'>
+        <section ref={searchResultsRef} className='my-5 lg:my-10 xl:my-20 2xl:my-100px'>
           <div className='container mx-auto px-5 3xl:px-0'>
             <div className='flex flex-wrap items-center justify-center lg:justify-between mb-8 lg:mb-10 xl:mb-60px'>
               <h2 className='text-center lg:text-left mb-5 lg:mb-0 w-full lg:w-auto text-3xl lg:text-4xl xl:text-5xl font-bold leading-12 xl:leading-14 text-primary'>
@@ -655,8 +664,9 @@ const Landing = () => {
                   value={filter?.therapistGender}
                   onFocus={() => setOpen(false)}
                   onChange={value => {
-                    handleSelectChange('therapistGender', value as SelectOption);
-                    updateFilter('gender', value?.label as string);
+                    const selected = value as SelectOption | null;
+                    handleSelectChange('therapistGender', selected as SelectOption);
+                    updateFilter('gender', selected?.label || '');
                   }}
                   StylesConfig={selectStyles}
                 />
@@ -694,8 +704,10 @@ const Landing = () => {
                       <div onClick={e => e.stopPropagation()} className='w-full'>
                         <CustomDatePicker
                           selected={startDate}
-                          onChange={(update: [Date | null, Date | null]) => {
-                            const [start, end] = update;
+                          onChange={date => {
+                            if (!Array.isArray(date)) return;
+                            const start = (date[0] as Date | null) ?? null;
+                            const end = (date[1] as Date | null) ?? null;
                             // Keep them in local timezone
                             const startLocal = start ? moment(start).startOf('day').toDate() : null;
                             const endLocal = end ? moment(end).endOf('day').toDate() : null;
@@ -709,6 +721,7 @@ const Landing = () => {
                                 : 'Custom Range'
                             );
                           }}
+                          // @ts-expect-error CustomDatePicker supports selectsRange
                           shouldCloseOnSelect={false}
                           selectsRange
                           startDate={startDate}
@@ -729,11 +742,7 @@ const Landing = () => {
                   onFocus={() => setOpen(false)}
                   loadOptions={getLanguagesAsync}
                   queryKey={['languages']}
-                  value={
-                    filter?.language
-                      ? { label: appliedFilters?.language, value: filter?.language }
-                      : null
-                  }
+                  value={filter?.language ?? null}
                   pageSize={10}
                   isSearchable={true}
                   onChange={value => {
@@ -842,6 +851,7 @@ const Landing = () => {
       {isModalOpen && selectedTherapist && (
         // updated modal
         <Modal
+          key={selectedTherapist?.id}
           title={
             <>
               {modalStep !== 1 && (
@@ -867,6 +877,7 @@ const Landing = () => {
         >
           {modalStep === 1 && (
             <BookSlot
+              key={selectedTherapist?.id}
               therapist_id={selectedTherapist.id}
               onContinue={getAppointmentData}
               onBack={handleClose}
@@ -874,20 +885,21 @@ const Landing = () => {
           )}
           {modalStep == 2 && (
             <ClientQuickDetails
+              key={selectedTherapist?.id}
               onContinue={handleAddClientModalOpen}
               dependentData={dependentData}
-              appointmentDetails={appointmentDetails}
+              appointmentDetails={appointmentDetails || undefined}
               selectedTherapist={selectedTherapist}
               filter={filter}
               setDependentData={setDependentData}
               onAppointmentBooked={handleAppointmentBooked}
-              appointmentBookedResponse={appointmentBookedResponse}
               savedValues={savedValues}
               setSavedValues={setSavedValues}
             />
           )}
           {modalStep == 3 && (
             <AddClientDependentModal
+              key={selectedTherapist?.id}
               mode={mode}
               setDependentData={setDependentData}
               onSubmit={backward}
@@ -897,11 +909,12 @@ const Landing = () => {
           )}
           {modalStep == 4 && (
             <AppointmentConfirmedDashboard
+              key={selectedTherapist?.id}
               isOpen={true}
               closeButton={false}
-              appointmentData={appointmentDetails}
+              appointmentData={appointmentDetails || undefined}
               onClose={handleAppointmentBookedModalClose}
-              selectedTherapist={selectedTherapist}
+              selectedTherapist={selectedTherapist || undefined}
               appointmentResponse={appointmentBookedResponse}
             />
           )}
@@ -910,6 +923,7 @@ const Landing = () => {
       {requestSlotModalOpen && selectedTherapist && (
         // upadted modal
         <Modal
+          key={selectedTherapist?.id}
           title={`Request a slot to ${selectedTherapist?.user?.first_name || ''} ${selectedTherapist?.user?.last_name || ''}`}
           isOpen={requestSlotModalOpen}
           onClose={handleCloseRequestModal}
@@ -927,11 +941,12 @@ const Landing = () => {
       )}
       {successSlotRequestOpen && (
         <SuccessSlotRequestModal
+          key={selectedTherapist?.id}
           isOpen={successSlotRequestOpen}
           closeButton={true}
           onClose={() => setSuccessSlotRequestOpen(false)}
           fromDashboard={true}
-          selectedTherapist={selectedTherapist}
+          selectedTherapist={selectedTherapist || undefined}
           preferredTime={slotRequestData?.preferred_time}
         />
       )}

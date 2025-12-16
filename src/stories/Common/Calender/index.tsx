@@ -15,7 +15,6 @@ import { CalendarTopBar } from '@/stories/Common/Calender/Component/CalendarTopB
 import DayColumn from '@/stories/Common/Calender/Component/DayColumnComponent';
 import { MonthViewComponent } from '@/stories/Common/Calender/Component/MonthViewComponent';
 import { TimeLineComponent } from '@/stories/Common/Calender/Component/TimeLineComponent';
-
 import {
   type ActiveMonthData,
   type Appointment,
@@ -28,7 +27,7 @@ import {
   type ViewMode,
   type WeekDayData,
   type localStorageCalendarConfig,
-} from './types';
+} from '@/stories/Common/Calender/types';
 
 import './calender.css';
 
@@ -889,12 +888,12 @@ const CustomCalendar = ({
       const timeRangeText = `${formattedStartTime} - ${formattedEndTime}`;
 
       // Find the first selected slot to show time info
-      // Find the first selected slot to show time info
       const firstDayIndex = Math.min(...dayIndices);
 
       const midIndex = Math.ceil((maxIndex + minIndex) / 2);
+
       const midSlot = document.querySelector(
-        `[data-day-index="${firstDayIndex}"][data-slot-index="${midIndex - 2}"]`
+        `[data-day-index="${firstDayIndex}"][data-slot-index="${midIndex}"]`
       );
       const differenceEng = ((maxIndex - minIndex) * timeSlotSize) / 13;
 
@@ -903,7 +902,7 @@ const CustomCalendar = ({
 
         timeInfoDiv.className = 'time-range-info';
         timeInfoDiv.innerHTML = `
-        <div class="text-center text-primary font-bold pointer-events-none ">
+        <div  class="text-center text-primary font-bold pointer-events-none ">
           ${difference < 0 ? `<div>${timeRangeText}</div><div>Mark it as available?</div>` : `<div>Mark it as available?</div><div>${timeRangeText}</div>`}
         </div>
       `;
@@ -913,7 +912,7 @@ const CustomCalendar = ({
       display:flex;
       justify-content:center;
       align-items:center;
-      top: ${timeSlotSize}px ;
+      top: -${timeSlotSize - 5}px ;
       font-size: ${differenceEng < 17 ? (differenceEng < 10 ? 10 : differenceEng) : 17}px;
       height:${100}%;
       z-index: 10;
@@ -926,7 +925,7 @@ const CustomCalendar = ({
         midSlot.appendChild(timeInfoDiv);
       }
     },
-    [timeLine, clearTimeRangeInfo, timeZone, timeInterval, slotTimeSlotSize]
+    []
   );
 
   // Add mouse up handler to manage button visibility
@@ -1011,12 +1010,7 @@ const CustomCalendar = ({
       addSelectionToDOM(Number(dayIndex), Number(slotIndex));
       if (timeInterval == 60) {
         // showSelectionButtons(Number(dayIndex), Number(slotIndex));
-        updateTimeRangeInfo(
-          Number(slotIndex),
-          Number(slotIndex),
-          [Number(dayIndex)],
-          Number(slotIndex)
-        );
+        updateTimeRangeInfo(Number(slotIndex), Number(slotIndex), [Number(dayIndex)]);
       }
     },
     [
@@ -1031,15 +1025,24 @@ const CustomCalendar = ({
   );
 
   const handleMouseEnter = useCallback(
-    (event: React.MouseEvent) => {
+    (event: React.MouseEvent, onclick = false) => {
       const target = event.target as HTMLElement;
 
       if (!target.matches('.slot-cell')) return;
 
       const dayIndex = Number(target.getAttribute('data-day-index'));
       const slotIndex = Number(target.getAttribute('data-slot-index'));
-
+      if (
+        (onclick &&
+          selectionState.current.isSelecting &&
+          (slotIndex == selectionState.current.endIndex ||
+            slotIndex == selectionState.current.startIndex)) ||
+        timeInterval == 30
+      ) {
+        handleMouseOver(event);
+      }
       if (event.buttons !== 1) return;
+
       if (!selectionState.current.isSelecting) return;
 
       // Check if the target date is in the past
@@ -1132,7 +1135,7 @@ const CustomCalendar = ({
         // showSelectionButtons(dayIndex, endIndex);
 
         // Update time range info directly in DOM
-        updateTimeRangeInfo(minIndex, maxIndex, newDayList, firstIndex);
+        updateTimeRangeInfo(minIndex, maxIndex, newDayList);
       } else {
         // If no range, hide buttons and clear time info
         // hideSelectionButtons();
@@ -1161,6 +1164,7 @@ const CustomCalendar = ({
 
   const handleMouseOver = useCallback((event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
+
     if (!target.matches('.selected')) return;
 
     const dayIndex = Number(target.getAttribute('data-day-index'));
@@ -1212,7 +1216,7 @@ const CustomCalendar = ({
         backgroundColor: 'white',
         border: '1px solid #e0e0e0',
         borderRadius: '10px',
-        zIndex: '40',
+        zIndex: '50',
       },
     };
     return (
@@ -1316,7 +1320,12 @@ const CustomCalendar = ({
           />
         </div>
         <div className='overflow-x-auto flex-1'>
-          <div className='min-w-[800px] h-full flex flex-col overflow-hidden'>
+          <div
+            className={clsx(
+              'h-full flex flex-col overflow-hidden',
+              view === MODE_CONSTANT.DAY ? '' : 'min-w-900px'
+            )}
+          >
             <div className='calendar-header'>
               <CalendarHeader view={view} weekday={weekday} timeZone={timeZone} />
             </div>
@@ -1338,14 +1347,14 @@ const CustomCalendar = ({
                   <div
                     draggable={false}
                     className={clsx(
-                      'grid w-[calc(100%-100px)] day-column transition-all duration-75',
+                      'grid flex-1 day-column transition-all duration-75',
                       view === MODE_CONSTANT.DAY ? 'grid-cols-1' : 'grid-cols-7'
                     )}
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseEnter}
                     onMouseUp={handleMouseUp}
                     onMouseOver={handleMouseOver}
-                    onClick={timeInterval == 60 ? handleMouseEnter : () => null}
+                    onClick={timeInterval == 60 ? e => handleMouseEnter(e, true) : () => null}
                   >
                     {MemoizeDayIndex}
                   </div>

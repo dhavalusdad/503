@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 
-import Select from '@/stories/Common/Select';
-
 import {
   getMediaDevices,
   getStoredDevicePreferences,
   storeDevicePreferences,
   type MediaDevices,
-} from '../utils/media';
+} from '@/features/video-call/utils/media';
+import Select from '@/stories/Common/Select';
 
 export function DeviceSelector() {
   const [devices, setDevices] = useState<MediaDevices>({

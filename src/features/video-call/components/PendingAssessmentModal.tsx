@@ -26,7 +26,7 @@ const PendingAssessmentModal = ({
   const queryClient = useQueryClient();
   const { data, isLoading, loaderRef } = useGetInfiniteUserAssessment({
     page: 1,
-    limit: 5,
+    limit: 10,
     user_id: userId,
     include_dependent: true,
     filters: {},
@@ -53,7 +53,7 @@ const PendingAssessmentModal = ({
 
   const handelRefreshData = () => {
     queryClient.invalidateQueries({
-      queryKey: formsQueryKey.getList(appointmentId),
+      queryKey: formsQueryKey.getList(),
     });
   };
 

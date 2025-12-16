@@ -6,12 +6,11 @@ import { UserRole } from '@/api/types/user.dto';
 import Illustration from '@/assets/images/Illustration.webp';
 import { ROUTES } from '@/constants/routePath';
 import { useVideoCall } from '@/features/video-call/store/useVideoCall';
+import { stopAllActiveMediaTracks } from '@/features/video-call/utils/cleanup';
+import { getTwilioIdentity } from '@/features/video-call/utils/twilioSessionStorage';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
-
-import { stopAllActiveMediaTracks } from '../utils/cleanup';
-import { getTwilioIdentity } from '../utils/twilioSessionStorage';
 
 const MeetingLeftScreen = ({ inviteToken }: { inviteToken: string }) => {
   const { isTherapistEndCall } = useVideoCall();

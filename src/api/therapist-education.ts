@@ -1,19 +1,17 @@
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
-import type { GetAllTherapistEducationType } from '@/features/profile/types';
-import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { therapistQueryKey } from './common/therapist.queryKey';
-
 import {
   useMutation,
   useQuery,
   type CustomUseMutationOptions,
   type CustomUseQueryOptions,
   type UseQueryRestParamsType,
-} from '.';
+} from '@/api';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { therapistQueryKey } from '@/api/common/therapist.queryKey';
+import type { ApiResponse } from '@/api/types/common.dto';
+import type { CreateTherapistEducation, EducationDataType } from '@/api/types/therapist.dto';
+import type { GetAllTherapistEducationType } from '@/features/profile/types';
+import { useInvalidateQuery } from '@/hooks/data-fetching';
 
-import type { ApiResponse } from './types/common.dto';
-import type { CreateTherapistEducation, EducationDataType } from './types/therapist.dto';
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 

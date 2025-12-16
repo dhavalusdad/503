@@ -162,7 +162,7 @@ const AppointmentHistory = ({
   };
 
   return (
-    <div className='flex flex-col gap-5'>
+    <div className='flex flex-col gap-5 min-h-[380px]'>
       <div className='flex items-center flex-wrap gap-5'>
         <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
           Appointment History
@@ -214,7 +214,7 @@ const AppointmentHistory = ({
       </div>
 
       {isLoading ? (
-        <div className='flex justify-center py-8'>
+        <div className='flex justify-center py-8 min-h-[320px]'>
           <Spinner />
         </div>
       ) : (
@@ -227,7 +227,8 @@ const AppointmentHistory = ({
                 : therapistClientsAppointmentHistoryColumns
               : historyColumn
           }
-          className='w-full'
+          className='w-full min-h-[320px]'
+          parentClassName='min-h-[320px]'
           totalCount={total}
           pageIndex={pageIndex}
           pageSize={pageSize}

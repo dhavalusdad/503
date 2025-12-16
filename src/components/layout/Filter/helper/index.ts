@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
 import { isDefined } from '@/api/utils';
+import type { CommonFilterField } from '@/components/layout/Filter';
 import { FIELD_TYPE } from '@/constants/CommonConstant';
 
-import type { CommonFilterField } from '..';
 import type { DefaultValues } from 'react-hook-form';
 
 export const getActiveFilterCount = <T extends Record<string, unknown>>({

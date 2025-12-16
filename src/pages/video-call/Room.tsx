@@ -186,6 +186,7 @@ export default function Room() {
         )}
         {currentUserRole === UserRole.THERAPIST && isMemoPadOpen && (
           <MemoPad
+            tenant_id={appointmentDetails?.tenant_id}
             appointment_id={appointmentDetails.id}
             client_id={appointmentDetails.client.id}
             therapist_id={appointmentDetails.therapist.id}
@@ -261,6 +262,7 @@ export default function Room() {
           setPendingCount={setPendingCount}
           showModal={showModal}
           tenant_id={appointmentDetails.tenant_id}
+          role={role}
         />
       )}
     </div>

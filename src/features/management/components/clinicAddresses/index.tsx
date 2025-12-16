@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { PermissionType } from '@/enums';
 import AddEditClinicAddressesModal from '@/features/management/components/clinicAddresses/addEditClinicAddressesModal';
 import useClinicAddresses from '@/features/management/components/clinicAddresses/hooks';
@@ -34,7 +36,9 @@ const ClinicAddresses = () => {
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Clinic Addresses</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          Clinic Addresses
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -43,7 +47,11 @@ const ClinicAddresses = () => {
           iconClassName='text-primarygray'
           onChange={handleSearchChange}
           value={searchQuery}
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName={clsx(
+            hasPermission(PermissionType.CLINIC_ADDRESSES_ADD)
+              ? 'w-full lg:w-76 xl:w-360px order-3 lg:order-none'
+              : 'w-76 xl:w-360px order-2 lg:order-none'
+          )}
         />
         {hasPermission(PermissionType.CLINIC_ADDRESSES_ADD) && (
           <Button
@@ -52,6 +60,7 @@ const ClinicAddresses = () => {
             icon={<Icon name='plus' />}
             isIconFirst
             className='rounded-lg'
+            parentClassName='order-2 lg:order-none'
             onClick={() => {
               openCloseModal('addEdit', true);
             }}

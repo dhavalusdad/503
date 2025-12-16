@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { UserRole } from '@/api/types/user.dto';
+import { getNormalizedParam } from '@/api/utils';
 import { getDefaultRouteByRole } from '@/config/defaultRoutes';
-import { ROUTES } from '@/constants/routePath';
-import { PermissionType } from '@/enums';
+import { ROUTES, type RouteObjectValueType } from '@/constants/routePath';
 import { currentUser } from '@/redux/ducks/user';
 
 export const useRoleBasedRouting = () => {
@@ -16,11 +16,11 @@ export const useRoleBasedRouting = () => {
 
   const userRole = user.role || UserRole.CLIENT;
   const isAuthenticated = !!user.accessToken && !!user.id;
+  const currentPath = location.pathname;
 
   // Redirect to role-appropriate default route if user is on a generic route
   useEffect(() => {
     if (isAuthenticated) {
-      const currentPath = location.pathname;
       const defaultRoute = getDefaultRouteByRole(userRole);
 
       // If user is on root path or login path, redirect to their default route
@@ -28,232 +28,233 @@ export const useRoleBasedRouting = () => {
         navigate(defaultRoute, { replace: true });
       }
     }
-  }, [isAuthenticated, userRole, location.pathname, navigate, user]);
+  }, [isAuthenticated, userRole, currentPath, navigate, user]);
 
-  // Check if current route is accessible for user's role.
-  const isRouteAccessible = (path: string): boolean => {
-    const backofficeRoutePermissionsMap: Record<string, string | string[] | undefined> = {
-      [ROUTES.TRANSACTION.path]: PermissionType.TRANSACTIONS_VIEW,
-      [ROUTES.TRANSACTION_DETAILS.path]: PermissionType.TRANSACTIONS_VIEW,
-      [ROUTES.THIRD_PARTY_API_LOGS.path]: PermissionType.THIRD_PARTY_LOGS_VIEW,
-      [ROUTES.THIRD_PARTY_API_LOGS_DETAILS.path]: PermissionType.THIRD_PARTY_LOGS_VIEW,
-      [ROUTES.AMD_APPOINTMENTS_TYPES.path]: PermissionType.APPOINTMENT_TYPES_VIEW,
-      [ROUTES.APPOINTMENT.path]: PermissionType.APPOINTMENT_VIEW,
-      [ROUTES.ADMIN_BOOK_APPOINTMENT.path]: PermissionType.APPOINTMENT_ADD,
-      [ROUTES.APPOINTMENT_VIEW.path]: PermissionType.APPOINTMENT_VIEW,
-      [ROUTES.CLIENT_MANAGEMENT.path]: PermissionType.PATIENT_VIEW,
-      [ROUTES.ADD_CLIENT.path]: PermissionType.PATIENT_ADD,
-      [ROUTES.CLIENT_MANAGEMENT_DETAILS.path]: PermissionType.PATIENT_VIEW,
-      [ROUTES.EDIT_CLIENT.path]: PermissionType.PATIENT_EDIT,
-      [ROUTES.THERAPIST_MANAGEMENT.path]: PermissionType.THERAPIST_VIEW,
-      [ROUTES.EDIT_THERAPIST.path]: PermissionType.THERAPIST_EDIT,
-      [ROUTES.VIEW_THERAPIST_DETAILS.path]: PermissionType.THERAPIST_VIEW,
-      [ROUTES.ASSESSMENT_FORM.path]: PermissionType.ASSESSMENT_FORM_VIEW,
-      // Allow view to edit page when user has either UPDATE or READ permission
-      [ROUTES.EDIT_ASSESSMENT_FORM.path]: [
-        PermissionType.ASSESSMENT_FORM_EDIT,
-        PermissionType.ASSESSMENT_FORM_VIEW,
-      ],
-      [ROUTES.AGREEMENT.path]: PermissionType.AGREEMENTS_VIEW,
-      [ROUTES.BOOK_APPOINTMENTS_DETAILS.path]: PermissionType.APPOINTMENT_ADD,
-      [ROUTES.AREA_OF_FOCUS.path]: PermissionType.AREA_OF_FOCUS_VIEW,
-      [ROUTES.REMINDER_WIDGETS.path]: PermissionType.WIDGETS_VIEW,
-      [ROUTES.TAG.path]: PermissionType.ALERT_TAGS_VIEW,
-      [ROUTES.SESSION_TAG.path]: PermissionType.SESSION_TAGS_VIEW,
-      [ROUTES.CLINIC_ADDRESSES.path]: PermissionType.CLINIC_ADDRESSES_VIEW,
-      [ROUTES.ADMIN_BACKOFFICE_QUEUE.path]: PermissionType.BACKOFFICE_QUEUE_VIEW,
-      [ROUTES.QUEUE_DETAILS_VIEW.path]: PermissionType.BACKOFFICE_QUEUE_VIEW,
-      [ROUTES.ADMIN_BOOK_APPOINTMENT_DETAIL.path]: PermissionType.APPOINTMENT_ADD,
-    };
+  const staticRoutes = {
+    [UserRole.CLIENT]: [
+      ROUTES.CLIENT_DASHBOARD,
+      ROUTES.APPOINTMENT,
+      ROUTES.TRANSACTION,
+      ROUTES.CHAT,
+      ROUTES.CLIENT_PROFILE,
+      ROUTES.BOOK_APPOINTMENT,
+      ROUTES.BOOK_SLOT,
+      ROUTES.BOOK_APPOINTMENTS_DETAILS,
+      ROUTES.GENERAL_SETTING,
+      ROUTES.PAYMENT_METHOD,
+      ROUTES.INSURANCE,
+      ROUTES.MY_AGREEMENTS,
+      ROUTES.SESSION_DOCUMENTS,
+      ROUTES.SUBMIT_FORM_RESPONSE,
+      ROUTES.VIEW_FORM_RESPONSE,
+    ],
+    [UserRole.THERAPIST]: [
+      ROUTES.THERAPIST_DASHBOARD,
+      ROUTES.APPOINTMENT,
+      ROUTES.MY_CLIENT,
+      ROUTES.CALENDAR,
+      ROUTES.CHAT,
+      ROUTES.SETTINGS,
+      ROUTES.THERAPIST_PROFILE,
+      ROUTES.INTAKE_FORM,
+    ],
+    [UserRole.ADMIN]: [
+      ROUTES.ADMIN_DASHBOARD,
+      ROUTES.APPOINTMENT,
+      ROUTES.TRANSACTION,
+      ROUTES.CLIENT_MANAGEMENT,
+      ROUTES.THERAPIST_MANAGEMENT,
+      ROUTES.ADMIN_PROFILE,
+      ROUTES.ADMIN_SETTINGS,
+      // ROUTES.ADD_THERAPIST,
+      ROUTES.STAFF_MANAGEMENT,
+      ROUTES.ADD_STAFF_MEMBER,
+      ROUTES.EDIT_STAFF_MEMBER,
+      ROUTES.ROLE_PERMISSION,
+      ROUTES.AREA_OF_FOCUS,
+      ROUTES.REMINDER_WIDGETS,
+      ROUTES.ADMIN_BACKOFFICE_QUEUE,
+      ROUTES.TAG,
+      ROUTES.AGREEMENT,
+      ROUTES.ADD_CLIENT,
+      ROUTES.ASSESSMENT_FORM,
+      ROUTES.SESSION_TAG,
+      ROUTES.CLINIC_ADDRESSES,
+      // ROUTES.AMD_LOGS,
+      // ROUTES.AMD_LOGS_DETAILS,
+      ROUTES.AMD_APPOINTMENTS_TYPES,
+      ROUTES.ADMIN_BOOK_APPOINTMENT,
+      ROUTES.ADMIN_BOOK_APPOINTMENT_DETAIL,
+      ROUTES.THIRD_PARTY_API_LOGS,
+      ROUTES.NOT_AUTHORIZED,
+    ],
+    [UserRole.BACKOFFICE]: [
+      ROUTES.ADMIN_DASHBOARD,
+      ROUTES.APPOINTMENT,
+      ROUTES.ADMIN_BOOK_APPOINTMENT,
+      ROUTES.CLIENT_MANAGEMENT,
+      ROUTES.ADD_CLIENT,
+      ROUTES.THERAPIST_MANAGEMENT,
+      ROUTES.ASSESSMENT_FORM,
+      ROUTES.AGREEMENT,
+      ROUTES.ADMIN_BOOK_APPOINTMENT_DETAIL,
+      ROUTES.AREA_OF_FOCUS,
+      ROUTES.REMINDER_WIDGETS,
+      ROUTES.TAG,
+      ROUTES.SESSION_TAG,
+      ROUTES.CLINIC_ADDRESSES,
+      ROUTES.ADMIN_BACKOFFICE_QUEUE,
+      ROUTES.STAFF_PROFILE,
+      ROUTES.ADMIN_SETTINGS,
+      ROUTES.TRANSACTION,
+      ROUTES.THIRD_PARTY_API_LOGS,
+      ROUTES.AMD_APPOINTMENTS_TYPES,
+    ],
+  };
 
-    const isRouteAccessible = (route: string): boolean => {
-      const safePermissions = Array.isArray(user?.permissions) ? user?.permissions : [];
+  const dynamicRoutes = {
+    [UserRole.ADMIN]: [
+      ROUTES.VIEW_THERAPIST_DETAILS,
+      ROUTES.EDIT_THERAPIST,
+      ROUTES.APPOINTMENT_VIEW,
+      ROUTES.THERAPIST_APPOINTMENT_LIST,
+      ROUTES.CLIENT_MANAGEMENT_DETAILS,
+      ROUTES.EDIT_CLIENT,
+      // ROUTES.AMD_LOGS_DETAILS,
+      ROUTES.VIEW_FORM_RESPONSE_ADMIN,
+      ROUTES.THIRD_PARTY_API_LOGS_DETAILS,
+      ROUTES.ADD_CREDENTIALING_ITEM,
+      ROUTES.EDIT_CREDENTIALING_ITEM,
+      ROUTES.TRANSACTION_DETAILS,
+      ROUTES.QUEUE_DETAILS_VIEW,
+      ROUTES.EDIT_ASSESSMENT_FORM,
+      ROUTES.STAFF_MANAGEMENT_DETAILS,
+    ],
+    [UserRole.THERAPIST]: [
+      ROUTES.MY_CLIENT_DETAIL,
+      ROUTES.APPOINTMENT_VIEW,
+      ROUTES.CHAT_VIEW,
+      ROUTES.VIEW_FORM_RESPONSE_THERAPIST,
+      ROUTES.WELLNESS_DETAIL,
+      ROUTES.AMD_SAFETY_PLAN,
+      // Add therapist dynamic routes here
+    ],
+    [UserRole.CLIENT]: [
+      // Add client dynamic routes here
+      ROUTES.APPOINTMENT_VIEW,
+      ROUTES.CHAT_VIEW,
+      ROUTES.MY_AGREEMENTS_DETAIL,
+      ROUTES.EDIT_FORM_RESPONSE,
+      ROUTES.VIEW_FORM_RESPONSE,
+      ROUTES.REQUEST_SLOT,
+    ],
+    [UserRole.BACKOFFICE]: [
+      ROUTES.APPOINTMENT_VIEW,
+      ROUTES.CLIENT_MANAGEMENT_DETAILS,
+      ROUTES.EDIT_CLIENT,
+      ROUTES.EDIT_THERAPIST,
+      ROUTES.VIEW_THERAPIST_DETAILS,
+      ROUTES.EDIT_ASSESSMENT_FORM,
+      ROUTES.QUEUE_DETAILS_VIEW,
+      ROUTES.TRANSACTION_DETAILS,
+      ROUTES.THIRD_PARTY_API_LOGS_DETAILS,
+      ROUTES.THERAPIST_APPOINTMENT_LIST,
+      ROUTES.VIEW_FORM_RESPONSE_ADMIN,
+      ROUTES.ADD_CREDENTIALING_ITEM,
+      ROUTES.EDIT_CREDENTIALING_ITEM,
+    ],
+  };
 
-      const requiredPermission = backofficeRoutePermissionsMap[route];
+  const isAccessible = (route: RouteObjectValueType): boolean => {
+    // List of the user permissions
+    const safePermissions = Array.isArray(user?.permissions) ? user?.permissions : [];
 
-      if (!requiredPermission) {
-        return true;
-      }
+    // Permissions need to access the particular route (Defined in routes itself)
+    const requiredPermission = route.permissions?.list;
 
-      if (Array.isArray(requiredPermission)) {
-        return requiredPermission.some(p => safePermissions.includes(p));
-      }
-
-      return safePermissions.includes(requiredPermission);
-    };
-
-    const staticRoutes = {
-      [UserRole.CLIENT]: [
-        ROUTES.CLIENT_DASHBOARD.path,
-        ROUTES.APPOINTMENT.path,
-        ROUTES.CALENDAR.path,
-        ROUTES.TRANSACTION.path,
-        ROUTES.CHAT.path,
-        ROUTES.CLIENT_PROFILE.path,
-        ROUTES.BOOK_APPOINTMENT.path,
-        ROUTES.BOOK_SLOT.path,
-        ROUTES.BOOK_APPOINTMENTS_DETAILS.path,
-        ROUTES.GENERAL_SETTING.path,
-        ROUTES.PAYMENT_METHOD.path,
-        ROUTES.INSURANCE.path,
-        ROUTES.MY_AGREEMENTS.path,
-        ROUTES.SESSION_DOCUMENTS.path,
-        ROUTES.SUBMIT_FORM_RESPONSE.path,
-        ROUTES.VIEW_FORM_RESPONSE.path,
-        ROUTES.REQUEST_SLOT.path,
-      ],
-      [UserRole.THERAPIST]: [
-        ROUTES.THERAPIST_DASHBOARD.path,
-        ROUTES.APPOINTMENT.path,
-        ROUTES.MY_CLIENT.path,
-        ROUTES.WELLNESS_DETAIL.path,
-        ROUTES.CALENDAR.path,
-        ROUTES.CHAT.path,
-        ROUTES.SETTINGS.path,
-        ROUTES.THERAPIST_PROFILE.path,
-        ROUTES.INTAKE_FORM.path,
-        ROUTES.VIEW_FORM_RESPONSE_THERAPIST.path,
-        ROUTES.THERAPIST_ADD_CREDENTIALING_ITEM.path,
-        ROUTES.AMD_SAFETY_PLAN,
-      ],
-      [UserRole.ADMIN]: [
-        ROUTES.ADMIN_DASHBOARD.path,
-        ROUTES.APPOINTMENT.path,
-        ROUTES.TRANSACTION.path,
-        ROUTES.CLIENT_MANAGEMENT.path,
-        ROUTES.CLIENT_MANAGEMENT_DETAILS.path,
-        ROUTES.THERAPIST_MANAGEMENT.path,
-        ROUTES.SETTINGS.path,
-        ROUTES.MANAGEMENT.path,
-        ROUTES.ADMIN_PROFILE.path,
-        ROUTES.ADMIN_LOGIN.path,
-        ROUTES.ADMIN_STAFF.path,
-        ROUTES.ADMIN_SETTINGS.path,
-        // ROUTES.ADD_THERAPIST.path,
-        ROUTES.STAFF_MANAGEMENT.path,
-        ROUTES.STAFF_MANAGEMENT_DETAILS.path,
-        ROUTES.ADD_STAFF_MEMBER.path,
-        ROUTES.EDIT_STAFF_MEMBER.path,
-        ROUTES.ROLE_PERMISSION.path,
-        ROUTES.ASSESSMENT_FORM_DETAILS.path,
-        ROUTES.AREA_OF_FOCUS.path,
-        ROUTES.REMINDER_WIDGETS.path,
-        ROUTES.APPOINTMENT_VIEW.path,
-        ROUTES.ADMIN_BACKOFFICE_QUEUE.path,
-        ROUTES.TAG.path,
-        ROUTES.QUEUE_DETAILS_VIEW.path,
-        ROUTES.AGREEMENT.path,
-        ROUTES.ADD_CLIENT.path,
-        ROUTES.ASSESSMENT_FORM.path,
-        ROUTES.ADD_ASSESSMENT_FORM.path,
-        ROUTES.EDIT_ASSESSMENT_FORM.path,
-        ROUTES.SESSION_TAG.path,
-        ROUTES.CLINIC_ADDRESSES.path,
-        // ROUTES.AMD_LOGS.path,
-        // ROUTES.AMD_LOGS_DETAILS.path,
-        ROUTES.AMD_APPOINTMENTS_TYPES.path,
-        ROUTES.ADMIN_BOOK_APPOINTMENT.path,
-        ROUTES.BOOK_APPOINTMENTS_DETAILS.path,
-        ROUTES.ADMIN_BOOK_APPOINTMENT_DETAIL.path,
-        ROUTES.VIEW_FORM_RESPONSE_ADMIN.path,
-        ROUTES.THIRD_PARTY_API_LOGS.path,
-        ROUTES.TRANSACTION_DETAILS.path,
-      ],
-      [UserRole.BACKOFFICE]: [
-        ROUTES.ADMIN_DASHBOARD.path,
-        ROUTES.APPOINTMENT.path,
-        ROUTES.ADMIN_BOOK_APPOINTMENT.path,
-        ROUTES.CLIENT_MANAGEMENT.path,
-        ROUTES.ADD_CLIENT.path,
-        ROUTES.THERAPIST_MANAGEMENT.path,
-        ROUTES.ASSESSMENT_FORM.path,
-        ROUTES.AGREEMENT.path,
-        ROUTES.ADMIN_BOOK_APPOINTMENT_DETAIL.path,
-        ROUTES.AREA_OF_FOCUS.path,
-        ROUTES.REMINDER_WIDGETS.path,
-        ROUTES.TAG.path,
-        ROUTES.SESSION_TAG.path,
-        ROUTES.CLINIC_ADDRESSES.path,
-        ROUTES.ADMIN_BACKOFFICE_QUEUE.path,
-        ROUTES.STAFF_PROFILE.path,
-        ROUTES.SETTINGS.path,
-        ROUTES.TRANSACTION.path,
-        ROUTES.THIRD_PARTY_API_LOGS.path,
-        ROUTES.AMD_APPOINTMENTS_TYPES.path,
-      ],
-    };
-
-    const dynamicRoutes = {
-      [UserRole.ADMIN]: [
-        ROUTES.VIEW_THERAPIST_DETAILS.path,
-        ROUTES.EDIT_THERAPIST.path,
-        ROUTES.APPOINTMENT_VIEW.path,
-        ROUTES.THERAPIST_APPOINTMENT_LIST.path,
-        ROUTES.CLIENT_MANAGEMENT_DETAILS.path,
-        ROUTES.EDIT_CLIENT.path,
-        // ROUTES.AMD_LOGS_DETAILS.path,
-        ROUTES.VIEW_FORM_RESPONSE_ADMIN.path,
-        ROUTES.THIRD_PARTY_API_LOGS_DETAILS.path,
-        ROUTES.CREDENTIALING.path,
-        ROUTES.ADD_CREDENTIALING_ITEM.path,
-        ROUTES.EDIT_CREDENTIALING_ITEM.path,
-      ],
-      [UserRole.THERAPIST]: [
-        ROUTES.MY_CLIENT_DETAIL.path,
-        ROUTES.APPOINTMENT_VIEW.path,
-        ROUTES.CHAT_VIEW.path,
-        ROUTES.VIEW_FORM_RESPONSE_THERAPIST.path,
-        ROUTES.WELLNESS_DETAIL.path,
-        ROUTES.CREDENTIALING.path,
-        ROUTES.ADD_CREDENTIALING_ITEM.path,
-        ROUTES.AMD_SAFETY_PLAN.path,
-        // Add therapist dynamic routes here
-      ],
-      [UserRole.CLIENT]: [
-        // Add client dynamic routes here
-        ROUTES.APPOINTMENT_VIEW.path,
-        ROUTES.CHAT_VIEW.path,
-        ROUTES.MY_AGREEMENTS_DETAIL.path,
-        ROUTES.EDIT_FORM_RESPONSE.path,
-        ROUTES.VIEW_FORM_RESPONSE.path,
-        ROUTES.REQUEST_SLOT.path,
-      ],
-      [UserRole.BACKOFFICE]: [
-        ROUTES.APPOINTMENT_VIEW.path,
-        ROUTES.CLIENT_MANAGEMENT_DETAILS.path,
-        ROUTES.EDIT_CLIENT.path,
-        ROUTES.EDIT_THERAPIST.path,
-        ROUTES.VIEW_THERAPIST_DETAILS.path,
-        ROUTES.EDIT_ASSESSMENT_FORM.path,
-        ROUTES.QUEUE_DETAILS_VIEW.path,
-        ROUTES.TRANSACTION_DETAILS.path,
-        ROUTES.THIRD_PARTY_API_LOGS_DETAILS.path,
-      ],
-    };
-
-    const allowedStaticRoutes = staticRoutes[userRole as keyof typeof staticRoutes] || [];
-
-    const allowedDynamicRoutes = dynamicRoutes[userRole as keyof typeof dynamicRoutes] || [];
-
-    if (allowedStaticRoutes.includes(path)) {
-      if (userRole === UserRole.BACKOFFICE) {
-        return isRouteAccessible(path);
-      }
+    // If no permissions required then return isAccessible as true
+    if (!requiredPermission) {
       return true;
     }
-    return allowedDynamicRoutes.some(allowedPath => {
-      const allowedSegments = allowedPath.split('/').filter(Boolean);
-      const currentSegments = path.split('/').filter(Boolean);
-      if (allowedSegments.length !== currentSegments.length) return false;
 
-      if (allowedSegments.every((seg, i) => seg.startsWith(':') || seg === currentSegments[i])) {
-        if (userRole === UserRole.BACKOFFICE) {
-          return isRouteAccessible(allowedPath);
+    // Else check if user has the permissions required to access that path
+    if (Array.isArray(requiredPermission)) {
+      return requiredPermission.every(p => safePermissions.includes(p));
+    }
+
+    return safePermissions.includes(requiredPermission);
+  };
+
+  // Check if current route is accessible for user's role.
+  const isRouteAccessible = (path: string, checkForNotFound: boolean = false): boolean => {
+    // CHeck if it is static route
+    const isStaticRoute =
+      Object.entries(staticRoutes).find(([, routes]) =>
+        routes.some(route => route.path === path)
+      ) || null;
+
+    if (isStaticRoute) {
+      // Check if the current role has access to that route
+      const isRouteAccessibleToRole = staticRoutes[userRole as keyof typeof staticRoutes].find(
+        r => r.path === path
+      );
+
+      // If accessible,
+      if (isRouteAccessibleToRole) {
+        // If checking for not found, then return false
+        if (checkForNotFound) {
+          return false;
         }
+        // If checking for route access..
+        // Check for staff permissions
+        if (userRole === UserRole.BACKOFFICE) {
+          return isAccessible(isRouteAccessibleToRole);
+        }
+        // Else return true
         return true;
+      } else {
+        // If Route is not accessible to role
+        // If checking for not found, return true
+        if (checkForNotFound) {
+          return true;
+        }
+        // Else checking for route access then return false
+        return false;
       }
-      return false;
-    });
+    } else {
+      // Check for dynamic routes
+      // Get dynamic routes of the current role
+      const allowedDynamicRoutes = dynamicRoutes[userRole as keyof typeof dynamicRoutes] || [];
+
+      // If we are checking for not found route
+      if (checkForNotFound) {
+        // Check if the role has access to the current path
+        // If not , return not found as true else false
+        if (!allowedDynamicRoutes.find(a => getNormalizedParam(a.path) === path)) {
+          return true;
+        }
+        return false;
+      }
+
+      // Now match the current and the dynamic path
+      return allowedDynamicRoutes.some(allowedPath => {
+        const allowedSegments = allowedPath.path.split('/').filter(Boolean);
+        const currentSegments = path.split('/').filter(Boolean);
+        if (allowedSegments.length !== currentSegments.length) return false;
+
+        // If the route matched
+        if (allowedSegments.every((seg, i) => seg.startsWith(':') || seg === currentSegments[i])) {
+          // Check for the permissions for the staff role
+          if (userRole === UserRole.BACKOFFICE) {
+            return isAccessible(allowedPath);
+          }
+          // Else return route accessible as true
+          return true;
+        }
+        // If route is not accessible, return false
+        return false;
+      });
+    }
   };
 
   const hasPermission = (permission: string): boolean => {
@@ -266,7 +267,7 @@ export const useRoleBasedRouting = () => {
     userRole,
     isAuthenticated,
     isRouteAccessible,
-    getDefaultRoute: () => getDefaultRouteByRole(userRole, user.permissions),
+    getDefaultRoute: () => getDefaultRouteByRole(userRole),
     hasPermission,
   };
 };
