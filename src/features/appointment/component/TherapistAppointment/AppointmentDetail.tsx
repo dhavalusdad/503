@@ -86,7 +86,7 @@ const AppointmentDetail = () => {
   const navigate = useNavigate();
 
   // ** Redux State **
-  const { timezone } = useSelector(currentUser);
+  const { timezone, tenant_id } = useSelector(currentUser);
 
   // ** States **
   const [activeTab, setActiveTab] = useState<keyof typeof tabToNoteType>('before');
@@ -108,7 +108,7 @@ const AppointmentDetail = () => {
   // ** Services **
   const { data: appointmentDetails } = useGetAppointmentDetails(appointmentId || '');
   const { data: selectedNote } = useGetNoteById(selectedNoteId ?? '');
-  const { mutateAsync: createNote } = useCreateNote(appointmentId!, noteType);
+  const { mutateAsync: createNote } = useCreateNote(appointmentId!, noteType, tenant_id!);
   const { data: sessionTags } = useGetSessionTagById(appointmentId);
 
   const tagCellOption = sessionTags?.map(
@@ -136,6 +136,7 @@ const AppointmentDetail = () => {
         sortColumn: params.sortColumn,
         sortOrder: params.sortOrder,
         search: params.search,
+        tenant_id,
       }),
     initialQueryParams: {
       sortColumn: 'created_at',
@@ -438,6 +439,12 @@ const AppointmentDetail = () => {
               {appointmentDetails?.session_type || 'Not specified'}
             </p>
           </div>
+          <div className='flex flex-col gap-1.5'>
+            <h3 className='text-base font-bold text-blackdark leading-22px'>Session Type</h3>
+            <p className='text-base font-normal leading-22px text-primarygray'>
+              {appointmentDetails?.payment_method?.name || 'Not specified'}
+            </p>
+          </div>
           {appointmentDetails?.session_type === SessionType.CLINIC && (
             <div className='flex flex-col gap-1.5'>
               <h3 className='text-base font-bold text-blackdark leading-22px'>Clinic Address</h3>
@@ -571,7 +578,7 @@ const AppointmentDetail = () => {
                 }
               }}
               selectedRowId={selectedNoteId}
-              mainParentClassName='max-h-[600px] overflow-y-auto'
+              className='max-h-500px'
               isLoading={isLoading}
             />
           </div>

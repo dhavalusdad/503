@@ -50,10 +50,7 @@ export const CheckboxField = React.forwardRef<HTMLDivElement, CheckboxProps<Fiel
       label ? (
         <label
           htmlFor={id}
-          className={clsx(
-            'text-sm text-blackdark leading-5 cursor-pointer w-[calc(100%-30px)]',
-            labelClass
-          )}
+          className={clsx('text-sm text-blackdark leading-5 cursor-pointer flex-1', labelClass)}
         >
           {label}
         </label>

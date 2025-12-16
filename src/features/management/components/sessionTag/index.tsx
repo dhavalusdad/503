@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { PermissionType } from '@/enums';
 import AddEditUserTagModal from '@/features/management/components/sessionTag/addEditSessionTagModal';
 import useTag from '@/features/management/components/sessionTag/hooks';
@@ -38,7 +40,9 @@ const SessionTag = () => {
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Session Tags</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          Session Tags
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -47,7 +51,11 @@ const SessionTag = () => {
           iconClassName='text-primarygray'
           onChange={handleSearchChange}
           value={searchQuery}
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName={clsx(
+            hasPermission(PermissionType.SESSION_TAGS_ADD)
+              ? 'w-full lg:w-76 xl:w-360px order-3 lg:order-none'
+              : 'w-76 xl:w-360px order-2 lg:order-none'
+          )}
         />
         {hasPermission(PermissionType.SESSION_TAGS_ADD) && (
           <Button
@@ -56,6 +64,7 @@ const SessionTag = () => {
             icon={<Icon name='plus' />}
             isIconFirst
             className='rounded-lg'
+            parentClassName='order-2 lg:order-none'
             onClick={() => {
               setId('');
               toggleAddEditTagModal();

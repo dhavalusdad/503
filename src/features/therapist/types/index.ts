@@ -106,6 +106,7 @@ export interface TherapistAppointment {
     user: {
       first_name: string;
       last_name: string;
+      profile_image: string;
     };
   };
   therapy_type: {

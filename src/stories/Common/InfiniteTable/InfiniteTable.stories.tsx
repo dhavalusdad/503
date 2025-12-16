@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 
 import { type ColumnDef, type SortingState } from '@tanstack/react-table';
 
-import InfiniteTable, { type InfiniteTableProps } from '.';
+import InfiniteTable, { type InfiniteTableProps } from '@/stories/Common/InfiniteTable';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

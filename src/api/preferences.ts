@@ -1,10 +1,8 @@
+import { useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPut } from '@/api/axios';
+import { preferenceQueryKey } from '@/api/common/preferences.queryKey';
 import type { PreferenceData } from '@/api/types/preferences.dto';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { preferenceQueryKey } from './common/preferences.queryKey';
-
-import { useMutation, useQuery } from '.';
 
 const BASE_PATH = '/preferences';
 

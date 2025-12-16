@@ -2,12 +2,11 @@ import { useForm, useFormContext } from 'react-hook-form';
 
 import { useCreateFieldOptions } from '@/api/field-option';
 import { FieldOptionType } from '@/enums';
+import type { FormDataEducation } from '@/features/profile/types';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
 import Button from '@/stories/Common/Button';
 import InputField from '@/stories/Common/Input';
 import Modal from '@/stories/Common/Modal';
-
-import type { FormDataEducation } from '../types';
 
 type Props = {
   onClose: () => void;

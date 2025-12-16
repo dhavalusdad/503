@@ -7,16 +7,15 @@ import { SyncClient } from 'twilio-sync';
 import { useEndSession } from '@/api/twilio';
 import { UserRole } from '@/api/types/user.dto';
 import { useVideoCall } from '@/features/video-call/store/useVideoCall';
-import { currentUser } from '@/redux/ducks/user';
-
-import { stopAllActiveMediaTracks } from '../utils/cleanup';
-import { clearConnectionDetails } from '../utils/connectionStorage';
-import { stopAllMediaStreams } from '../utils/media';
-import { sendHandRaiseSignal } from '../utils/twilio';
+import { stopAllActiveMediaTracks } from '@/features/video-call/utils/cleanup';
+import { clearConnectionDetails } from '@/features/video-call/utils/connectionStorage';
+import { stopAllMediaStreams } from '@/features/video-call/utils/media';
+import { sendHandRaiseSignal } from '@/features/video-call/utils/twilio';
 import {
   clearTwilioSessionDetailsExceptIdentity,
   getTwilioToken,
-} from '../utils/twilioSessionStorage';
+} from '@/features/video-call/utils/twilioSessionStorage';
+import { currentUser } from '@/redux/ducks/user';
 
 import type { LocalDataTrack } from 'twilio-video';
 

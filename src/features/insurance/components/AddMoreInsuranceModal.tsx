@@ -1,12 +1,14 @@
 import { useState } from 'react';
 
 import { useAddInsurancesToAppointment, useGetInsurancesNotInAppointment } from '@/api/insurance';
+import { PermissionType } from '@/enums';
+import { InsuranceList } from '@/features/insurance/components/InsuranceList';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import AddInsuranceModal from '@/pages/Preferences/components/AddInsuranceModal';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
+import Modal from '@/stories/Common/Modal';
 import Skeleton from '@/stories/Common/Skeleton';
-
-import { InsuranceList } from './InsuranceList';
 
 export const AddMoreInsuranceModal = ({
   isOpen,
@@ -22,6 +24,8 @@ export const AddMoreInsuranceModal = ({
     isLoading,
   } = useGetInsurancesNotInAppointment(appointmentId);
   const { mutateAsync: addInsurances, isPending } = useAddInsurancesToAppointment(appointmentId);
+  const { hasPermission } = useRoleBasedRouting();
+
   const [selectedInsuranceIds, setSelectedInsuranceIds] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -69,15 +73,17 @@ export const AddMoreInsuranceModal = ({
           <Skeleton count={2} className='h-56 w-full' parentClassName='flex gap-5' />
         ) : (
           <>
-            <Button
-              variant='filled'
-              title='Add Insurance'
-              icon={<Icon name='plus' />}
-              isIconFirst
-              onClick={() => setIsModalOpen(true)}
-              className='rounded-10px'
-              parentClassName='ml-auto'
-            />
+            {hasPermission(PermissionType.PATIENT_EDIT) && (
+              <Button
+                variant='filled'
+                title='Add Insurance'
+                icon={<Icon name='plus' />}
+                isIconFirst
+                onClick={() => setIsModalOpen(true)}
+                className='rounded-10px'
+                parentClassName='ml-auto'
+              />
+            )}
             <InsuranceList
               insurancesData={insurancesData}
               isEditable={true}

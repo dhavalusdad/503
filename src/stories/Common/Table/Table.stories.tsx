@@ -1,6 +1,6 @@
 // src/components/common/Table/Table.stories.tsx
 
-import { Table } from './index';
+import { Table } from '@/stories/Common/Table';
 
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ColumnDef } from '@tanstack/react-table';

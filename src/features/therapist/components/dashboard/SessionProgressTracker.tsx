@@ -64,7 +64,7 @@ const ProgressBar: React.FC<ClientProgressProps> = ({ name, completed_sessions: 
       tooltip_class: TOOLTIP_CLASS.YELLOW,
       theme: 'yellow',
     };
-  } else if (current > 25 && current <= 50) {
+  } else {
     // Red range
     percentage = Math.min(((current - 25) / 25) * 100, 100);
     data = {
@@ -132,7 +132,7 @@ const SessionProgressTracker = () => {
           {_.isArray(clients) && clients?.length ? (
             <div className='max-h-400px overflow-y-auto min-h-[300px]'>
               <div className='pr-2'>
-                {(clients || []).slice(0, 1).map(c => (
+                {(clients || []).map(c => (
                   <ProgressBar
                     {...c}
                     key={c.id}

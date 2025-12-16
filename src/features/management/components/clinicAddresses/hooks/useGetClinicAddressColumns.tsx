@@ -1,9 +1,9 @@
 import { PermissionType } from '@/enums';
+import type { ClinicAddressInterface } from '@/features/management/components/clinicAddresses/hooks';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 
-import type { ClinicAddressInterface } from './index';
 import type { CellContext, ColumnDef } from '@tanstack/react-table';
 
 interface UseGetClinicAddressColumnsProps {

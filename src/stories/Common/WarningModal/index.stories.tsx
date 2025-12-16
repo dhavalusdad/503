@@ -1,4 +1,4 @@
-import { WarningModal } from '.';
+import { WarningModal } from '@/stories/Common/WarningModal';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

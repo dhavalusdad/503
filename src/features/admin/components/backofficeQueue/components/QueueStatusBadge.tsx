@@ -17,7 +17,7 @@ const BADGE_COLOR = {
   GREEN: 'bg-green-500',
   RED: 'bg-red-500',
   YELLOW: 'bg-yellow-500',
-  BLUE: 'bg-blue-500',
+  TEAL: 'bg-teal-600',
   GRAY: 'bg-gray-500',
   PRIMARY_LIGHT: 'bg-primarylight',
 };
@@ -37,7 +37,7 @@ export const QueueStatusBadge: React.FC<QueueStatusBadgeProps> = ({
       case QueueStatus.IN_PROGRESS:
         return BADGE_COLOR.YELLOW;
       case QueueStatus.OPEN:
-        return BADGE_COLOR.BLUE;
+        return BADGE_COLOR.TEAL;
       case QueueStatus.ESCALATED:
         return BADGE_COLOR.GRAY;
       default:
@@ -48,8 +48,8 @@ export const QueueStatusBadge: React.FC<QueueStatusBadgeProps> = ({
   return (
     <span
       className={clsx(
-        'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium leading-4 text-white',
-        disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
+        'inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium leading-4 text-white',
+        disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
         getStatusColor(),
         parentClassName
       )}
@@ -57,7 +57,7 @@ export const QueueStatusBadge: React.FC<QueueStatusBadgeProps> = ({
       {QueueStatusLabels[status]}
 
       {showDropdownArrow && !disabled && (
-        <Icon name='chevronRight' className='icon-wrapper w-2.5 h-2.5 rotate-90 ml-1' />
+        <Icon name='chevronRight' className='icon-wrapper w-2.5 h-2.5 rotate-90' />
       )}
     </span>
   );

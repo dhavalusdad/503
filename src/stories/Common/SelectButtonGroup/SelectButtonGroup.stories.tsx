@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import SelectButtonGroup from './index';
+import SelectButtonGroup from '@/stories/Common/SelectButtonGroup';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

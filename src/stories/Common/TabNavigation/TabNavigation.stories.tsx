@@ -1,7 +1,7 @@
 // stories/TabNavigation.stories.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import TabNavigation from '.';
+import TabNavigation from '@/stories/Common/TabNavigation';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

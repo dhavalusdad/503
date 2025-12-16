@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import { useGetQueueQuery } from '@/api/queueManagement';
+import { getInfiniteStaffAsync } from '@/api/staff';
+import { UserRole } from '@/api/types/user.dto';
 import type { CommonFilterField } from '@/components/layout/Filter';
 import { FIELD_TYPE } from '@/constants/CommonConstant';
 import {
-  ASSIGNEE_OPTION,
   REQUEST_TYPE_OPTION,
   STATUS_OPTION,
 } from '@/features/admin/components/backofficeQueue/constant';
@@ -14,6 +17,7 @@ import type {
   QueueDataType,
   ModalType,
 } from '@/features/admin/components/backofficeQueue/types';
+import { userRole } from '@/redux/ducks/user';
 import useTableWithFilters, {
   type BaseQueryParams,
 } from '@/stories/Common/Table/hook/useTableWithFilters';
@@ -21,6 +25,7 @@ import useTableWithFilters, {
 const useGetQueueManagement = () => {
   // ** States **
   const [id, setId] = useState<string>('');
+  const role = useSelector(userRole);
 
   const [openModal, setOpenModal] = useState<ModalType>({
     modal: '',
@@ -97,19 +102,24 @@ const useGetQueueManagement = () => {
         isMulti: true,
       },
       {
-        type: FIELD_TYPE.REQUEST_TYPE,
+        type: FIELD_TYPE.SELECT,
         label: 'Request Type',
         name: 'request_type',
         options: REQUEST_TYPE_OPTION,
         isMulti: true,
       },
-      {
-        type: FIELD_TYPE.ASSIGNEE,
-        label: 'Assigned To',
-        name: 'assigned_to_role',
-        options: ASSIGNEE_OPTION,
-        isMulti: true,
-      },
+      ...(role === UserRole.ADMIN
+        ? [
+            {
+              type: FIELD_TYPE.ASYNC_SELECT,
+              label: 'Assigned To',
+              name: 'assigned_to_role',
+              isMulti: true,
+              queryKey: 'backoffice-staff-list',
+              queryFn: getInfiniteStaffAsync,
+            },
+          ]
+        : []),
     ];
   }, []);
 

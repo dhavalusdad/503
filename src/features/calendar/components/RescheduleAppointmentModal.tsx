@@ -7,7 +7,6 @@ import { useUpdateAppointment } from '@/api/appointment';
 import { useGetAvailabilitySlots } from '@/api/availability';
 import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
 import { clientAppointmentBookingQueryKey } from '@/api/common/clientAppointment.queryKey';
-// import { UserRole } from '@/api/types';
 import { UserRole } from '@/api/types/user.dto';
 import { showToast } from '@/helper';
 import { useInvalidateQuery } from '@/hooks/data-fetching';

@@ -16,6 +16,7 @@ import {
 import defaultUserImage from '@/assets/images/default-user.webp';
 import { GENDER_OPTION, MARTIAL_STATUS_OPTION, TIMEZONE_OPTIONS } from '@/constants/CommonConstant';
 import type { ClientProfileFormData } from '@/features/client/types';
+import { clientProfileValidationSchema } from '@/features/client/validationSchema/profileValidation.ts';
 import { dispatchSetUser } from '@/redux/dispatch/user.dispatch';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
@@ -30,8 +31,6 @@ import Modal from '@/stories/Common/Modal';
 import PhoneField from '@/stories/Common/PhoneNumberInput';
 import Select from '@/stories/Common/Select';
 import TextArea from '@/stories/Common/Textarea';
-
-import { clientProfileValidationSchema } from '../../validationSchema/profileValidation.ts';
 
 const SERVER_URL = import.meta.env.VITE_BASE_URL;
 
@@ -266,8 +265,8 @@ export const ClientProfileComponent = () => {
                       title='Upload Image'
                       variant='filled'
                       onClick={() => toggleModal('imageModal', true)}
-                      className='!py-2.5 rounded-lg min-h-50px'
-                      icon={<Icon name='upload' />}
+                      className='!py-2.5 rounded-lg'
+                      icon={<Icon name='upload' className='icon-wrapper w-18px h-18px' />}
                       isIconFirst
                     />
                     {profileImage && (
@@ -303,7 +302,7 @@ export const ClientProfileComponent = () => {
               <InputField
                 type='text'
                 label='First Name'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 name='first_name'
                 register={register}
                 error={errors.first_name?.message}
@@ -311,12 +310,12 @@ export const ClientProfileComponent = () => {
                 isRequired={true}
                 parentClassName=''
                 placeholder='First Name'
-                inputClass={'!text-base !leading-22px !text-primarygray !px-3.5 !py-3 bg-Gray'}
+                inputClass='!text-base !leading-5 !text-primarygray bg-Gray'
               />
               <InputField
                 type='text'
                 label='Last Name'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 register={register}
                 name='last_name'
                 error={errors.last_name?.message}
@@ -324,11 +323,11 @@ export const ClientProfileComponent = () => {
                 isRequired={true}
                 parentClassName=''
                 placeholder='Last Name'
-                inputClass={'!text-base !leading-22px !text-primarygray !px-3.5 !py-3 bg-Gray'}
+                inputClass='!text-base !leading-5 !text-primarygray bg-Gray'
               />
               <CustomDatePicker
                 label='Date of Birth'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 name='dob'
                 selected={
                   getValues('dob') && moment(getValues('dob')).isValid()
@@ -343,14 +342,14 @@ export const ClientProfileComponent = () => {
                 disabled={!isEditing}
                 isRequired={true}
                 parentClassName='z-[0]'
-                className='client-profile'
+                className='client-profile !p-3.5 !pr-10 !leading-5'
               />
               <Select
                 options={GENDER_OPTION}
                 isRequired={true}
                 label='Gender'
                 name='gender'
-                labelClassName='!text-base !leading-22px'
+                labelClassName='!text-base'
                 value={GENDER_OPTION.find(option => option.value === getValues('gender'))}
                 placeholder='Select Gender'
                 onChange={value => {
@@ -366,37 +365,40 @@ export const ClientProfileComponent = () => {
                 parentClassName=''
                 StylesConfig={{
                   control: () => ({
-                    minHeight: '48px',
+                    minHeight: '50px',
                     background: '#F6F5F4',
                     backgroundColor: '#E8ECF3',
                   }),
                   singleValue: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
                   }),
                   placeholder: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
+                  }),
+                  option: () => ({
+                    fontSize: '16px',
                   }),
                 }}
               />
               <InputField
                 label='Age'
                 type='text'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 value={calculateAge(getValues('dob'))}
                 isDisabled={true}
                 isRequired={true}
                 parentClassName=''
                 placeholder='Age'
-                inputClass={'!text-base !leading-22px !text-primarygray !px-3.5 !py-3 bg-Gray'}
+                inputClass='!text-base !leading-5 !text-primarygray bg-Gray'
               />
               <Select
                 options={MARTIAL_STATUS_OPTION}
                 isRequired={true}
                 label='Marital Status'
                 name='marital_status'
-                labelClassName='!text-base !leading-22px'
+                labelClassName='!text-base'
                 value={MARTIAL_STATUS_OPTION.find(
                   option => option.value === getValues('marital_status')
                 )}
@@ -414,24 +416,27 @@ export const ClientProfileComponent = () => {
                 parentClassName=''
                 StylesConfig={{
                   control: () => ({
-                    minHeight: '48px',
+                    minHeight: '50px',
                     background: '#F6F5F4',
                     backgroundColor: '#E8ECF3',
                   }),
                   singleValue: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
                   }),
                   placeholder: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
+                  }),
+                  option: () => ({
+                    fontSize: '16px',
                   }),
                 }}
               />
               <InputField
                 type='email'
                 label='Email'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 register={register}
                 name='email'
                 error={errors.email?.message}
@@ -439,11 +444,11 @@ export const ClientProfileComponent = () => {
                 isRequired={true}
                 parentClassName=''
                 placeholder='Email'
-                inputClass={'!text-base !leading-22px !text-primarygray !px-3.5 !py-3 bg-Gray'}
+                inputClass={'!text-base !leading-5 !text-primarygray bg-Gray'}
               />
               <PhoneField
                 label='Contact Number'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 value={getValues('phone') || ''}
                 name='phone'
                 onChange={formattedValue => {
@@ -457,12 +462,12 @@ export const ClientProfileComponent = () => {
                 disabled={!isEditing}
                 placeholder='Contact number'
                 parentClassName='client-profile'
-                inputClass={` !text-base !leading-6 !p-3 !bg-Gray ${errors.phone && errors.phone.message ? 'border-red-500' : ''} `}
+                inputClass={` !text-base !bg-Gray ${errors.phone && errors.phone.message ? 'border-red-500' : ''} `}
                 buttonClass='!bg-Gray'
               />
               <PhoneField
                 label='Emergency Contact Number'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 value={getValues('emergency_contact') || ''}
                 name='emergency_contact'
                 onChange={formattedValue => {
@@ -475,13 +480,13 @@ export const ClientProfileComponent = () => {
                 disabled={!isEditing}
                 placeholder='Emergency contact number'
                 parentClassName='client-profile'
-                inputClass={` !text-base !leading-6 !p-3 !bg-Gray ${errors.emergency_contact && errors.emergency_contact.message ? 'border-red-500' : ''} `}
+                inputClass={` !text-base !bg-Gray ${errors.emergency_contact && errors.emergency_contact.message ? 'border-red-500' : ''} `}
                 buttonClass='!bg-Gray'
               />
               <InputField
                 type='string'
                 label='Address'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 register={register}
                 name='address'
                 error={errors.address?.message}
@@ -489,7 +494,7 @@ export const ClientProfileComponent = () => {
                 isRequired={true}
                 parentClassName='xl:col-span-3 md:col-span-2 col-span-1'
                 placeholder='Address'
-                inputClass={'!text-base !leading-22px !text-primarygray !px-3.5 !py-3 bg-Gray'}
+                inputClass={'!text-base !leading-5 !text-primarygray bg-Gray'}
               />
               <Select
                 options={TIMEZONE_OPTIONS}
@@ -502,23 +507,26 @@ export const ClientProfileComponent = () => {
                 }}
                 error={errors.timezone?.message}
                 label='Time Zone'
-                labelClassName='!text-base !leading-22px'
+                labelClassName='!text-base'
                 isMulti={false}
                 isDisabled={!isEditing}
                 parentClassName=''
                 StylesConfig={{
                   control: () => ({
-                    minHeight: '48px',
+                    minHeight: '50px',
                     background: '#F6F5F4',
                     backgroundColor: '#E8ECF3',
                   }),
                   singleValue: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
                   }),
                   placeholder: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
+                  }),
+                  option: () => ({
+                    fontSize: '16px',
                   }),
                 }}
               />
@@ -529,7 +537,7 @@ export const ClientProfileComponent = () => {
                 isRequired
                 label='Country'
                 name='country'
-                labelClassName='!text-base !leading-22px'
+                labelClassName='!text-base'
                 control={control}
                 placeholder='Select Country'
                 onChange={(selected: { value: string }) => {
@@ -550,17 +558,20 @@ export const ClientProfileComponent = () => {
                 parentClassName=''
                 StylesConfig={{
                   control: () => ({
-                    minHeight: '48px',
+                    minHeight: '50px',
                     background: '#F6F5F4',
                     backgroundColor: '#E8ECF3',
                   }),
                   singleValue: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
                   }),
                   placeholder: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
+                  }),
+                  option: () => ({
+                    fontSize: '16px',
                   }),
                 }}
               />
@@ -576,7 +587,7 @@ export const ClientProfileComponent = () => {
                     : [{ value: '', label: 'No states for selected country' }]
                 }
                 label='State'
-                labelClassName='!text-base !leading-22px'
+                labelClassName='!text-base'
                 name='state'
                 control={control}
                 placeholder='Select State'
@@ -597,17 +608,20 @@ export const ClientProfileComponent = () => {
                 parentClassName=''
                 StylesConfig={{
                   control: () => ({
-                    minHeight: '48px',
+                    minHeight: '50px',
                     background: '#F6F5F4',
                     backgroundColor: '#E8ECF3',
                   }),
                   singleValue: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
                   }),
                   placeholder: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
+                  }),
+                  option: () => ({
+                    fontSize: '16px',
                   }),
                 }}
               />
@@ -618,7 +632,7 @@ export const ClientProfileComponent = () => {
                     : [{ value: '', label: 'No cities for selected state' }]
                 }
                 label='City'
-                labelClassName='!text-base !leading-22px'
+                labelClassName='!text-base'
                 name='city'
                 control={control}
                 placeholder='Select City'
@@ -636,17 +650,20 @@ export const ClientProfileComponent = () => {
                 parentClassName=''
                 StylesConfig={{
                   control: () => ({
-                    minHeight: '48px',
+                    minHeight: '50px',
                     background: '#F6F5F4',
                     backgroundColor: '#E8ECF3',
                   }),
                   singleValue: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
                   }),
                   placeholder: () => ({
                     fontSize: '16px',
-                    lineHeight: '22px',
+                    lineHeight: '20px',
+                  }),
+                  option: () => ({
+                    fontSize: '16px',
                   }),
                 }}
               />
@@ -654,7 +671,7 @@ export const ClientProfileComponent = () => {
               <InputField
                 type='string'
                 label='Postal Code'
-                labelClass='!text-base !leading-22px'
+                labelClass='!text-base'
                 register={register}
                 name='postal_code'
                 error={errors.postal_code?.message}
@@ -662,7 +679,7 @@ export const ClientProfileComponent = () => {
                 isRequired={true}
                 parentClassName=''
                 placeholder='Postal code'
-                inputClass={'!text-base !leading-22px !text-primarygray !px-3.5 !py-3 bg-Gray'}
+                inputClass={'!text-base !leading-5 !text-primarygray bg-Gray'}
               />
               <TextArea
                 label='Allergies'
@@ -670,7 +687,7 @@ export const ClientProfileComponent = () => {
                 error={errors.allergies?.message}
                 placeholder='Describe your allergies...'
                 labelClass='!text-base !leading-22px'
-                className='!text-base !leading-6 !p-3 bg-Gray'
+                className='!text-base !leading-5 bg-Gray'
                 parentClassName='xl:col-span-3 md:col-span-2 col-span-1'
                 isDisabled={!isEditing}
                 rows={3}
@@ -691,7 +708,7 @@ export const ClientProfileComponent = () => {
                 title='Cancel'
                 variant='outline'
                 onClick={() => toggleModal('cancelModal', true)}
-                className='px-3 py-3 rounded-lg'
+                className='rounded-lg min-h-50px !px-6'
               />
               <Button
                 title='Save Changes'
@@ -702,7 +719,7 @@ export const ClientProfileComponent = () => {
                     toggleModal('saveModal', true);
                   }
                 }}
-                className='px-3 py-3 rounded-lg'
+                className='rounded-lg min-h-50px !px-6'
                 isDisabled={!isDirty}
               />
             </div>

@@ -30,18 +30,17 @@ import type {
   PresenceUpdate,
   ReadInfoType,
 } from '@/features/chat/types';
-import { DATE_FORMATS, formatDateLabel } from '@/helper';
-import { useSocketListener } from '@/hooks/socket';
-import { currentUser } from '@/redux/ducks/user';
-import DualAxisInfiniteScroll from '@/stories/Common/DualAxisInfiniteScroll';
-import Spinner from '@/stories/Common/Spinner';
-
 import {
   groupMessagesByDate,
   updateAllInfiniteQueryPages,
   updateInfiniteQueryPage,
   validateFiles,
-} from '../../Utilities';
+} from '@/features/chat/Utilities';
+import { DATE_FORMATS, formatDateLabel } from '@/helper';
+import { useSocketListener } from '@/hooks/socket';
+import { currentUser } from '@/redux/ducks/user';
+import DualAxisInfiniteScroll from '@/stories/Common/DualAxisInfiniteScroll';
+import Spinner from '@/stories/Common/Spinner';
 
 const MAX_FILES = 4;
 

@@ -1,6 +1,6 @@
-import Card from '.';
+import Card from '@/stories/Common/Card';
 
-import type { Therapist } from './types';
+import type { Therapist } from '@/stories/Common/Card/types';
 import type { Meta, StoryObj } from '@storybook/react';
 
 // Mock data for different scenarios

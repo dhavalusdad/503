@@ -121,7 +121,7 @@ const AddEditUserTagModal = ({ isOpen, onClose, isEdit = false, id }: AddEditTag
         type='text'
         placeholder='Enter Session Tag Name'
         isRequired
-        labelClass='!text-base !leading-5'
+        labelClass='!text-base'
         inputClass='!text-base !leading-5'
       />
     </Modal>

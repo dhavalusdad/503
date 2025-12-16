@@ -190,20 +190,20 @@ const AddExperienceModal = (props: {
           onClose={onClose}
           closeButton
           id='Add-Experience-modal'
+          footerClassName='pt-30px flex justify-end border border-solid border-surface'
           footer={
-            <div className='flex justify-end border-gray-300'>
+            <>
               <Button
                 variant='filled'
                 title='Save'
-                className='rounded-10px w-30'
-                type='button'
+                className='rounded-10px min-h-50px !px-10'
                 onClick={handleSubmit(createOrUpdateTherapistExperience)}
                 isLoading={
                   isCreateTherapistExperienceApiPending || isUpdateTherapistExperienceApiPending
                 }
                 isDisabled={!isDirty || _.isEmpty(dirtyFields)}
               />
-            </div>
+            </>
           }
         >
           <div className='flex flex-col gap-5'>
@@ -212,7 +212,7 @@ const AddExperienceModal = (props: {
               register={register}
               type='text'
               label='Designation'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               placeholder='Enter Designation'
               error={errors.designation?.message || ''}
@@ -222,7 +222,7 @@ const AddExperienceModal = (props: {
               register={register}
               type='text'
               label='Hospital Name'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               placeholder='Enter Hospital name'
               error={errors.organization?.message}
@@ -232,7 +232,7 @@ const AddExperienceModal = (props: {
               register={register}
               type='text'
               label='Location'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               placeholder='Enter location'
               error={errors.location?.message || ''}
@@ -305,6 +305,7 @@ const AddExperienceModal = (props: {
                   options={MONTHS}
                   name='end_month'
                   placeholder='Select end Month'
+                  isClearable={true}
                   error={errors.end_month && (errors.end_month?.message as FieldErrors<FormData>)}
                   isDisabled={watch('currentlyWorking')}
                   portalRootId='Add-Experience-modal'
@@ -328,6 +329,7 @@ const AddExperienceModal = (props: {
                   error={errors.end_year && (errors.end_year?.message as FieldErrors<FormData>)}
                   isDisabled={watch('currentlyWorking')}
                   portalRootId='Add-Experience-modal'
+                  isClearable={true}
                   StylesConfig={{
                     control: () => ({
                       minHeight: '50px',
@@ -348,7 +350,7 @@ const AddExperienceModal = (props: {
               register={register}
               type='text'
               label='Specialty'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               placeholder='Enter Specialty'
               error={errors.specialty?.message || ''}

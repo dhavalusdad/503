@@ -6,6 +6,7 @@ import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
 import { queryClient } from '@/api/QueryProvider';
 import { CANCELLATION_REASONS } from '@/constants/CommonConstant';
 import { AppointmentStatus } from '@/enums';
+import type { AppointmentInfiniteData } from '@/features/calendar/types';
 import { showToast } from '@/helper';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
 import { Button } from '@/stories/Common/Button';
@@ -13,8 +14,6 @@ import { Modal, type ModalProps } from '@/stories/Common/Modal';
 import RadioField from '@/stories/Common/RadioBox';
 import Select from '@/stories/Common/Select';
 import TextArea from '@/stories/Common/Textarea';
-
-import type { AppointmentInfiniteData } from '../types';
 
 const CancelTherapistAppointmentModal = ({
   isOpen,

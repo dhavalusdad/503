@@ -1,4 +1,4 @@
-import PasswordChecker from '.';
+import PasswordChecker from '@/stories/Common/PasswordChecker';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

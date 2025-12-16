@@ -1,6 +1,6 @@
 import '../../../index.css';
 
-import Spinner, { type SpinnerProps } from './index';
+import Spinner, { type SpinnerProps } from '@/stories/Common/Spinner';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

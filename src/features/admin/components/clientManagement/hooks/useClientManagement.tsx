@@ -11,14 +11,18 @@ import { UserRole } from '@/api/types/user.dto';
 import { useUpdateUserStatus } from '@/api/user';
 import type { CommonFilterField } from '@/components/layout/Filter';
 import { ACTIVE_STATUS_OPTION, FIELD_TYPE } from '@/constants/CommonConstant';
+import { PermissionType } from '@/enums';
 import { FLAG_OPTIONS } from '@/features/admin/components/clientManagement/constant';
 import useGetClientManagementColumns from '@/features/admin/components/clientManagement/hooks/useGetClientManagementColumns';
+import type {
+  ClientManagementFilterDataType,
+  ClientManagementResponseType,
+} from '@/features/admin/components/clientManagement/types';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { currentUser } from '@/redux/ducks/user';
 import useTableWithFilters, {
   type BaseQueryParams,
 } from '@/stories/Common/Table/hook/useTableWithFilters';
-
-import type { ClientManagementFilterDataType, ClientManagementResponseType } from '../types';
 
 type ModalType = {
   updateStatus: boolean;
@@ -27,6 +31,9 @@ type ModalType = {
 export const useClientManagement = () => {
   // ** Redux States **
   const { timezone } = useSelector(currentUser);
+
+  // ** Hooks **
+  const { hasPermission } = useRoleBasedRouting();
 
   // ** States **
   const [openModal, setOpenModal] = useState<{
@@ -84,6 +91,10 @@ export const useClientManagement = () => {
     openCloseModal('updateStatus', true, user_id, status);
   }
 
+  const [hasTagViewPermission] = useMemo(() => {
+    return [hasPermission(PermissionType.ALERT_TAGS_VIEW)];
+  }, [hasPermission]);
+
   const { filterManager, tableManager, handleSearchChange } = useTableWithFilters<
     ClientManagementResponseType,
     ClientManagementFilterDataType,
@@ -127,14 +138,18 @@ export const useClientManagement = () => {
         label: 'Joined Date',
         maxDate: timezone ? moment.tz(timezone).toDate() : new Date(),
       },
-      {
-        type: FIELD_TYPE.ASYNC_SELECT,
-        name: 'alertTags',
-        label: 'Alert Tags',
-        isMulti: true,
-        queryFn: getTagsAsync,
-        queryKey: tagQueryKey.getTagList(),
-      },
+      ...(hasTagViewPermission
+        ? [
+            {
+              type: FIELD_TYPE.ASYNC_SELECT,
+              name: 'alertTags',
+              label: 'Alert Tags',
+              isMulti: true,
+              queryFn: getTagsAsync,
+              queryKey: tagQueryKey.getTagList(),
+            },
+          ]
+        : []),
       {
         type: FIELD_TYPE.SELECT,
         name: 'status',

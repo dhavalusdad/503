@@ -1,18 +1,16 @@
+import { useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPut } from '@/api/axios';
+import { queueQueryKey } from '@/api/common/queue.query';
 import type { UpdateQueueRequest } from '@/api/types/queue.dto';
 import type { QueueMangementParamsType } from '@/api/types/user.dto';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { queueQueryKey } from './common/queue.query';
-
-import { useMutation, useQuery } from '.';
 
 const BASE_PATH = '/backoffice-queue';
 
 export const useGetQueueQuery = (params: QueueMangementParamsType) => {
   const { page, limit, search, filters, timezone, sortColumn, sortOrder } = params;
   const defaultData = {
-    sortColumn: 'created_at',
+    sortColumn: 'updated_at',
     sortOrder: 'desc',
   };
   const modifiedData = {

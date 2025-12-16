@@ -34,4 +34,6 @@ export const mutationsQueryKey = {
   sendTransactionApproval: (params?: string) =>
     ['sendTransactionApproval', params].filter(d => d !== undefined),
   createAmdEhrForm: (params?: string) => ['createAmdEhrForm', params].filter(d => d !== undefined),
+  revertTransaction: (params?: string) =>
+    ['revertTransaction', params].filter(d => d !== undefined),
 };

@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 
 import { isAdminPanelRole } from '@/helper';
-import { currentUser } from '@/redux/ducks/user';
+import { userRole } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import Modal from '@/stories/Common/Modal';
@@ -35,7 +35,7 @@ const ConfirmAppointmentModal: React.FC<ConfirmAppointmentModalProps> = ({
   showBookingConflict = false, // Default to false
   isLoading = false,
 }) => {
-  const { role } = useSelector(currentUser);
+  const role = useSelector(userRole);
   const toggleSuccessAppointmentModal = () => {
     if (onConfirm) {
       onConfirm();
@@ -146,8 +146,9 @@ const ConfirmAppointmentModal: React.FC<ConfirmAppointmentModalProps> = ({
           <div className='flex items-center gap-2.5 py-1.5 px-3.5 rounded-md bg-yellow'>
             <Icon name='announcement' className='text-blackdark' />
             <span className='text-sm font-medium leading-18px text-blackdark'>
-              You'll get a reminder notification 15 minutes prior your appointment is scheduled to
-              begin.
+              {isAdminPanelRole(role)
+                ? `${patientName} will get a reminder notification 15 minutes prior to the scheduled appointment.`
+                : `You'll get a reminder notification 15 minutes prior to your scheduled appointment.`}
             </span>
           </div>
           {showBookingConflict && (

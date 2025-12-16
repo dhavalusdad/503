@@ -1,9 +1,8 @@
+import type { CommonFilterParamsType } from '@/api/types/common.dto';
+import type { OptionType } from '@/api/types/field-option.dto';
 import type { DateRangeFilterObjType } from '@/components/layout/Filter/types';
 import { AppointmentStatus, type GenderEnum } from '@/enums';
 import type { AdminAppointmentListFilterDataType } from '@/features/admin/components/appointmentList/types';
-
-import type { CommonFilterParamsType } from './common.dto';
-import type { OptionType } from './field-option.dto';
 
 export interface GetAvailabilitySlotsRequest {
   therapist_id?: string;
@@ -49,7 +48,6 @@ export interface Therapist {
   user_id: string;
   tenant_id: string;
   bio: string | null;
-  years_experience: number | null;
   hourly_rate: number | null;
   token: string | null;
   created_at: string;
@@ -79,6 +77,7 @@ export interface AvailabilitySlot {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  availableSlots: AvailabilitySlot[];
 }
 
 export interface GetAvailabilitySlotsResponse {

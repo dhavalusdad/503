@@ -1,4 +1,4 @@
-import CheckboxField from './index';
+import CheckboxField from '@/stories/Common/CheckBox';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

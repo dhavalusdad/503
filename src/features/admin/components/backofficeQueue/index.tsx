@@ -38,7 +38,9 @@ const BackofficeQueue = () => {
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>BackOffice Queue</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          BackOffice Queue
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -46,17 +48,19 @@ const BackofficeQueue = () => {
           iconFirst
           onChange={handleSearchChange}
           iconClassName='text-primarygray'
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName='w-full lg:w-76 xl:w-360px order-3 lg:order-none'
         />
-        <FilterButton<QueueFilterDataType>
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-          onClearFilter={onClearFilter}
-          handleApplyFilter={handleApplyFilter}
-          filterFields={filterFields}
-          isLoading={isQueueListDataFetching}
-          defaultValues={filters}
-        />
+        <div className='order-2 lg:order-none'>
+          <FilterButton<QueueFilterDataType>
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onClearFilter={onClearFilter}
+            handleApplyFilter={handleApplyFilter}
+            filterFields={filterFields}
+            isLoading={isQueueListDataFetching}
+            defaultValues={filters}
+          />
+        </div>
       </div>
 
       {isQueueListDataFetching ? (
@@ -65,7 +69,6 @@ const BackofficeQueue = () => {
         <Table<QueueDataType>
           data={data || []}
           columns={columns}
-          className='w-full !overflow-visible'
           totalCount={total ?? 0}
           pageIndex={pageIndex}
           pageSize={pageSize}

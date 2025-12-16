@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 
 import { useCreateTag, useGetTagById, useUpdateTag } from '@/api/tag';
+import { TagType } from '@/enums';
 import { TagSchema } from '@/features/management/validation';
 import { showToast } from '@/helper';
 import Button from '@/stories/Common/Button';
@@ -84,6 +85,7 @@ const AddEditUserTagModal = ({ isOpen, onClose, isEdit = false, id }: AddEditTag
           data: {
             name: data.name,
             color: data.color.slice(1),
+            type: TagType.ALERT_TAG,
           },
         });
       }
@@ -130,7 +132,7 @@ const AddEditUserTagModal = ({ isOpen, onClose, isEdit = false, id }: AddEditTag
           type='text'
           placeholder='Enter Tag Name'
           isRequired
-          labelClass='!text-base !leading-5'
+          labelClass='!text-base'
           inputClass='!text-base !leading-5'
         />
         <InputField
@@ -140,7 +142,7 @@ const AddEditUserTagModal = ({ isOpen, onClose, isEdit = false, id }: AddEditTag
           error={errors.color?.message}
           type='color'
           isRequired
-          labelClass='!text-base !leading-5'
+          labelClass='!text-base'
           inputClass='!p-0 min-h-50px cursor-pointer !border-0 focus:outline-none !text-base !leading-5'
         />
       </div>

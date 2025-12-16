@@ -10,18 +10,18 @@ import {
   FIELD_TYPE,
   SESSION_TYPE_OPTIONS,
 } from '@/constants/CommonConstant';
-import { FieldOptionType } from '@/enums';
+import { FieldOptionType, PermissionType } from '@/enums';
 import useGetAdminAppointmentListColumns from '@/features/admin/components/appointmentList/hooks/useGetAdminAppointmentListColumns';
-import useTableWithFilters, {
-  type BaseQueryParams,
-} from '@/stories/Common/Table/hook/useTableWithFilters';
-
 import type {
   AdminAppointmentListFilterDataType,
   AppointmentDataType,
   AppointmentFormData,
   FieldOption,
-} from '../types';
+} from '@/features/admin/components/appointmentList/types';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
+import useTableWithFilters, {
+  type BaseQueryParams,
+} from '@/stories/Common/Table/hook/useTableWithFilters';
 
 export type AppointmentFilters = {
   status?: string;
@@ -33,7 +33,6 @@ export type AppointmentFilters = {
 
 type ModalState = {
   editAppointment: boolean;
-  addCharge: boolean;
   appointment?: AppointmentDataType;
 };
 
@@ -41,12 +40,12 @@ export const useAppointmentList = () => {
   // ** States **
   const [modalState, setModalState] = useState<ModalState>({
     editAppointment: false,
-    addCharge: false,
   });
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentFormData | null>(null);
 
   // ** Custom Hooks **
   const { columns } = useGetAdminAppointmentListColumns({ openCloseModal });
+  const { hasPermission } = useRoleBasedRouting();
 
   const { filterManager, tableManager, handleSearchChange } = useTableWithFilters<
     AppointmentDataType[],
@@ -89,7 +88,7 @@ export const useAppointmentList = () => {
 
   // ** Modal Helpers **
   function openCloseModal(
-    modalName: 'editAppointment' | 'addCharge',
+    modalName: 'editAppointment',
     action: boolean,
     appointment?: AppointmentDataType
   ) {
@@ -117,15 +116,19 @@ export const useAppointmentList = () => {
         name: 'appointment_date',
         label: 'Appointment Date',
       },
-      {
-        type: FIELD_TYPE.ASYNC_SELECT,
-        name: 'therapists',
-        label: 'Therapist Name',
-        queryKey: THERAPIST_KEYS_NAME.OPTIONS,
-        queryFn: getTherapistOptions,
-        isMulti: true,
-        showImage: false,
-      },
+      ...(hasPermission(PermissionType.THERAPIST_VIEW)
+        ? [
+            {
+              type: FIELD_TYPE.ASYNC_SELECT,
+              name: 'therapists',
+              label: 'Therapist Name',
+              queryKey: THERAPIST_KEYS_NAME.OPTIONS,
+              queryFn: getTherapistOptions,
+              isMulti: true,
+              showImage: false,
+            },
+          ]
+        : []),
       {
         type: FIELD_TYPE.SELECT,
         name: 'status',

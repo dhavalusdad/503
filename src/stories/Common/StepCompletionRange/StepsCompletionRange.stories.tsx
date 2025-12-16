@@ -1,4 +1,4 @@
-import { StepCompletionRange } from '.';
+import { StepCompletionRange } from '@/stories/Common/StepCompletionRange';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

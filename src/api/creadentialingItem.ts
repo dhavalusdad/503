@@ -1,9 +1,7 @@
+import { useMutation, useQuery } from '@/api';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { credentialingItemQueryKey } from '@/api/common/credentialingItems.queryKey';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from './axios';
-import { credentialingItemQueryKey } from './common/credentialingItems.queryKey';
-
-import { useMutation, useQuery } from '.';
 
 const BASE_PATH = '/credentialing-items';
 

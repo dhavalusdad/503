@@ -1,6 +1,5 @@
 // import { useNavigate } from 'react-router-dom';
 
-import FilterButton from '@/components/layout/Filter/FilterButton';
 // import { ROUTES } from '@/constants/routePath';
 import { useAssessmentFormList } from '@/features/admin/components/AssessmentForm/hooks/useAssessmentFormList';
 import InputField from '@/stories/Common/Input';
@@ -26,21 +25,21 @@ const AssessmentFormList = ({
     assessmentFormData,
     total,
     isAppointmentListLoading,
-    isVisible,
     handleSearchChange,
-    setIsVisible,
-    filterFields,
-    handleApplyFilter,
-    filters,
-    onClearFilter,
+    // isVisible,
+    // setIsVisible,
+    // filterFields,
+    // handleApplyFilter,
+    // filters,
+    // onClearFilter,
     isLoading,
   } = useAssessmentFormList(therapistPanel, selectedIds, setSelectedIds);
 
   return (
     <div className='p-5 bg-white rounded-20px border border-solid border-surface'>
       {/* Header */}
-      <div className='flex flex-wrap gap-5 justify-between items-center mb-5'>
-        <h2 className='text-lg font-bold leading-6 text-blackdark'>Assessment Form</h2>
+      <div className='flex flex-wrap gap-5 items-center mb-5'>
+        <h2 className='text-lg font-bold leading-6 text-blackdark mr-auto'>Assessment Form</h2>
         <InputField
           type='Search'
           placeholder='Search'
@@ -49,9 +48,9 @@ const AssessmentFormList = ({
           iconClassName='text-primarygray'
           onChange={handleSearchChange}
           name='search'
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName='w-full lg:w-76 xl:w-360px'
         />
-        <FilterButton
+        {/* <FilterButton
           isVisible={isVisible}
           setIsVisible={setIsVisible}
           onClearFilter={onClearFilter}
@@ -59,7 +58,7 @@ const AssessmentFormList = ({
           filterFields={filterFields}
           isLoading={isAppointmentListLoading}
           defaultValues={filters}
-        />
+        /> */}
 
         {/* <Button
             variant='filled'

@@ -1,6 +1,5 @@
 import type { QuestionTypeEnum } from '@/enums';
-
-import type { FileItem } from '../backofficeQueue/types';
+import type { FileItem } from '@/features/admin/components/backofficeQueue/types';
 
 export type QuestionType = 'short-answer' | 'radio' | 'select' | 'textarea' | 'number';
 

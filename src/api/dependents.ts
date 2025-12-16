@@ -1,14 +1,12 @@
 import { type QueryFunctionContext } from '@tanstack/react-query';
 
+import { useInfiniteQuery, useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { appointmentQueryKey } from '@/api/common/appointment.queryKey';
+import { dependentQueryKey } from '@/api/common/dependents.queryKey';
+import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
 import type { DependentsResponse } from '@/api/types/dependents.dto';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { appointmentQueryKey } from './common/appointment.queryKey';
-import { dependentQueryKey } from './common/dependents.queryKey';
-import { mutationsQueryKey } from './common/mutations.queryKey';
-
-import { useInfiniteQuery, useMutation, useQuery } from '.';
 
 const BASE_PATH = '/client';
 

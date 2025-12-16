@@ -28,12 +28,9 @@ const useGetStaffManagementColumns = (props: Props) => {
       accessorKey: 'full_name',
       accessorFn: row => `${row.first_name} ${row.last_name}`,
       header: 'Staff Name',
-      meta: {
-        cellClassName: 'w-60',
-      },
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:font-bold hover:underline cursor-pointer underline-offset-2 block w-full'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() => navigate(ROUTES.STAFF_MANAGEMENT_DETAILS.navigatePath(row?.original?.id))}
         >
           {row.getValue('full_name')}
@@ -122,6 +119,7 @@ const useGetStaffManagementColumns = (props: Props) => {
                 icon: 'delete',
                 onClick: () => openCloseModal('deleteStaff', true, staff_id),
                 show: true,
+                iconClassName: '!w-4 !h-4',
               },
             ]}
           />

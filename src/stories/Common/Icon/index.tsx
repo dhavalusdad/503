@@ -127,6 +127,7 @@ import PinIcon from '@/assets/svg/PinIcon.svg?react';
 import PinOff from '@/assets/svg/PinOff.svg?react';
 import Play from '@/assets/svg/Play.svg?react';
 import Plus from '@/assets/svg/Plus.svg?react';
+import Polygon from '@/assets/svg/Polygon.svg?react';
 import PolygonArrow from '@/assets/svg/PolygonArrow.svg?react';
 import PreviousArrow from '@/assets/svg/PreviousArrow.svg?react';
 import Profile from '@/assets/svg/Profile.svg?react';
@@ -367,6 +368,7 @@ export type IconNameType =
   | 'memopad'
   | 'notfound'
   | 'error'
+  | 'polygon'
   | 'approve';
 
 type IconProps = {
@@ -767,6 +769,8 @@ export const Icon = ({
         return <Error {...iconProps} />;
       case 'approve':
         return <Approve {...iconProps} />;
+      case 'polygon':
+        return <Polygon {...iconProps} />;
       default:
         return null;
     }

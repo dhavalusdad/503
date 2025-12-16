@@ -4,6 +4,14 @@ import clsx from 'clsx';
 import moment from 'moment';
 
 import { selectStyles } from '@/constants/CommonConstant';
+import type {
+  AllowedChangeValue,
+  ComponentProps,
+  FormField,
+  FormSection,
+  FormStructure,
+  OnChangeValue,
+} from '@/features/IntakeForm/types';
 import AmdSimpleIcdCptSelector from '@/stories/Common/AmdICDCPTselector/SimpleAmdIcdCptSelector';
 import CheckboxField from '@/stories/Common/CheckBox';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
@@ -14,15 +22,6 @@ import RadioField from '@/stories/Common/RadioBox';
 import Select from '@/stories/Common/Select';
 import TextArea from '@/stories/Common/Textarea';
 import TimeSelect from '@/stories/Common/TimeSelect';
-
-import type {
-  AllowedChangeValue,
-  ComponentProps,
-  FormField,
-  FormSection,
-  FormStructure,
-  OnChangeValue,
-} from '../types';
 
 export const useJsonToHtmlForm = (
   formStructure: FormStructure,

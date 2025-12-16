@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import RichTextEditorField from './index';
+import RichTextEditorField from '@/stories/Common/RichTextEditer';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

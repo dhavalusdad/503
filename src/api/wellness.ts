@@ -1,12 +1,10 @@
+import { useInfiniteQuery, useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPost } from '@/api/axios';
 import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
+import { userQueryKey } from '@/api/common/user.queryKey';
+import { wellnessQueryKey } from '@/api/common/wellness.queryKey';
 import type { WellnessDetail } from '@/features/client/types';
 import { useRemoveQueries } from '@/hooks/data-fetching';
-
-import { userQueryKey } from './common/user.queryKey';
-import { wellnessQueryKey } from './common/wellness.queryKey';
-
-import { useInfiniteQuery, useMutation, useQuery } from '.';
 
 import type { QueryFunctionContext } from '@tanstack/react-query';
 

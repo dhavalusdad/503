@@ -15,13 +15,6 @@ export const REQUEST_TYPE_OPTION: OptionType[] = [
   { label: 'Insurance Verification Failed', value: 'Insurance Verification Failed' },
 ];
 
-export const ASSIGNEE_OPTION: OptionType[] = [
-  { label: 'Admin', value: 'Admin' },
-  { label: 'Manager', value: 'Manager' },
-  { label: 'Support', value: 'Support' },
-  { label: 'Other', value: 'Other' },
-];
-
 export enum UpdateQueueRequestDataType {
   STATUS = 'status',
   ASSIGNEE = 'assignee',

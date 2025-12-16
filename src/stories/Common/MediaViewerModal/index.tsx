@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 
-import Button from '../Button';
-import Icon from '../Icon';
-import { Modal, type ModalSizeType } from '../Modal';
+import Button from '@/stories/Common/Button';
+import Icon from '@/stories/Common/Icon';
+import { Modal, type ModalSizeType } from '@/stories/Common/Modal';
 
 export interface MediaFile {
   url?: string;

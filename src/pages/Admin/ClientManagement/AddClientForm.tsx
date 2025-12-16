@@ -23,10 +23,10 @@ import FileUpload from '@/stories/Common/FileUpload';
 import Icon from '@/stories/Common/Icon';
 import Image from '@/stories/Common/Image';
 import InputField from '@/stories/Common/Input';
+import SectionLoader from '@/stories/Common/Loader/Spinner';
 import Modal from '@/stories/Common/Modal';
 import PhoneField from '@/stories/Common/PhoneNumberInput';
 import Select from '@/stories/Common/Select';
-import Spinner from '@/stories/Common/Spinner';
 
 type ModalType = {
   fileUpload: boolean;
@@ -37,6 +37,7 @@ type ModalType = {
 
 type DependentUser = {
   id: string | number;
+  user_id: string;
   dependent_user_id: string | number;
   relationship?: string;
   dependent_user: {
@@ -68,11 +69,16 @@ const AddClientForm = () => {
   const [isFormInitialized, setIsFormInitialized] = useState(false);
 
   // ** Services **
-  const { mutateAsync: createPatientMutation, isPending: isCreatingPatient } = useCreateNewPatient(
-    {}
-  );
-  const { mutateAsync: updateClientMutation, isPending: isUpdatingPatient } =
-    useUpdateClientBasicInfo(client_id!);
+  const {
+    mutateAsync: createPatientMutation,
+    isPending: isCreatingPatient,
+    isError: isErrorCreatingPatient,
+  } = useCreateNewPatient({});
+  const {
+    mutateAsync: updateClientMutation,
+    isPending: isUpdatingPatient,
+    isError: isErrorUpdatingPatient,
+  } = useUpdateClientBasicInfo(client_id!);
 
   // Add delete dependent mutation
   const { mutateAsync: deleteDependentMutation, isPending: isDeletingDependent } =
@@ -128,6 +134,7 @@ const AddClientForm = () => {
 
         return {
           id: dependent?.id,
+          user_id: dependent?.user_id,
           dependent_user_id: dependent?.dependent_user_id,
           relationship: dependent?.relationship || '',
           first_name: user?.first_name || '',
@@ -163,7 +170,7 @@ const AddClientForm = () => {
   }, [clientData, isEditMode, isFormInitialized, reset]);
 
   if (isEditMode && (isLoadingClientData || !isFormInitialized)) {
-    return <Spinner />;
+    return <SectionLoader />;
   }
 
   if (isEditMode && clientDataError) {
@@ -239,6 +246,10 @@ const AddClientForm = () => {
         await updateClientMutation(formData);
       } else {
         await createPatientMutation(formData);
+        navigateToListingPage();
+      }
+      if (!isErrorCreatingPatient || !isErrorUpdatingPatient) {
+        navigate(ROUTES.CLIENT_MANAGEMENT.path);
       }
     } catch (error) {
       console.error('Error saving client:', error);
@@ -293,15 +304,13 @@ const AddClientForm = () => {
             />
             <div className='flex flex-col gap-1.5'>
               <p className='text-base font-normal leading-22px text-blackdark'>Profile Image</p>
-              <div className='flex items-center gap-3.5'>
-                <Button
-                  variant='filled'
-                  title='Upload Image'
-                  className=' !py-1.5 rounded-md'
-                  type='button'
-                  onClick={() => openCloseModal('fileUpload', true)}
-                />
-              </div>
+              <Button
+                variant='filled'
+                title='Upload Image'
+                className=' !py-1.5 rounded-md'
+                type='button'
+                onClick={() => openCloseModal('fileUpload', true)}
+              />
               <p className='text-sm font-normal leading-18px text-primarygray'>
                 Your image should be below 2 MB, accepted formats: jpg, png.
               </p>
@@ -315,34 +324,34 @@ const AddClientForm = () => {
             <InputField
               type='text'
               label='First Name'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               placeholder='Enter first name'
               register={register}
               name='first_name'
               error={errors.first_name?.message}
-              inputClass={'!text-base !leading-5'}
+              inputClass='!text-base !leading-5'
               isRequired
             />
             <InputField
               type='text'
               label='Last Name'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               placeholder='Enter last name'
               register={register}
               name='last_name'
               error={errors.last_name?.message}
-              inputClass={'!text-base !leading-5'}
+              inputClass='!text-base !leading-5'
               isRequired
             />
             <InputField
               type='email'
               label='Email Address'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               placeholder='Enter email address'
               register={register}
               name='email'
               error={errors.email?.message}
-              inputClass={'!text-base !leading-5'}
+              inputClass='!text-base !leading-5'
               isDisabled={isEditMode}
               isRequired
             />
@@ -352,10 +361,10 @@ const AddClientForm = () => {
                 control={control}
                 name='phone'
                 label={'Contact Number'}
-                labelClass='!text-base !leading-5'
-                isRequired={false}
+                labelClass='!text-base'
+                isRequired={true}
                 parentClassName='w-full border-primarylight'
-                inputClass={`!text-base !leading-5`}
+                inputClass='!text-base !leading-5'
                 country='us'
                 enableSearch={true}
                 error={errors.phone && errors.phone.message}
@@ -373,7 +382,7 @@ const AddClientForm = () => {
                 render={({ field, fieldState }) => (
                   <CustomDatePicker
                     label='Date of Birth'
-                    labelClass='!text-base !leading-5'
+                    labelClass='!text-base'
                     placeholderText='Select date of birth'
                     error={fieldState.error?.message}
                     selected={field.value}
@@ -403,7 +412,7 @@ const AddClientForm = () => {
                   fontSize: '16px',
                 }),
               }}
-              labelClassName='!text-base !leading-5'
+              labelClassName='!text-base'
               isRequired
             />
           </div>

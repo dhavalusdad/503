@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import moment from 'moment';
 import { useForm } from 'react-hook-form';
-// import { useSelector } from 'react-redux';
 
 import { getTherapyTypesAsync } from '@/api/field-option';
 import {
@@ -13,17 +12,16 @@ import {
   THERAPY_TYPE_OPTIONS,
 } from '@/constants/CommonConstant';
 import type { RelationEnum, TherapyType } from '@/enums';
-import type { FilterState } from '@/features/appointment';
-// import { currentUser } from '@/redux/ducks/user';
+import type { FilterState } from '@/features/appointment/types';
 import type { DependentFormValues, MultipleDependentFormValue } from '@/features/client/types';
+import { dependentValidationModalSchema } from '@/features/client/validationSchema/dependentValidation';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
+import Icon from '@/stories/Common/Icon';
 import InputField from '@/stories/Common/Input';
 import PhoneField from '@/stories/Common/PhoneNumberInput';
 import Select from '@/stories/Common/Select';
 import SelectButtonGroup from '@/stories/Common/SelectButtonGroup';
-
-import { dependentValidationModalSchema } from '../../validationSchema/dependentValidation';
 
 interface ClientDependentFormProps {
   relationship?: RelationEnum;

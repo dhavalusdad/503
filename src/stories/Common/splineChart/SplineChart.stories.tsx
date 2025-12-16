@@ -1,4 +1,4 @@
-import SplineChartCard from './index';
+import SplineChartCard from '@/stories/Common/splineChart';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

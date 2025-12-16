@@ -1,4 +1,4 @@
-import type { UserRole } from './user.dto';
+import type { UserRole } from '@/api/types/user.dto';
 
 export type UpdateUserPermissionRequestBodyType = {
   permission?: string;

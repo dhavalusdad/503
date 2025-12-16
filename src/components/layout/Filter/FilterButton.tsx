@@ -2,12 +2,11 @@ import React, { useMemo, useRef } from 'react';
 
 import { useSelector } from 'react-redux';
 
+import CommonFilter, { type CommonFilterField } from '@/components/layout/Filter';
 import { getActiveFilterCount } from '@/components/layout/Filter/helper';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
-
-import CommonFilter, { type CommonFilterField } from '.';
 
 import type { DefaultValues, FieldValues } from 'react-hook-form';
 

@@ -1,5 +1,5 @@
 // components/SwiperComponent.stories.tsx
-import SwiperComponent from './index';
+import SwiperComponent from '@/stories/Common/Swiper';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

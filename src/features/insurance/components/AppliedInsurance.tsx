@@ -17,9 +17,9 @@ export const AppliedInsurance = ({
       case 'rejected':
         return 'bg-red-100 text-red-700 border border-solid border-red-300';
       case 'expired':
-        return 'bg-gray-100 text-gray-700 border border-solid border-gray-300';
+        return 'bg-gray-300 text-gray-700 border border-solid border-gray-500';
       default:
-        return 'bg-gray-100 text-gray-700 border border-solid border-gray-300';
+        return 'bg-gray-300 text-gray-700 border border-solid border-gray-500';
     }
   };
 

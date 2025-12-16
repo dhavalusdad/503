@@ -2,7 +2,9 @@ import { useState } from 'react';
 
 import { useDeletePaymentMethod, useUpdatePaymentMethod } from '@/api/payment';
 import type { PaymentProfile, PaymentProfileDetails } from '@/api/types/payment.dto';
+import { PermissionType } from '@/enums';
 import { renderCardIcon } from '@/features/payment/utils/paymentHelpers';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import Button from '@/stories/Common/Button';
 import CheckboxField from '@/stories/Common/CheckBox';
 import { DeleteModal } from '@/stories/Common/DeleteModal';
@@ -47,6 +49,8 @@ export const PaymentMethodList = ({
     isOpen: false,
     paymentProfileId: null,
   });
+
+  const { hasPermission } = useRoleBasedRouting();
 
   const { mutateAsync: deletePaymentMethod, isPending } = useDeletePaymentMethod();
 
@@ -129,7 +133,8 @@ export const PaymentMethodList = ({
                     {profile.payment.creditCard.expirationDate}
                   </p>
                   <div className='flex items-center gap-2.5'>
-                    {!profile.defaultPaymentProfile ? (
+                    {!profile.defaultPaymentProfile &&
+                    hasPermission(PermissionType.PATIENT_EDIT) ? (
                       <>
                         <Button
                           variant='none'
@@ -154,16 +159,22 @@ export const PaymentMethodList = ({
                       </>
                     ) : (
                       <>
-                        <span className='bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-bold'>
-                          Default
-                        </span>
-                        <div className='w-1px h-4 bg-primarylight'></div>
-                        <Button
-                          variant='none'
-                          title='Edit'
-                          className='!p-0 !text-sm !text-primary !font-bold'
-                          onClick={() => handleEditPaymentProfile(profile)}
-                        />
+                        {profile.defaultPaymentProfile && (
+                          <span className='bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-bold'>
+                            Default
+                          </span>
+                        )}
+                        {hasPermission(PermissionType.PATIENT_EDIT) && (
+                          <>
+                            <div className='w-1px h-4 bg-primarylight'></div>
+                            <Button
+                              variant='none'
+                              title='Edit'
+                              className='!p-0 !text-sm !text-primary !font-bold'
+                              onClick={() => handleEditPaymentProfile(profile)}
+                            />{' '}
+                          </>
+                        )}
                       </>
                     )}
                   </div>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import Drawer from '.';
+import Drawer from '@/stories/Common/Drawer';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

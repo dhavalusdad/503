@@ -4,9 +4,8 @@ import { useSelector } from 'react-redux';
 
 import { useGetUserPaymentProfileStatus } from '@/api/payment';
 import { UserRole } from '@/api/types/user.dto';
+import { PaymentSetupModal } from '@/features/payment/components/PaymentSetupModal';
 import { currentUser } from '@/redux/ducks/user';
-
-import { PaymentSetupModal } from './PaymentSetupModal';
 
 const PaymentGate = ({
   setModalOpen,

@@ -14,7 +14,7 @@ type TippyHoverProps = {
 
 const Tooltip = ({
   children,
-  className = 'bg-gray-800 text-white text-sm px-3 py-1 rounded-lg shadow-lg z-[1000]',
+  className = 'bg-gray-800 text-white text-sm px-3 py-1 rounded-lg shadow-lg max-w-96',
   label = 'demo text',
   disable = false,
   placement = 'right',

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import PhoneField from '.';
+import PhoneField from '@/stories/Common/PhoneNumberInput';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

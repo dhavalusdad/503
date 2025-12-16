@@ -8,14 +8,13 @@ import { useCreateDependent, useGetDependentById, useUpdateDependentUser } from 
 import { GENDER_OPTION, RELATIONSHIP_OPTIONS } from '@/constants/CommonConstant';
 import type { RelationEnum } from '@/enums';
 import type { DependentFormValues } from '@/features/client/types';
+import { dependentValidationSchema } from '@/features/client/validationSchema/dependentValidation';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
 import Drawer from '@/stories/Common/Drawer';
 import InputField from '@/stories/Common/Input';
 import PhoneField from '@/stories/Common/PhoneNumberInput';
 import Select from '@/stories/Common/Select';
-
-import { dependentValidationSchema } from '../../validationSchema/dependentValidation';
 
 interface ClientDependentFormProps {
   relationship?: RelationEnum;
@@ -184,7 +183,7 @@ export const AddClientDependentForm = ({
                   options={RELATIONSHIP_OPTIONS}
                   placeholder='Select Relationship'
                   parentClassName=''
-                  labelClassName='!text-base !leading-22px'
+                  labelClassName='!text-base'
                   value={RELATIONSHIP_OPTIONS.find(option => option.value === field.value) || null}
                   onChange={value => {
                     if (value && 'value' in value) {
@@ -202,11 +201,11 @@ export const AddClientDependentForm = ({
                     }),
                     singleValue: () => ({
                       fontSize: '16px',
-                      lineHeight: '22px',
+                      lineHeight: '20px',
                     }),
                     placeholder: () => ({
                       fontSize: '16px',
-                      lineHeight: '22px',
+                      lineHeight: '20px',
                     }),
                     option: () => ({
                       fontSize: '16px',

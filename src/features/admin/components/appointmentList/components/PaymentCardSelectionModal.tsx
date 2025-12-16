@@ -8,6 +8,7 @@ import { useChargeAppointment, useGetCustomerPaymentProfile } from '@/api/paymen
 import type { CustomerPaymentProfileData, PaymentProfileDetails } from '@/api/types/payment.dto';
 import { UserRole } from '@/api/types/user.dto';
 import { PermissionType } from '@/enums';
+import type { AppointmentDataType } from '@/features/admin/components/appointmentList/types';
 import { AddPaymentMethodModal } from '@/features/payment/components/AddPaymentMethodModal';
 import { PaymentMethodList } from '@/features/payment/components/PaymentMethodList';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
@@ -19,8 +20,6 @@ import Modal from '@/stories/Common/Modal';
 import RadioField from '@/stories/Common/RadioBox';
 import Skeleton from '@/stories/Common/Skeleton';
 import { StepCompletionRange } from '@/stories/Common/StepCompletionRange';
-
-import type { AppointmentDataType } from '../types';
 
 interface AddChargeModalProps {
   isOpen: boolean;

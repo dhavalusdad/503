@@ -1,24 +1,25 @@
 // In "@/api/video-call"
+import { useInfiniteQuery, useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPost } from '@/api/axios';
+import { fieldOptionsQueryKey } from '@/api/common/fieldOptions.queryKey';
+import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
+import { notesOptionsQueryKey } from '@/api/common/notes.queryKey';
+import { tagQueryKey } from '@/api/common/tag.query';
 import type { InfiniteTherapistPageResponse } from '@/api/types/therapist.dto';
-
-import { fieldOptionsQueryKey } from './common/fieldOptions.queryKey';
-import { mutationsQueryKey } from './common/mutations.queryKey';
-import { notesOptionsQueryKey } from './common/notes.queryKey';
-import { tagQueryKey } from './common/tag.query';
-
-import { useInfiniteQuery, useMutation, useQuery } from '.';
 
 export interface WidgetInfiniteType {
   type?: string;
   appointment_id?: string;
 }
 
+const WIDGET_BASE_PATH = '/appointment-widget';
+const SESSION_TAG_BASE_PATH = '/appointment-session-tag';
+
 export const useInfiniteWidgetsQuery = (param?: WidgetInfiniteType) => {
   return useInfiniteQuery<InfiniteTherapistPageResponse>({
     queryKey: fieldOptionsQueryKey.getFieldOptionsList({ param }),
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await axiosGet(`/appointment-widget`, {
+      const res = await axiosGet(`${WIDGET_BASE_PATH}`, {
         params: {
           ...param,
           page: pageParam,
@@ -52,7 +53,7 @@ export const useAssignAndRemoveWidgetOptions = () => {
   return useMutation({
     mutationKey: mutationsQueryKey.assignAndRemoveReminderWidget(),
     mutationFn: async (data: object) => {
-      const response = await axiosPost('/appointment-widget', data);
+      const response = await axiosPost(`${WIDGET_BASE_PATH}`, data);
       return response.data;
     },
     showToast: false,
@@ -80,7 +81,7 @@ export const useInfiniteSessionTagQuery = (param?: WidgetInfiniteType) => {
   return useInfiniteQuery<InfiniteTherapistPageResponse>({
     queryKey: tagQueryKey.getSessionTagWithSelectList({ param }),
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await axiosGet(`/appointment-session-tag`, {
+      const res = await axiosGet(`${SESSION_TAG_BASE_PATH}`, {
         params: {
           ...param,
           page: pageParam,
@@ -115,7 +116,7 @@ export const useAssignAndRemoveSessionTagOptions = () => {
   return useMutation({
     mutationKey: mutationsQueryKey.assignAndRemoveSessionTag(),
     mutationFn: async (data: object) => {
-      const response = await axiosPost('/appointment-session-tag', data);
+      const response = await axiosPost(`${SESSION_TAG_BASE_PATH}`, data);
       return response.data;
     },
     showToast: false,

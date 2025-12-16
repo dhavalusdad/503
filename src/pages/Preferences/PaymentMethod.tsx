@@ -42,11 +42,10 @@ const PaymentMethod = ({ clientId }: { clientId: string }) => {
             {role == UserRole.CLIENT ? 'Manage your payment methods' : `Manage payment methods`}
           </p>
         </div>
-        {(role === UserRole.BACKOFFICE
-          ? hasPermission(PermissionType.PATIENT_ADD) || hasPermission(PermissionType.PATIENT_EDIT)
-          : true) && (
+        {(role === UserRole.BACKOFFICE ? hasPermission(PermissionType.PATIENT_EDIT) : true) && (
           <Button
             variant='filled'
+            id='tour-addNewPatmentMethod-btn'
             title='Add New Payment Method'
             onClick={() =>
               setAddPaymentProfileModal({ isOpen: true, paymentProfile: null, isEditMode: false })

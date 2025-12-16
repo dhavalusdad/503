@@ -231,24 +231,26 @@ const AddEditAgreementModal = ({
       onClose={handleClose}
       size='xl'
       closeButton={false}
+      contentClassName='pt-30px'
+      footerClassName='flex items-center justify-end gap-5'
       footer={
-        <div className='flex items-center justify-end gap-5'>
+        <>
           <Button
             type='button'
             variant='outline'
             title='Cancel'
             onClick={handleClose}
-            className='!px-6 rounded-10px'
+            className='!px-6 rounded-10px min-h-50px'
           />
           <Button
             type='button'
             variant='filled'
             title={isEdit ? 'Update' : 'Save'}
             onClick={handleSubmit(onSubmit)}
-            className='!px-6 rounded-10px'
+            className='!px-6 rounded-10px min-h-50px'
             isDisabled={!isFormChanged}
           />
-        </div>
+        </>
       }
     >
       <div className='flex flex-col gap-5'>
@@ -274,7 +276,7 @@ const AddEditAgreementModal = ({
             noLimit={false}
             NumberOfFileAllowed={1}
             accept={'.pdf,.doc,.docx'}
-            className={'w-full col-span-2'}
+            className={'w-full'}
             canRemoveExisting={true}
             autoUpload={true}
             {

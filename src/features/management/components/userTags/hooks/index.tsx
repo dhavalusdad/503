@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { getCheckTagInUseById, useDeleteTag, useGetTagList } from '@/api/tag';
 import { PermissionType, TagType } from '@/enums';
+import { isDarkColor } from '@/helper';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
@@ -82,6 +83,9 @@ const useTag = () => {
       accessorKey: 'name',
       header: 'Tag Name',
       enableSorting: true,
+      meta: {
+        cellClassName: 'min-w-56 !whitespace-normal',
+      },
       cell: (info: CellContext<TagInterface, unknown>) => info.getValue(),
     },
     {
@@ -91,11 +95,12 @@ const useTag = () => {
       cell: (info: CellContext<TagInterface, unknown>) => {
         const colorCode = info.getValue() as string;
         const hexCode = `#${colorCode}`;
+        const isDark = isDarkColor(hexCode);
 
         return (
           <span
-            className='flex w-24 py-1.5 rounded-2xl justify-center items-center'
-            style={{ backgroundColor: hexCode }}
+            className='inline-flex min-w-24 py-1.5 rounded-full justify-center items-center'
+            style={{ backgroundColor: hexCode, color: isDark ? '#FFFFFF' : '#2E3139' }}
           >
             {hexCode}
           </span>

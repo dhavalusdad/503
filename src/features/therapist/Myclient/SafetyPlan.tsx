@@ -4,12 +4,11 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
 import { useGetAmdEhrFormById, useUploadEhrDoc } from '@/api/advancedMd';
+import { generatePDF, type SafetyPlanFormData } from '@/features/therapist/Myclient/pdfmaker';
 import { UnderlineInput } from '@/features/therapist/Myclient/UnderLineInput';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import SectionLoader from '@/stories/Common/Loader/Spinner';
-
-import { generatePDF, type SafetyPlanFormData } from './pdfmaker';
 
 const SafetyPlan: React.FC = () => {
   const { formId } = useParams();

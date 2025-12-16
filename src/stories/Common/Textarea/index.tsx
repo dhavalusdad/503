@@ -70,7 +70,7 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps<Fiel
             className={clsx(
               'w-full p-3.5 border border-solid border-surface rounded-10px text-sm text-blackdark placeholder:text-primarygray focus:outline-1 focus:outline-primary transition-all ease-in-out duration-300',
               className,
-              error ? 'border-red-500 focus:!outline-0' : ''
+              error ? '!border-red-500 focus:!outline-0' : ''
             )}
             name={name}
             onPaste={onPaste}

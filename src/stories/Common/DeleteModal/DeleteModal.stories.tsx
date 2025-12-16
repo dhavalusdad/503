@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { DeleteModal } from '.';
+import { DeleteModal } from '@/stories/Common/DeleteModal';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

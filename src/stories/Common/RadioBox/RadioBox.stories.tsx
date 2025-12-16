@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import RadioField from './index';
+import RadioField from '@/stories/Common/RadioBox';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

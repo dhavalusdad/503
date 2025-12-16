@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import FilterButton from '@/components/layout/Filter/FilterButton';
@@ -7,10 +7,10 @@ import useClientAppointmentBooking from '@/features/appointment/component/Client
 import AppointmentDetailsModal from '@/features/appointment/component/TherapistAppointment/AppointmentDetailsModal';
 import appointmentManagement from '@/features/appointment/hooks';
 import { clearAppointmentFilters } from '@/redux/ducks/appointment-filters';
+import { selectIsTourActive } from '@/redux/ducks/tour';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import InputField from '@/stories/Common/Input';
-import Spinner from '@/stories/Common/Loader/Spinner.tsx';
 import { Table } from '@/stories/Common/Table';
 
 const ClientAppointmentBooking = () => {
@@ -43,6 +43,9 @@ const ClientAppointmentBooking = () => {
     isClientAppointmentListFetching,
     isLoading,
   } = useClientAppointmentBooking();
+
+  const isTourActive = useSelector(selectIsTourActive);
+  const showTourSkeleton = data.length == 0 && isTourActive;
 
   return (
     <>
@@ -85,24 +88,21 @@ const ClientAppointmentBooking = () => {
             }}
           />
         </div>
-        {isClientAppointmentListFetching ? (
-          <Spinner />
-        ) : (
-          <Table
-            data={data}
-            columns={columns}
-            className='w-full'
-            onPageChange={setPageIndex}
-            onPageSizeChange={setPageSize}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-            totalCount={total}
-            onSortingChange={onSortingChange}
-            sorting={sorting}
-            setSorting={setSorting}
-            isLoading={isLoading}
-          />
-        )}
+
+        <Table
+          data={data}
+          columns={columns}
+          className='w-full'
+          onPageChange={setPageIndex}
+          onPageSizeChange={setPageSize}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          totalCount={total}
+          onSortingChange={onSortingChange}
+          sorting={sorting}
+          setSorting={setSorting}
+          isLoading={isLoading || isClientAppointmentListFetching || showTourSkeleton}
+        />
       </div>
 
       {openAppointmentDetailModal && (

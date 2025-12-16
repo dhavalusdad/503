@@ -65,7 +65,7 @@ const AssignFormDetails = ({
   }, []);
 
   useEffect(() => {
-    if (appointmentDetail.length && getAppointmentType(appointmentDetail).length == 0) {
+    if (clientData.id && getAppointmentType(appointmentDetail).length == 0) {
       setUserDependentIds({
         value: clientData?.id ?? '',
         label: `${clientData?.first_name} ${clientData?.last_name} (Main Client)`,
@@ -82,7 +82,7 @@ const AssignFormDetails = ({
         isClearable={true}
         labelClassName='!text-base'
         loadOptions={(page, searchTerm) => getAssessmentFormsAsync(page, 10, searchTerm)}
-        placeholder='select Forms'
+        placeholder='Select Forms'
         queryKey={formsQueryKey.getList().filter(Boolean).map(String)}
         pageSize={10}
         onChange={value => {
@@ -98,7 +98,7 @@ const AssignFormDetails = ({
         key={`appointments-list-history-${clientId}`}
         portalRootId='assign-assessment-form-modal'
         label='Appointments'
-        placeholder='select appointments'
+        placeholder='Select appointments'
         labelClassName='!text-base'
         isClearable={true}
         // isMulti={true}

@@ -10,6 +10,16 @@ import { useParams } from 'react-router-dom';
 import { queueQueryKey } from '@/api/common/queue.query';
 import { useGetQueueDetails, useUpdateQueueRequest } from '@/api/queueManagement';
 import { PermissionType, QueueRequestType, QueueStatus } from '@/enums';
+import {
+  QUEUE_REQUEST_FIELD_TYPE_BY_TABLE_NAME,
+  QUEUE_REQUEST_METADATA_ACTIONS,
+  QUEUE_REQUEST_PROFILE_FIELD_TYPE,
+  QueueRequestProfileChangeStatus,
+  STATUS_STYLE,
+  TABLE_NAME_ENUM,
+  UpdateQueueRequestDataType,
+} from '@/features/admin/components/backofficeQueue/constant';
+import { transformTableData } from '@/features/admin/components/backofficeQueue/helper';
 import type {
   AuditLog,
   DisplayFieldProps,
@@ -28,17 +38,6 @@ import InputField from '@/stories/Common/Input';
 import Spinner from '@/stories/Common/Loader/Spinner.tsx';
 import Modal from '@/stories/Common/Modal';
 import TextArea from '@/stories/Common/Textarea';
-
-import {
-  QUEUE_REQUEST_FIELD_TYPE_BY_TABLE_NAME,
-  QUEUE_REQUEST_METADATA_ACTIONS,
-  QUEUE_REQUEST_PROFILE_FIELD_TYPE,
-  QueueRequestProfileChangeStatus,
-  STATUS_STYLE,
-  TABLE_NAME_ENUM,
-  UpdateQueueRequestDataType,
-} from '../constant';
-import { transformTableData } from '../helper';
 
 const SERVER_URL = import.meta.env.VITE_BASE_URL;
 
@@ -101,7 +100,7 @@ const CollapsibleSection = ({
 
       {open && (
         <div className='flex flex-col gap-5 p-5 border-t border-solid border-surface'>
-          <div className='grid grid-cols-2 gap-5 items-end'>{children}</div>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-5 items-end'>{children}</div>
           {buttons}
         </div>
       )}
@@ -212,47 +211,47 @@ const QueueRequestDetails: React.FC = () => {
       return (
         <>
           {hasPermission(PermissionType.BACKOFFICE_QUEUE_EDIT) && (
-            <Button
-              key={`${field_name}-${QueueRequestProfileChangeStatus.APPROVED}`}
-              variant='filled'
-              title='Accept'
-              className='rounded-lg !px-2 min-w-28 min-h-50px'
-              onClick={() =>
-                handleAction(QueueRequestProfileChangeStatus.APPROVED, field_name, type)
-              }
-              isDisabled={isButtonDisabled}
-              icon={
-                field_status === QueueRequestProfileChangeStatus.APPROVED && (
-                  <Icon name='checked' className='icon-wrapper w-5 h-5' />
-                )
-              }
-              isLoading={
-                isQueueUpdating &&
-                loadingField === `${field_name}-${QueueRequestProfileChangeStatus.APPROVED}`
-              }
-              isIconFirst={true}
-            />
-          )}
-          {hasPermission(PermissionType.BACKOFFICE_QUEUE_EDIT) && (
-            <Button
-              key={`${field_name}-${QueueRequestProfileChangeStatus.REJECTED}`}
-              variant='filled'
-              title='Reject'
-              className='bg-red hover:bg-red/85 border-red hover:border-red/85  rounded-lg !px-2 min-w-28 min-h-50px'
-              onClick={() =>
-                handleAction(QueueRequestProfileChangeStatus.REJECTED, field_name, type)
-              }
-              isDisabled={isButtonDisabled}
-              icon={
-                field_status === QueueRequestProfileChangeStatus.REJECTED && (
-                  <Icon name='checked' className='icon-wrapper w-5 h-5' />
-                )
-              }
-              isIconFirst={true}
-              isLoading={
-                loadingField === `${field_name}-${QueueRequestProfileChangeStatus.REJECTED}`
-              }
-            />
+            <div className='flex gap-2'>
+              <Button
+                key={`${field_name}-${QueueRequestProfileChangeStatus.APPROVED}`}
+                variant='filled'
+                title='Accept'
+                className='rounded-lg !px-2 min-w-28 min-h-50px'
+                onClick={() =>
+                  handleAction(QueueRequestProfileChangeStatus.APPROVED, field_name, type)
+                }
+                isDisabled={isButtonDisabled}
+                icon={
+                  field_status === QueueRequestProfileChangeStatus.APPROVED && (
+                    <Icon name='checked' className='icon-wrapper w-5 h-5' />
+                  )
+                }
+                isLoading={
+                  isQueueUpdating &&
+                  loadingField === `${field_name}-${QueueRequestProfileChangeStatus.APPROVED}`
+                }
+                isIconFirst={true}
+              />
+              <Button
+                key={`${field_name}-${QueueRequestProfileChangeStatus.REJECTED}`}
+                variant='filled'
+                title='Reject'
+                className='bg-red hover:bg-red/85 border-red hover:border-red/85  rounded-lg !px-2 min-w-28 min-h-50px'
+                onClick={() =>
+                  handleAction(QueueRequestProfileChangeStatus.REJECTED, field_name, type)
+                }
+                isDisabled={isButtonDisabled}
+                icon={
+                  field_status === QueueRequestProfileChangeStatus.REJECTED && (
+                    <Icon name='checked' className='icon-wrapper w-5 h-5' />
+                  )
+                }
+                isIconFirst={true}
+                isLoading={
+                  loadingField === `${field_name}-${QueueRequestProfileChangeStatus.REJECTED}`
+                }
+              />
+            </div>
           )}
         </>
       );
@@ -293,7 +292,7 @@ const QueueRequestDetails: React.FC = () => {
                 }
                 status={obj.status}
                 buttons={
-                  <div className='flex gap-2'>
+                  <div className='flex gap-2 justify-end'>
                     {getButtons({
                       type: QUEUE_REQUEST_FIELD_TYPE_BY_TABLE_NAME[table_name],
                       field_name: obj.id,
@@ -353,12 +352,12 @@ const QueueRequestDetails: React.FC = () => {
         <div className='flex flex-col gap-5'>
           <h2 className='text-lg font-bold text-blackdark leading-6'>Request Details</h2>
           {/* Appointment Info Grid */}
-          <div className='grid grid-cols-3 gap-5'>
+          <div className='grid grid-cols-2 xl:grid-cols-3 gap-5'>
             <InputField
               readOnly={true}
               type='text'
               label='Ticket Raised'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               value={
                 queueDetails?.created_at
@@ -370,7 +369,7 @@ const QueueRequestDetails: React.FC = () => {
               type='text'
               readOnly={true}
               label='Ticket Updated'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               value={
                 queueDetails?.updated_at
@@ -382,7 +381,7 @@ const QueueRequestDetails: React.FC = () => {
               type='text'
               readOnly={true}
               label='Request Type'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               value={formatLabel(queueDetails?.request_type)}
             />
@@ -390,7 +389,7 @@ const QueueRequestDetails: React.FC = () => {
               type='text'
               readOnly={true}
               label='Requester'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               value={
                 isSystemGenerated
@@ -402,7 +401,7 @@ const QueueRequestDetails: React.FC = () => {
               type='text'
               readOnly={true}
               label='Status'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               inputClass='!text-base !leading-5'
               value={
                 queueDetails?.status === QueueStatus.IN_PROGRESS
@@ -418,7 +417,7 @@ const QueueRequestDetails: React.FC = () => {
                   type='text'
                   readOnly={true}
                   label='Patient Name'
-                  labelClass='!text-base !leading-5'
+                  labelClass='!text-base'
                   inputClass='!text-base !leading-5'
                   value={`${queueDetails?.appointment?.client?.user?.first_name || ''} ${queueDetails?.appointment?.client?.user?.last_name || ''}`}
                 />
@@ -427,7 +426,7 @@ const QueueRequestDetails: React.FC = () => {
                   type='text'
                   readOnly={true}
                   label='Therapist Name'
-                  labelClass='!text-base !leading-5'
+                  labelClass='!text-base'
                   inputClass='!text-base !leading-5'
                   value={`${queueDetails?.appointment?.therapist?.user?.first_name || ''} ${queueDetails?.appointment?.therapist?.user?.last_name || ''}`}
                 />
@@ -437,7 +436,7 @@ const QueueRequestDetails: React.FC = () => {
                   type='text'
                   readOnly={true}
                   label='Appointment Date & Time'
-                  labelClass='!text-base !leading-5'
+                  labelClass='!text-base'
                   inputClass='!text-base !leading-5'
                   value={
                     queueDetails?.appointment?.slot?.start_time
@@ -453,7 +452,7 @@ const QueueRequestDetails: React.FC = () => {
                       type='text'
                       readOnly={true}
                       label='Form Name'
-                      labelClass='!text-base !leading-5'
+                      labelClass='!text-base'
                       inputClass='!text-base !leading-5'
                       value={queueDetails.metadata.form_name}
                     />
@@ -465,7 +464,7 @@ const QueueRequestDetails: React.FC = () => {
                       type='text'
                       readOnly={true}
                       label='Reason'
-                      labelClass='!text-base !leading-5'
+                      labelClass='!text-base'
                       inputClass='!text-base !leading-5'
                       value={queueDetails?.metadata.cancellation_reason}
                     />
@@ -479,8 +478,8 @@ const QueueRequestDetails: React.FC = () => {
             placeholder='comments'
             label='Comments'
             labelClass='!text-base'
-            className={`w-full focus:outline-0  border rounded-10px col-span-2`}
-            parentClassName='w-full col-span-2'
+            className={`rounded-10px`}
+            parentClassName='w-full'
             value={queueDetails?.comment}
             isDisabled={true}
           />
@@ -498,11 +497,11 @@ const QueueRequestDetails: React.FC = () => {
             )}
             {selectedFiles.length > 0 && (
               <>
-                <div className='grid grid-cols-5 gap-5'>
+                <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5'>
                   {selectedFiles.map(fileItem => (
                     <div
                       key={fileItem.id}
-                      className='relative group rounded-lg overflow-hidden bg-white '
+                      className='relative group rounded-lg overflow-hidden bg-white cursor-pointer'
                       onClick={() => setPreviewImage(`${SERVER_URL}${fileItem.image_path}`)}
                     >
                       {/* File Preview */}
@@ -527,15 +526,20 @@ const QueueRequestDetails: React.FC = () => {
                       <h3 className='text-lg font-bold leading-6 text-blackdark'>Profile</h3>
                       {queueDetails?.metadata.profile.map(
                         (field: THERAPIST_BIO_METADATA_TYPE, index: number) => (
-                          <div key={index} className='flex gap-5 items-end'>
-                            <DisplayField
-                              label={`Old ${commanizeName(field.field_name)}`}
-                              value={getFieldValue(field.old_value as string, field.field_name)}
-                            />
-                            <DisplayField
-                              value={getFieldValue(field.new_value as string, field.field_name)}
-                              label={`New ${commanizeName(field.field_name)}`}
-                            />
+                          <div
+                            key={index}
+                            className='flex gap-5 items-end flex-wrap md:justify-end xl:justify-normal'
+                          >
+                            <div className='flex items-center gap-5 w-full flex-col lg:flex-row xl:flex-1'>
+                              <DisplayField
+                                label={`Old ${commanizeName(field.field_name)}`}
+                                value={getFieldValue(field.old_value as string, field.field_name)}
+                              />
+                              <DisplayField
+                                value={getFieldValue(field.new_value as string, field.field_name)}
+                                label={`New ${commanizeName(field.field_name)}`}
+                              />
+                            </div>
                             <div className='flex gap-2'>
                               {getButtons({
                                 type: QUEUE_REQUEST_PROFILE_FIELD_TYPE.PROFILE,
@@ -572,43 +576,42 @@ const QueueRequestDetails: React.FC = () => {
                   Failed Insurance Verifications
                 </h3>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+                <div className='grid gap-5 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3'>
                   {queueDetails.metadata.carriers.map((carrier, index) => (
                     <div
                       key={index}
-                      className='border border-surface rounded-2xl p-4 bg-gray-50 shadow-sm hover:shadow-md transition-shadow duration-200'
+                      className='border border-solid border-surface rounded-2xl p-5 bg-Gray flex flex-col gap-3.5'
                     >
-                      <div className='flex items-center justify-between mb-2'>
-                        <span className='text-sm font-medium text-primarygray'>#{index + 1}</span>
+                      <div className='flex items-center justify-between'>
+                        <p className='text-base leading-5 font-bold text-blackdark'>#{index + 1}</p>
                         <span
-                          className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                          className={`text-xs font-semibold px-3.5 py-1 rounded-full ${
                             carrier.status === 'failed'
-                              ? 'bg-red-100 text-red-600'
-                              : 'bg-yellow-100 text-yellow-700'
+                              ? 'bg-red-100 border border-solid border-red-300 text-red-600'
+                              : 'bg-yellow-100 border border-solid border-yellow-300 text-yellow-700'
                           }`}
                         >
                           {carrier.status?.toUpperCase() || 'FAILED'}
                         </span>
                       </div>
-
-                      <div className='space-y-1'>
-                        <p className='text-sm text-primarygray'>Carrier Name</p>
-                        <p className='font-semibold text-blackdark'>
+                      <div className='flex items-center gap-5 justify-between'>
+                        <p className='text-base leading-5 font-bold text-blackdark'>Carrier Name</p>
+                        <p className='font-normal text-primarygray text-sm leading-18px'>
                           {carrier.carrier_name || 'Unknown Carrier'}
                         </p>
                       </div>
-
-                      <div className='mt-3 space-y-1'>
-                        <p className='text-sm text-primarygray'>Reason</p>
-                        <p className='text-sm text-red-600 bg-red-50 rounded-lg p-2'>
+                      <div className='flex items-center gap-5 justify-between'>
+                        <p className='text-base leading-5 font-bold text-blackdark'>Reason</p>
+                        <p className='text-sm leading-18px text-red-600 bg-red-100 rounded-full py-1 px-3.5'>
                           {carrier.reason || 'No reason specified'}
                         </p>
                       </div>
-
                       {carrier.member_id && (
-                        <div className='mt-3 space-y-1'>
-                          <p className='text-sm text-primarygray'>Member ID</p>
-                          <p className='text-sm font-medium text-blackdark'>{carrier.member_id}</p>
+                        <div className='flex items-center gap-5 justify-between'>
+                          <p className='text-base leading-5 font-bold text-blackdark'>Member ID</p>
+                          <p className='font-normal text-primarygray text-sm leading-18px'>
+                            {carrier.member_id}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -631,8 +634,10 @@ const QueueRequestDetails: React.FC = () => {
                 <Button
                   onClick={() => setPreviewImage(null)}
                   variant='filled'
-                  className='!p-2 !rounded-full absolute top-4 right-4 z-50 bg-black/60 text-white hover:bg-black/80 transition'
-                  title='✕'
+                  className='!p-1 !rounded-full z-50 bg-black/60 text-white hover:bg-black/80 transition'
+                  title=''
+                  parentClassName='!absolute top-4 right-4'
+                  icon={<Icon name='close' />}
                 />
                 <img
                   src={previewImage}
@@ -674,7 +679,7 @@ const QueueRequestDetails: React.FC = () => {
                     {`From ${formatStatusLabel(audit_log?.prev_status)} -> ${formatStatusLabel(audit_log?.next_status)}.`}{' '}
                   </p>
                   {audit_log?.audit_trail_uploads?.length > 0 && (
-                    <div className='grid grid-cols-12 gap-2.5'>
+                    <div className='grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-12 gap-2.5'>
                       {audit_log?.audit_trail_uploads.map(fileItem => (
                         <div
                           key={fileItem.id}

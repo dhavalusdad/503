@@ -1,7 +1,9 @@
 import '../../../index.css';
 import { useState, useRef } from 'react';
 
-import DualAxisInfiniteScroll, { type DualAxisInfiniteScrollProps } from './index';
+import DualAxisInfiniteScroll, {
+  type DualAxisInfiniteScrollProps,
+} from '@/stories/Common/DualAxisInfiniteScroll';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

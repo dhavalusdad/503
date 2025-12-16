@@ -7,8 +7,10 @@ import {
   useUpdatePaymentMethod,
 } from '@/api/payment';
 import type { PaymentProfileDetails } from '@/api/types/payment.dto';
-
-import { type PaymentFormData, paymentMethodSchema } from '../schemas/paymentValidation';
+import {
+  type PaymentFormData,
+  paymentMethodSchema,
+} from '@/features/payment/schemas/paymentValidation';
 
 interface UsePaymentMethodFormProps {
   onSuccess?: () => void;

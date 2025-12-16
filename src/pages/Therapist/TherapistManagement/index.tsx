@@ -40,7 +40,9 @@ const TherapistManagement = () => {
   return (
     <div className='bg-white border border-solid border-surface rounded-20px p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Therapist Management</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          Therapist Management
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -48,18 +50,20 @@ const TherapistManagement = () => {
           iconFirst
           iconClassName='text-primarygray'
           onChange={onSearchChange}
-          parentClassName='w-360px ml-auto'
+          parentClassName='w-full lg:w-76 xl:w-360px order-3 lg:order-none'
           value={searchQuery}
         />
-        <FilterButton
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-          onClearFilter={onClearFilter}
-          handleApplyFilter={handleApplyFilter}
-          filterFields={filterFields}
-          isLoading={isGetTherapistListApiPending}
-          defaultValues={filters}
-        />
+        <div className='order-2 lg:order-none'>
+          <FilterButton
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onClearFilter={onClearFilter}
+            handleApplyFilter={handleApplyFilter}
+            filterFields={filterFields}
+            isLoading={isGetTherapistListApiPending}
+            defaultValues={filters}
+          />
+        </div>
       </div>
       {isGetTherapistListApiPending ? (
         <Spinner />

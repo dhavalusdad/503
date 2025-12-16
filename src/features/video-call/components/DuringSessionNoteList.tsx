@@ -32,9 +32,13 @@ interface InfiniteNoteQueryResponse {
 
 interface DuringSessionNoteListProps {
   appointment_id: string;
+  tenant_id: string;
 }
 
-export const DuringSessionNoteList = ({ appointment_id }: DuringSessionNoteListProps) => {
+export const DuringSessionNoteList = ({
+  appointment_id,
+  tenant_id,
+}: DuringSessionNoteListProps) => {
   const {
     data: noteData,
     fetchNextPage,
@@ -42,6 +46,7 @@ export const DuringSessionNoteList = ({ appointment_id }: DuringSessionNoteListP
     isFetchingNextPage,
   } = useInfiniteNotesByAppointment({
     appointment_id,
+    tenant_id,
     note_type: NoteType.DuringAppointment,
   });
 

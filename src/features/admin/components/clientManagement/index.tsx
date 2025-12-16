@@ -49,7 +49,9 @@ const ClientManagement = () => {
   return (
     <div className='bg-white rounded-20px border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Client Management</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto order-1 lg:order-none'>
+          Client Management
+        </h5>
         <InputField
           type='Search'
           placeholder='Search'
@@ -57,17 +59,19 @@ const ClientManagement = () => {
           iconFirst
           onChange={handleSearchChange}
           iconClassName='text-primarygray'
-          parentClassName='w-full sm:w-360px ml-auto'
+          parentClassName='w-full lg:w-76 xl:w-360px order-4 lg:order-none'
         />
-        <FilterButton<ClientManagementFilterDataType>
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-          onClearFilter={onClearFilter}
-          handleApplyFilter={handleApplyFilter}
-          filterFields={filterFields}
-          isLoading={isClientManagementDataLoading}
-          defaultValues={filters}
-        />
+        <div className='relative order-3 lg:order-none'>
+          <FilterButton<ClientManagementFilterDataType>
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onClearFilter={onClearFilter}
+            handleApplyFilter={handleApplyFilter}
+            filterFields={filterFields}
+            isLoading={isClientManagementDataLoading}
+            defaultValues={filters}
+          />
+        </div>
         {hasPermission(PermissionType.PATIENT_ADD) && (
           <Button
             variant='filled'
@@ -75,6 +79,7 @@ const ClientManagement = () => {
             icon={<Icon name='plus' />}
             isIconFirst
             className='rounded-lg'
+            parentClassName='order-2 lg:order-none'
             onClick={() => navigate(ROUTES.ADD_CLIENT.path)}
           />
         )}

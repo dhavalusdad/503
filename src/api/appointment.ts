@@ -1,8 +1,15 @@
 import { useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 
+import { useInfiniteQuery, useMutation, useQuery, type CustomUseQueryOptions } from '@/api';
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { appointmentQueryKey, therapistQueryKeys } from '@/api/common/appointment.queryKey';
+import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
+import { clientAppointmentBookingQueryKey } from '@/api/common/clientAppointment.queryKey';
+import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
+import { userQueryKey } from '@/api/common/user.queryKey';
 import type {
+  AdminAppointmentParamsType,
   CreateBookingAppointmentResponse,
   EndAppointmentDataType,
   GetAppointmentsRequest,
@@ -13,7 +20,6 @@ import type {
 } from '@/api/types/calendar.dto';
 import type { ApiResponse } from '@/api/types/common.dto';
 import type { InfiniteAppointmentPageResponse } from '@/api/types/therapist.dto';
-import type { AdminAppointmentParamsType } from '@/api/types/user.dto';
 import { isDefined } from '@/api/utils';
 import { TherapyType } from '@/enums';
 import type {
@@ -21,14 +27,6 @@ import type {
   CreateBookingAppointmentRequestClient,
 } from '@/features/calendar/types';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { appointmentQueryKey, therapistQueryKeys } from './common/appointment.queryKey';
-import { calendarQueryKeys } from './common/calendar.queryKey';
-import { clientAppointmentBookingQueryKey } from './common/clientAppointment.queryKey';
-import { mutationsQueryKey } from './common/mutations.queryKey';
-import { userQueryKey } from './common/user.queryKey';
-
-import { useInfiniteQuery, useMutation, useQuery, type CustomUseQueryOptions } from '.';
 
 const BASE_PATH = '/appointments';
 

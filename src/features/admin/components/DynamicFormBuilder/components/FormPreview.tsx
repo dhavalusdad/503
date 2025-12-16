@@ -4,7 +4,14 @@ import moment from 'moment';
 
 import { useUploadFormFile } from '@/api/assessment-forms';
 import { QuestionTypeEnum } from '@/enums';
-import { useDeviceType } from '@/hooks/useDeviceType';
+import {
+  type FormPreviewProps,
+  type DynamicQuestion,
+  type DynamicForm,
+  type ValueType,
+  type QuestionOption,
+  type LabelValue,
+} from '@/features/admin/components/DynamicFormBuilder/types';
 import Button from '@/stories/Common/Button';
 import CheckboxField from '@/stories/Common/CheckBox';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
@@ -18,15 +25,6 @@ import Select from '@/stories/Common/Select';
 import Spinner from '@/stories/Common/Spinner';
 import TextArea from '@/stories/Common/Textarea';
 
-import {
-  type FormPreviewProps,
-  type DynamicQuestion,
-  type DynamicForm,
-  type ValueType,
-  type QuestionOption,
-  type LabelValue,
-} from '../types';
-
 // Utility function to get unique key for questions/options
 const getQuestionKey = (q: DynamicQuestion | QuestionOption): string => q.id?.toString() ?? q.uid;
 
@@ -39,7 +37,6 @@ export const QuestionRenderer: React.FC<{
   readOnly: boolean;
   onAnswerChange: (value: ValueType, inputField?: boolean) => void;
 }> = ({ question, answer, readOnly, onAnswerChange }) => {
-  const deviceType = useDeviceType();
   const options = useMemo(
     () =>
       question.options?.map(opt => ({
@@ -58,7 +55,7 @@ export const QuestionRenderer: React.FC<{
           onChange={e => onAnswerChange(e.target.value)}
           placeholder={question.placeholder || 'Enter your answer...'}
           isDisabled={readOnly}
-          inputClass='bg-Graylight !text-sm sm:!text-base !leading-5'
+          inputClass='bg-Graylight !text-base !leading-5'
           parentClassName='w-full'
         />
       );
@@ -71,7 +68,7 @@ export const QuestionRenderer: React.FC<{
           placeholder={question.placeholder || 'Enter your answer...'}
           rows={4}
           isDisabled={readOnly}
-          className='w-full bg-Graylight !text-sm sm:!text-base !leading-5'
+          className='w-full bg-Graylight !text-base !leading-5'
           parentClassName='w-full'
           value={answer as string}
         />
@@ -100,13 +97,12 @@ export const QuestionRenderer: React.FC<{
                   isDisabled={readOnly}
                   value={option.option_value}
                   onChange={() => onAnswerChange(option, true)}
-                  labelClass='!text-sm sm:!text-base'
                 />
               </div>
             );
           })}
           {(!question.options || question.options.length === 0) && (
-            <p className='text-sm text-gray-400 italic'>No options available</p>
+            <p className='text-sm text-primarygray italic'>No options available</p>
           )}
         </div>
       );
@@ -152,19 +148,20 @@ export const QuestionRenderer: React.FC<{
           placeholder='Select an option...'
           isDisabled={readOnly}
           parentClassName='w-full'
+          portalRootId='form-preview-modal'
           StylesConfig={{
             control: () => ({
               background: '#F9FAFB',
               minHeight: '50px',
             }),
             singleValue: () => ({
-              fontSize: deviceType === 'mobile' ? '14px' : '16px',
+              fontSize: '16px',
             }),
             placeholder: () => ({
-              fontSize: deviceType === 'mobile' ? '14px' : '16px',
+              fontSize: '16px',
             }),
             option: () => ({
-              fontSize: deviceType === 'mobile' ? '14px' : '16px',
+              fontSize: '16px',
             }),
           }}
         />
@@ -178,7 +175,7 @@ export const QuestionRenderer: React.FC<{
           value={answer as string}
           placeholder={question.placeholder || 'Enter a number...'}
           disabled={readOnly}
-          inputClass='bg-Graylight !text-sm sm:!text-base !leading-5'
+          inputClass='bg-Graylight !text-base !leading-5'
           parentClassName='w-full'
         />
       );
@@ -205,7 +202,7 @@ export const QuestionRenderer: React.FC<{
             NumberOfFileAllowed={1}
             multiple={false}
             accept='image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain'
-            className='w-full col-span-2 bg-Graylight'
+            className='w-full bg-Graylight'
             existingFiles={existingFiles}
             autoUpload={true}
             disabled={readOnly}
@@ -245,7 +242,7 @@ export const QuestionRenderer: React.FC<{
                 name={`checkbox-${option.option_text}`}
                 value={option.option_value}
                 isDisabled={readOnly}
-                labelClass='!text-sm sm:!text-base'
+                labelClass='!text-base'
                 className='!border'
                 onChange={event => {
                   const checked = event.target.checked;
@@ -268,17 +265,13 @@ export const QuestionRenderer: React.FC<{
     case QuestionTypeEnum.BULLET_POINTS:
       return (
         <ul className='list-disc pl-6 '>
-          <li className='text-sm sm:text-base font-semibold text-blackdark'>
-            {question.question_text}
-          </li>
+          <li className='text-base font-semibold text-blackdark'>{question.question_text}</li>
         </ul>
       );
 
     case QuestionTypeEnum.TEXT_HEADER:
       return (
-        <h3 className='block text-sm sm:text-base text-blackdark font-semibold'>
-          {question.question_text}
-        </h3>
+        <h3 className='block text-base text-blackdark font-semibold'>{question.question_text}</h3>
       );
 
     case QuestionTypeEnum.NUMERIC_INPUT:
@@ -289,8 +282,8 @@ export const QuestionRenderer: React.FC<{
           onChange={e => onAnswerChange(e.target.value)}
           placeholder={question.placeholder || 'Enter your answer...'}
           isDisabled={readOnly}
-          labelClass='!text-base !leading-5'
-          inputClass='bg-Graylight !text-sm sm:!text-base !leading-5'
+          labelClass='!text-base'
+          inputClass='bg-Graylight !text-base !leading-5'
           parentClassName='w-full'
         />
       );
@@ -340,7 +333,7 @@ const QuestionField: React.FC<{
     >
       {question.question_type !== QuestionTypeEnum.BULLET_POINTS &&
         question.question_type !== QuestionTypeEnum.TEXT_HEADER && (
-          <label className='text-sm sm:text-base font-normal text-blackdarklight leading-5'>
+          <label className='text-base font-normal text-blackdarklight leading-5'>
             {question.question_text}
             {question.is_required && <span className='text-red-500 ml-1'>*</span>}
           </label>
@@ -368,8 +361,8 @@ const GroupedQuestions: React.FC<{
   fieldRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
 }> = ({ groupName, questions, answers, readOnly, onAnswerChange, errors, fieldRefs }) => {
   return (
-    <div className='border border-solid border-surface rounded-xl p-4 sm:p-5 bg-white'>
-      <h3 className='text-lg font-semibold text-blackdark leading-6 mb-4'>{groupName}</h3>
+    <div className='border border-solid border-surface rounded-xl p-5 bg-white'>
+      <h3 className='text-lg font-semibold text-blackdark leading-6 mb-5'>{groupName}</h3>
       <div className='flex flex-col gap-5'>
         {questions.map(q => (
           <QuestionField
@@ -626,7 +619,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
 
   if (formDataLoading && !form) {
     return (
-      <div className='w-full mx-auto p-6 bg-white rounded-lg shadow-sm'>
+      <div className='w-full mx-auto p-5 bg-white rounded-lg border border-solid border-surface'>
         <Spinner />
       </div>
     );
@@ -637,7 +630,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
       <>
         <div className='w-full p-5 bg-white rounded-20px border border-solid border-surface'>
           <div className='flex items-center justify-center h-full'>
-            <p className='text-blackdark text-base sm:text-xl font-semibold'>No Data To Show</p>
+            <p className='text-blackdark text-xl font-semibold'>No Data To Show</p>
           </div>
         </div>
       </>
@@ -692,7 +685,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
         })}
 
         {form.questions.length === 0 && (
-          <div className='text-center py-8 text-blackdark text-lg sm:text-xl font-semibold'>
+          <div className='text-center py-8 text-blackdark text-xl font-semibold'>
             <p>No questions added to this form yet.</p>
           </div>
         )}

@@ -12,6 +12,7 @@ import {
   QuestionTypeEnum,
   FormStatusType,
   FormCategory,
+  RelationEnum,
 } from '@/enums';
 // generateYears function moved here to avoid circular dependency
 const generateYears = (start = 1940, end = new Date().getFullYear()) => {
@@ -426,8 +427,6 @@ export const SESSION_TYPE_OPTIONS =
 export const FIELD_TYPE = {
   DATE_RANGE: 'dateRange',
   SELECT: 'select',
-  REQUEST_TYPE: 'requestType',
-  ASSIGNEE: 'assignee',
   TEXT: 'text',
   NUMBER: 'number',
   ASYNC_SELECT: 'asyncSelect',
@@ -531,3 +530,9 @@ export const FORM_CATEGORY_OPTIONS = [
 ];
 
 export const PERMISSION_ERROR = 'You do not have permission to perform this action';
+
+export const RELATION_BY_THERAPY_TYPE = {
+  [TherapyType.FAMILY]: RelationEnum.FAMILY,
+  [TherapyType.COUPLE]: RelationEnum.COUPLE,
+  [TherapyType.MINOR]: RelationEnum.MINOR,
+};

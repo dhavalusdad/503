@@ -233,8 +233,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                     disable={isSidebarOpen || !!item.childRoute}
                   >
                     <NavLink
+                      id={item.elementId}
                       to={!item.childRoute ? item.path : ''}
-                      onClick={handleMenuItemClick}
+                      onClick={!item.childRoute ? handleMenuItemClick : undefined}
                       className={() =>
                         clsx(
                           'flex items-center gap-2 px-4 py-4 text-blackdark text-base leading-18px font-medium hover:bg-primarylight hover:text-white rounded-lg transition-all duration-300 ease-in-out whitespace-nowrap',
@@ -301,6 +302,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                         >
                           <NavLink
                             to={item.path}
+                            onClick={handleMenuItemClick}
+                            id={item.elementId}
                             className={({ isActive: navLinkActive }) =>
                               clsx(
                                 'flex items-center gap-2 py-3 text-blackdark text-sm font-medium hover:text-primary transition-all duration-300 ease-in-out whitespace-nowrap',

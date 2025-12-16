@@ -1,4 +1,4 @@
-import type { AssessmentFormParamsType, ClientFormsParamsType } from '@/api/types/user.dto';
+import type { ClientFormsParamsType } from '@/api/types/user.dto';
 
 export const FORMS_KEY_NAME = {
   LIST: 'forms-list',
@@ -8,15 +8,16 @@ export const FORMS_KEY_NAME = {
 };
 
 export const formsQueryKey = {
-  getList: (params?: string | AssessmentFormParamsType, userId?: string) =>
-    ['forms', 'list', params, userId] as const,
+  getList: (params?: object) => ['getFormList', params].filter(item => item !== undefined),
+  getTreatmentList: (params?: object) =>
+    ['getTreatmentList', params].filter(item => item !== undefined),
   getFormById: (id?: string) => [FORMS_KEY_NAME.BY_ID, id],
   getFormResponseById: (id?: string) => [FORMS_KEY_NAME.FORM_RESPONSE, id],
   getFormsByUserId: (params?: ClientFormsParamsType | string) => [
     FORMS_KEY_NAME.LIST_BY_USER_ID,
     params,
   ],
-  getListData: () => ['forms', 'list'] as const,
+  getListData: () => ['forms-list'] as const,
   deleteAssignedForm: (params?: string) =>
     ['deleteAssignedForms', params].filter(d => d !== undefined),
 };

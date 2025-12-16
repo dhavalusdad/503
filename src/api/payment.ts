@@ -1,15 +1,13 @@
+import { useMutation, useQuery } from '@/api';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
+import { paymentQueryKey } from '@/api/common/payment.queryKey';
+import { transactionQueryKey } from '@/api/common/transaction.query.key';
 import type {
   CustomerPaymentProfileData,
   CustomerPaymentProfileResponse,
 } from '@/api/types/payment.dto';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from './axios';
-import { calendarQueryKeys } from './common/calendar.queryKey';
-import { paymentQueryKey } from './common/payment.queryKey';
-import { transactionQueryKey } from './common/transaction.query.key';
-
-import { useMutation, useQuery } from '.';
 
 // import type { CustomerPaymentProfileData, CustomerPaymentProfileResponse } from './types';
 
@@ -105,6 +103,7 @@ export const useAddPaymentMethod = () => {
     },
     onSuccess: () => {
       invalidate(paymentQueryKey.customerProfile());
+      invalidate(paymentQueryKey.userPaymentProfile());
     },
   });
 };

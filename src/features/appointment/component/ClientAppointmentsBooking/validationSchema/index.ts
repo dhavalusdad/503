@@ -31,7 +31,7 @@ export const getMemberSchema = (memberType: string) => {
         ? yup.string().required('Emergency contact is required')
         : yup.string().nullable(),
     relationshipType:
-      memberType === 'couple'
+      memberType === 'minor'
         ? yup.string().required('Relationship type is required').defined()
         : yup.string().nullable(),
   });
@@ -76,25 +76,21 @@ export const validationSchemaClientBooking = yup.object().shape({
     .min(1, 'At least one appointment type is required')
     .required('Appointment type is required'),
   clinic: yup
-    .object()
-    .when('sessionType', {
-      is: (value: SelectOption | string) => {
-        if (typeof value === 'string') return value === 'Clinic';
-        if (typeof value === 'object' && value !== null) return value.value === 'Clinic';
-        return false;
-      },
-      then: schema =>
-        schema.shape({
-          id: yup.string().trim().required('Please select a clinic'),
-          name: yup.string().trim().required('Please select a clinic'),
-        }),
-      otherwise: schema =>
-        schema.shape({
-          id: yup.string().trim().notRequired(),
-          name: yup.string().trim().notRequired(),
-        }),
+    .object({
+      id: yup.string().nullable(),
+      name: yup.string().nullable(),
     })
-    .nullable(),
+    .nullable()
+    .when('sessionType', {
+      is: (value: SelectOption | string) =>
+        (typeof value === 'string' && value === 'Clinic') ||
+        (typeof value === 'object' && value?.value === 'Clinic'),
+      then: schema =>
+        schema.required('Clinic is required').shape({
+          id: yup.string().required('Please select a clinic'),
+          name: yup.string().required('Please select a clinic'),
+        }),
+    }),
 });
 
 export const clientQuickDetailsSchema = yup.object().shape({
@@ -116,17 +112,22 @@ export const clientQuickDetailsSchema = yup.object().shape({
     .required(),
   dob: yup
     .date()
+    .nullable()
+    .defined()
     .label('Date of birth')
-    .required()
+    .test('required', 'Date of birth is required', function (value) {
+      if (!value) return false;
+      return true;
+    })
     .test('age', 'Must be older than 16 years to register', function (value) {
-      if (!value) return true;
+      if (!value) return true; // Skip age check if value is null
       const today = new Date();
       const eighteenYearsAgo = new Date(
         today.getFullYear() - 16,
         today.getMonth(),
         today.getDate()
       );
-      return value < eighteenYearsAgo;
+      return value < eighteenYearsAgo; // Validate age only if dob is not null
     }),
   clinic: yup.object().when('$sessionType', {
     is: (sessionType: string) => sessionType === SessionType.CLINIC,
@@ -141,8 +142,13 @@ export const clientQuickDetailsSchema = yup.object().shape({
   }),
   appointment_type: yup
     .array()
+    .nullable()
+    .defined()
     .min(1, 'At least one appointment type is required')
-    .required('Appointment type is required'),
+    .test('required', 'Appointment type is required', function (value) {
+      if (!value?.length) return false;
+      return true;
+    }),
 });
 
 export const requestSlotSchema = yup.object({

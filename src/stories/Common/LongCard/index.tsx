@@ -1,6 +1,6 @@
-import React, { FC, memo } from 'react';
+import React, { memo, type FC } from 'react';
 
-import type { AllTherapistExperienceResponse } from '@/api/types/common.dto';
+import type { AllTherapistExperienceResponse } from '@/api/types/therapist.dto';
 import { getMonthNameByMonthNumber, getWorkedDuration } from '@/api/utils';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
@@ -36,7 +36,6 @@ const getExperienceDisplayDate = ({
 
 const LongCard: FC<CardProps> = memo(({ data, onEdit, onDelete, isEditable }) => {
   const { organization, location, experiences } = data;
-
   return (
     <div
       className={`pb-5 mb-5 last:pb-0 last:mb-0 flex relative border-b border-solid border-surface last:border-b-0`}

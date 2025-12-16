@@ -1,8 +1,8 @@
 import '../../../index.css';
 
-import Icon from '../Icon';
+import Icon from '@/stories/Common/Icon';
 
-import ButtonWithTooltip, { type ButtonWithTooltipProps } from './index';
+import ButtonWithTooltip, { type ButtonWithTooltipProps } from '@/stories/Common/ButtonWithTooltip';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

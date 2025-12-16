@@ -1,17 +1,20 @@
-import Button from '../Button';
-import Icon, { type IconNameType } from '../Icon';
-import RowDropdown from '../RowDropdown';
+import clsx from 'clsx';
+
+import Button from '@/stories/Common/Button';
+import Icon, { type IconNameType } from '@/stories/Common/Icon';
+import RowDropdown from '@/stories/Common/RowDropdown';
 
 export interface ActionItem {
   label: string;
   icon: string;
   onClick: () => void;
   show?: boolean; // optional condition
+  iconClassName?: string;
 }
 
 interface ActionDropDown {
   actions: ActionItem[];
-  showThreeDotView: boolean;
+  showThreeDotView?: boolean;
 }
 
 export const ActionDropDown = ({ actions, showThreeDotView = false }: ActionDropDown) => {
@@ -30,7 +33,7 @@ export const ActionDropDown = ({ actions, showThreeDotView = false }: ActionDrop
           icon={
             <Icon
               name={action.icon as IconNameType}
-              className='text-blackdark icon-wrapper w-5 h-5'
+              className={clsx('text-blackdark icon-wrapper w-5 h-5', action?.iconClassName)}
             />
           }
         />
@@ -49,7 +52,10 @@ export const ActionDropDown = ({ actions, showThreeDotView = false }: ActionDrop
               onClick={action.onClick}
             >
               <div className='w-5 text-left'>
-                <Icon name={action.icon as IconNameType} className='icon-wrapper w-5 h-5' />
+                <Icon
+                  name={action.icon as IconNameType}
+                  className={clsx('icon-wrapper w-5 h-5', action?.iconClassName)}
+                />
               </div>
               <span className='text-sm font-normal leading-18px text-blackdark'>
                 {action.label}

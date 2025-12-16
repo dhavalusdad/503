@@ -1,8 +1,5 @@
 import { useEffect } from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
-
-import { formsQueryKey } from '@/api/common/assessment-form.queryKey';
 import { ROUTES } from '@/constants/routePath';
 import { FormStatusType } from '@/enums';
 import { useGetInfiniteUserAssessment } from '@/features/video-call/hooks/useGetInfiniteUserAssessment';
@@ -14,13 +11,15 @@ export const PendingTask = ({
   handleData = undefined,
   userId,
   tenant_id,
+  role,
 }: {
   appointmentId: string;
   handleData?: (data: number) => void;
   userId?: string;
   tenant_id: string;
+  role?: string;
 }) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const { loaderRef, data, total, isLoading, dataUpdatedAt } = useGetInfiniteUserAssessment({
     page: 1,
@@ -31,6 +30,7 @@ export const PendingTask = ({
     appointment_id: appointmentId,
     user_id: userId,
     tenant_id,
+    role,
   });
 
   const handelOpenForm = (d: { id: string; token?: string }) => {
@@ -44,21 +44,22 @@ export const PendingTask = ({
     }
   }, [dataUpdatedAt, total, isLoading]);
 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        queryClient.invalidateQueries({
-          queryKey: formsQueryKey.getList(appointmentId),
-        });
-        if (total > 0) handleData?.(total);
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     console.log("ravi go");
+  //     if (document.visibilityState === 'visible') {
+  //       queryClient.invalidateQueries({
+  //         queryKey: formsQueryKey.getList(appointmentId),
+  //       });
+  //       if (total > 0) handleData?.(total);
+  //     }
+  //   };
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //   };
+  // }, []);
 
   return (
     <div className='flex flex-col gap-5'>

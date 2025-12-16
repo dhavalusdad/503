@@ -11,7 +11,7 @@ interface ParticipantsPanelProps {
 }
 
 export function ParticipantsPanel({ onClose, parentClassName }: ParticipantsPanelProps) {
-  const { room, participants, networkQuality } = useVideoCall();
+  const { room, participants, networkQuality, isVideoEnabled, isMuted } = useVideoCall();
 
   if (!room) return null;
 
@@ -21,10 +21,9 @@ export function ParticipantsPanel({ onClose, parentClassName }: ParticipantsPane
       sid: room.localParticipant.sid,
       identity: room.localParticipant.identity,
       isLocal: true,
-      isMuted: !Array.from(room.localParticipant.audioTracks.values())[0]?.track?.isEnabled,
-      isVideoEnabled:
-        Array.from(room.localParticipant.videoTracks.values())[0]?.track?.isEnabled !== false,
-      networkQuality: networkQuality, // Use actual network quality from Redux store
+      isMuted: isMuted,
+      isVideoEnabled: isVideoEnabled,
+      networkQuality: networkQuality,
     },
     ...Array.from(participants.entries()).map(([sid, participant]: [string, ParticipantInfo]) => ({
       sid,
@@ -54,8 +53,8 @@ export function ParticipantsPanel({ onClose, parentClassName }: ParticipantsPane
       {/* Backdrop for mobile */}
       {/* <div className='md:hidden fixed inset-0 bg-black/50 z-[998]' onClick={onClose} /> */}
 
-      <div className='w-[calc(100%-32px)] sm:w-387px rounded-20px z-50 h-full absolute right-4 xl:right-auto xl:relative'>
-        <div className={clsx('flex flex-col bg-white rounded-20px h-full', parentClassName)}>
+      <div className='w-[calc(100%-32px)] sm:w-387px rounded-10px z-50 h-full absolute right-4 xl:right-auto xl:relative'>
+        <div className={clsx('flex flex-col bg-white rounded-10px h-full', parentClassName)}>
           {/* Header */}
           <div className='flex items-center justify-between p-5 bg-surface rounded-t-20px'>
             <h2 className='text-xl font-semibold leading-6 text-blackdark'>
@@ -69,7 +68,6 @@ export function ParticipantsPanel({ onClose, parentClassName }: ParticipantsPane
               icon={<Icon name='x' className='icon-wrapper w-6 h-6' />}
             />
           </div>
-
           {/* Participants List */}
           <div className='p-5 relative flex-1 overflow-hidden'>
             <div className='h-full overflow-y-auto scroll-disable flex flex-col gap-3'>

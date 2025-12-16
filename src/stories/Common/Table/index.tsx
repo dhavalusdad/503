@@ -16,8 +16,7 @@ import clsx from 'clsx';
 import DataNotFound from '@/components/common/DataNotFound';
 import { Icon } from '@/stories/Common/Icon';
 import { Pagination } from '@/stories/Common/Pagination';
-
-import Skeleton from '../Skeleton';
+import Skeleton from '@/stories/Common/Skeleton';
 
 interface TableProps<TData> {
   id?: string;
@@ -46,6 +45,8 @@ interface TableProps<TData> {
   rowIdAccessor?: keyof TData;
   isLoading?: boolean;
   skeletonCount?: number;
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
+  infiniteScrollLoader?: React.ReactNode;
 }
 
 export const Table = <TData,>({
@@ -74,6 +75,8 @@ export const Table = <TData,>({
   skeletonCount = 10,
   isLoading,
   rowIdAccessor = 'id' as keyof TData,
+  scrollContainerRef,
+  infiniteScrollLoader,
 }: TableProps<TData>) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -117,7 +120,7 @@ export const Table = <TData,>({
 
   return (
     <div className={clsx('w-full', parentClassName)} id={id}>
-      <div className={clsx('w-full bg-white overflow-x-auto', className)}>
+      <div ref={scrollContainerRef} className={clsx('w-full bg-white overflow-x-auto', className)}>
         <table className={clsx('w-full', tableClassName)}>
           <thead
             className={clsx(
@@ -166,14 +169,22 @@ export const Table = <TData,>({
               // 🔹 Show skeleton rows while loading
               Array.from({ length: skeletonCount }).map((_, rowIndex) => (
                 <tr key={`skeleton-${rowIndex}`}>
-                  {columns.map((_, colIndex) => (
-                    <td
-                      key={`skeleton-cell-${rowIndex}-${colIndex}`}
-                      className={clsx('px-4 py-3.5', tdClassName)}
-                    >
-                      <Skeleton count={1} className='h-7 w-full ' />
-                    </td>
-                  ))}
+                  {columns.map((column, colIndex) => {
+                    const customSkeleton = column.meta?.customSkeleton;
+
+                    return (
+                      <td
+                        key={`skeleton-cell-${rowIndex}-${colIndex}`}
+                        className={clsx('px-4 py-3.5', tdClassName)}
+                      >
+                        {customSkeleton ? (
+                          customSkeleton
+                        ) : (
+                          <Skeleton count={1} className='h-7 w-full' />
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))
             ) : totalCount === 0 ? (
@@ -215,6 +226,7 @@ export const Table = <TData,>({
             )}
           </tbody>
         </table>
+        {infiniteScrollLoader}
       </div>
       {!isLoading && pagination && totalCount > 0 && (
         <div className='flex items-center gap-2 mt-4'>
@@ -231,4 +243,4 @@ export const Table = <TData,>({
 };
 
 export default Table;
-export * from './hook';
+export * from '@/stories/Common/Table/hook';

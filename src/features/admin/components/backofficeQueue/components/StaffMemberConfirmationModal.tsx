@@ -1,9 +1,8 @@
 import { useUpdateQueueRequest } from '@/api/queueManagement';
+import { UpdateQueueRequestDataType } from '@/features/admin/components/backofficeQueue/constant';
 import { formatStatusLabel } from '@/helper';
 import Button from '@/stories/Common/Button';
 import Modal from '@/stories/Common/Modal';
-
-import { UpdateQueueRequestDataType } from '../constant';
 
 interface StaffMemberConfirmationModalProps {
   isOpen: boolean;

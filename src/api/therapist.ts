@@ -1,10 +1,3 @@
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
-import { THERAPIST_KEYS_NAME, therapistQueryKey } from '@/api/common/therapist.queryKey.ts';
-import { isDefined } from '@/api/utils';
-import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { therapistQueryKeys } from './common/appointment.queryKey';
-
 import {
   type CustomUseMutationOptions,
   type CustomUseQueryOptions,
@@ -12,10 +5,11 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
-} from '.';
-
+} from '@/api';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { therapistQueryKeys } from '@/api/common/appointment.queryKey';
+import { THERAPIST_KEYS_NAME, therapistQueryKey } from '@/api/common/therapist.queryKey.ts';
 import type {
-  ApiResponse,
   CreateOrUpdateExperienceResponse,
   GetTherapistBasicDetailsResponse,
   InfiniteTherapistPageResponse,
@@ -27,7 +21,11 @@ import type {
   TherapistSearchResponse,
   UpdateTherapistAmdProviderRequest,
   UpdateTherapistBasicDetailsRequest,
-} from './types';
+} from '@/api/types/therapist.dto';
+import { isDefined } from '@/api/utils';
+import type { ApiResponse } from '@/features/appointment/types';
+import { useInvalidateQuery } from '@/hooks/data-fetching';
+
 import type { UseMutationResult } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
@@ -96,7 +94,7 @@ export const getTherapistsAsync = async (page?: number, searchTerm?: string) => 
       params.search = searchTerm;
     }
 
-    const response = await axiosGet(`${BASE_PATH}/list`, {
+    const response = await axiosGet(`${BASE_PATH}/filter-list`, {
       params,
     });
 

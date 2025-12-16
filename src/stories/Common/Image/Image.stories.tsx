@@ -1,4 +1,4 @@
-import { Image } from './index';
+import Image from '@/stories/Common/Image';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

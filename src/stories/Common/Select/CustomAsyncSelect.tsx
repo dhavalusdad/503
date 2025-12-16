@@ -161,8 +161,10 @@ export const CustomAsyncSelect = React.forwardRef(
       (newValue: string, actionMeta: InputActionMeta) => {
         if (newValue === '') {
           setSearchTerm('');
-        } else if (actionMeta.action === 'input-change') setSearchTerm(newValue);
-        onInputChange?.(newValue, actionMeta);
+        } else if (actionMeta.action === 'input-change') {
+          setSearchTerm(newValue.trim());
+        }
+        onInputChange?.(newValue.trim(), actionMeta);
       },
       [onInputChange]
     );

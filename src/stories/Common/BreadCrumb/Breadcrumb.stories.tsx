@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
-import Breadcrumb from '.';
+import Breadcrumb from '@/stories/Common/BreadCrumb';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

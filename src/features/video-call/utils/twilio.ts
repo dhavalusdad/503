@@ -14,6 +14,28 @@ import {
   LocalAudioTrack,
   LocalVideoTrack,
 } from 'twilio-video';
+
+import { stopAllActiveMediaTracks } from '@/features/video-call/utils/cleanup';
+import {
+  setRoom,
+  setLocalParticipant,
+  setConnected,
+  setConnecting,
+  setConnectionError,
+  setLocalTracks,
+  setMuted,
+  setVideoEnabled,
+  setNetworkQuality,
+  addParticipant,
+  removeParticipant,
+  updateParticipant,
+  setDominantSpeaker,
+  toggleHandRaise,
+  setPinnedParticipant,
+  setIsTherapistEndCall,
+} from '@/redux/ducks/videoCall';
+import type { AppDispatch } from '@/redux/store';
+
 export const showVideoCallToast = (
   message: string,
   type: 'info' | 'success' | 'warning' | 'error' = 'info',
@@ -52,28 +74,6 @@ export const showVideoCallToast = (
       break;
   }
 };
-
-import {
-  setRoom,
-  setLocalParticipant,
-  setConnected,
-  setConnecting,
-  setConnectionError,
-  setLocalTracks,
-  setMuted,
-  setVideoEnabled,
-  setNetworkQuality,
-  addParticipant,
-  removeParticipant,
-  updateParticipant,
-  setDominantSpeaker,
-  toggleHandRaise,
-  setPinnedParticipant,
-  setIsTherapistEndCall,
-} from '@/redux/ducks/videoCall';
-import type { AppDispatch } from '@/redux/store';
-
-import { stopAllActiveMediaTracks } from './cleanup';
 
 export interface TokenResponse {
   data: {

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { UserRole } from '@/api/types/user.dto';
+import { getNormalizedPath } from '@/api/utils';
 import { ROUTES } from '@/constants/routePath';
 import { isAdminPanelRole } from '@/helper';
 import { useAuthState } from '@/hooks/useAuthState';
@@ -27,15 +28,19 @@ const AuthenticateRoute: React.FC<PropsWithChildren> = ({ children }) => {
     return <Navigate to={ROUTES.LOGIN.path} replace />;
   }
 
-  const normalizedPath = location.pathname.replace(
-    /\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,
-    '/:id'
-  );
-
+  const normalizedPath = getNormalizedPath(location.pathname);
+  const isNotFound = isRouteAccessible(normalizedPath, true);
   // Check if current route is accessible for user's role
+  if (isNotFound) {
+    return <Navigate to={ROUTES.NOT_FOUND.path} />;
+  }
   if (!isRouteAccessible(normalizedPath)) {
-    // Redirect to user's default route if they don't have access to current route
-    return <Navigate to={getDefaultRoute()} replace />;
+    if (role === UserRole.BACKOFFICE) {
+      return <Navigate to={ROUTES.NOT_AUTHORIZED.path} replace />;
+    } else {
+      // Redirect to user's default route if they don't have access to current route
+      return <Navigate to={getDefaultRoute()} replace />;
+    }
   }
 
   return <Suspense fallback={<SectionLoader />}>{children}</Suspense>;

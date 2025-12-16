@@ -18,6 +18,7 @@ type DuringSessionNotePropsType = {
   appointment_id: string;
   client_id: string;
   therapist_id: string;
+  tenant_id: string;
 };
 
 // Validation schema
@@ -29,11 +30,13 @@ export const DuringSessionNote = ({
   appointment_id,
   client_id,
   therapist_id,
+  tenant_id,
 }: DuringSessionNotePropsType) => {
   const [content, setContent] = useState<string>('');
   const { mutateAsync: createNote, isPending } = useCreateNote(
     appointment_id!,
-    NoteType.DuringAppointment
+    NoteType.DuringAppointment,
+    tenant_id
   );
   const {
     register,
@@ -90,14 +93,16 @@ export const DuringSessionNote = ({
         label='Content'
         isRequired
       />
-      <Button
-        type='submit'
-        variant='filled'
-        title='Save'
-        className='rounded-lg !px-8 py-2'
-        parentClassName='ml-auto'
-        isLoading={isPending}
-      />
+      <div className='bg-white flex py-2 px-2 justify-end items-center sticky bottom-[-10px]'>
+        <Button
+          type='submit'
+          variant='filled'
+          title='Save'
+          className='rounded-lg !px-8 py-2'
+          parentClassName='ml-auto'
+          isLoading={isPending}
+        />
+      </div>
     </form>
   );
 };

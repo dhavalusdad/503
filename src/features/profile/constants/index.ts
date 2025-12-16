@@ -1,4 +1,4 @@
-import type { TherapistProfileFormData } from '../types';
+import type { TherapistProfileFormData } from '@/features/profile/types';
 
 export enum PANEL_TYPE {
   THERAPIST = 'therapist',

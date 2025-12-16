@@ -5,13 +5,12 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 import type { UserAppointment } from '@/features/admin/components/appointmentList/types';
+import { PatientDependentsOverview } from '@/features/video-call/components/PatientDependentsOverview';
 import { PatientOverview } from '@/features/video-call/components/PatientOverview';
 import { PersonalHubNotes } from '@/features/video-call/components/PersonalHubNotes';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import Modal from '@/stories/Common/Modal';
-
-import { PatientDependentsOverview } from './PatientDependentsOverview';
 
 type ToggleSection = {
   id: string;

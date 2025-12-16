@@ -1,11 +1,9 @@
-import { axiosGet, axiosPost } from '@/api/axios.ts';
+import { useMutation, useQuery } from '@/api';
+import { axiosGet, axiosPost } from '@/api/axios';
+import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
+import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
+import { transactionQueryKey } from '@/api/common/transaction.query.key';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { calendarQueryKeys } from './common/calendar.queryKey';
-import { mutationsQueryKey } from './common/mutations.queryKey';
-import { transactionQueryKey } from './common/transaction.query.key';
-
-import { useMutation, useQuery } from '.';
 
 import type { AxiosError } from 'axios';
 
@@ -75,6 +73,30 @@ export const useSendApprovalTransaction = (appointment_id?: string) => {
 
       if (data?.isExpired) {
         invalidate(transactionQueryKey.getTransactionList());
+        invalidate(calendarQueryKeys.appointmentsDetail(appointment_id));
+      }
+    },
+  });
+};
+
+export const useRevertTransaction = (appointment_id?: string) => {
+  const { invalidate } = useInvalidateQuery();
+
+  return useMutation({
+    mutationKey: mutationsQueryKey.revertTransaction(),
+    mutationFn: async ({
+      transactionId,
+      data,
+    }: {
+      transactionId: string;
+      data: { amount: number; reason: string; note: string };
+    }) => {
+      const response = await axiosPost(`${BASE_PATH}/${transactionId}/revert`, { data });
+      return response.data;
+    },
+    onSuccess: () => {
+      invalidate(transactionQueryKey.getTransactionList());
+      if (appointment_id) {
         invalidate(calendarQueryKeys.appointmentsDetail(appointment_id));
       }
     },

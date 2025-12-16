@@ -15,7 +15,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 type Props = {
   openCloseModal: (
-    modalName: 'editAppointment' | 'addCharge',
+    modalName: 'editAppointment',
     action: boolean,
     appointment: AppointmentDataType
   ) => void;
@@ -30,12 +30,9 @@ const useGetAdminAppointmentListColumns = (props: Props) => {
       accessorKey: 'client_name',
       accessorFn: row => `${row.client.user.first_name} ${row.client.user.last_name}`,
       header: 'Client Name',
-      meta: {
-        cellClassName: 'w-72',
-      },
       cell: ({ row }) => (
         <span
-          className='hover:text-primary hover:font-bold hover:underline cursor-pointer underline-offset-2 block w-full'
+          className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
           onClick={() => navigate(`${ROUTES_BASE_PATH.APPOINTMENT_VIEW.path}/${row.original.id}`)}
         >
           {row.getValue('client_name')}

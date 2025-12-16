@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from 'react';
 
-import * as Sentry from '@sentry/react';
+import { captureException } from '@sentry/react';
 
 import Error from '@/components/common/ErrorBoundary/Error';
 
@@ -31,7 +31,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // You can log the error to an external service
     // console.error('Error occurred: ', error);
     // console.error('Error info: ', info);
-    Sentry.captureException(error, {
+    captureException(error, {
       extra: { componentStack: info.componentStack },
     });
   }
@@ -55,5 +55,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 }
 
 export default ErrorBoundary;
-export * from './ErrorElement';
-export * from './Error';
+
+export * from '@/components/common/ErrorBoundary/ErrorElement';
+export * from '@/components/common/ErrorBoundary/Error';

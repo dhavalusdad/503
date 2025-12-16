@@ -1,7 +1,7 @@
 // DropdownMenu.jsx
 import clsx from 'clsx';
 
-import Icon, { type IconNameType } from '../Icon';
+import Icon, { type IconNameType } from '@/stories/Common/Icon';
 
 export interface OptionsListProps {
   items: OptionListItem[];

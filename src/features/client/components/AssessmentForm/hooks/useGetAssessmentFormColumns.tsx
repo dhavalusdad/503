@@ -122,20 +122,25 @@ const useGetAssessmentFormListColumns = (
               headerClassName: '!text-center',
             },
             cell: ({ row }: { row: Row<UserAssessmentFormDataType> }) => {
+              const isDisabled = Boolean(
+                row.original.submitted_at ||
+                  row.original.appointment?.status === AppointmentStatus.CANCELLED
+              );
               return (
-                <Button
-                  variant='none'
-                  isDisabled={Boolean(
-                    row.original.submitted_at ||
-                      row.original.appointment?.status === AppointmentStatus.CANCELLED
-                  )}
-                  className='p-1 hover:bg-white rounded-full transition-colors'
-                  onClick={() => {
-                    navigate(ROUTES.SUBMIT_FORM_RESPONSE.navigatePath(row.original.id));
-                  }}
-                  icon={<Icon name='edit' className='w-5 h-5 text-blackdark' />}
-                  parentClassName='text-center'
-                />
+                <>
+                  <Button
+                    variant='none'
+                    isDisabled={isDisabled}
+                    className='p-1 hover:bg-white rounded-full transition-colors'
+                    onClick={() => {
+                      if (!isDisabled) {
+                        navigate(ROUTES.SUBMIT_FORM_RESPONSE.navigatePath(row.original.id));
+                      }
+                    }}
+                    icon={<Icon name='edit' className='w-5 h-5 text-blackdark' />}
+                    parentClassName='text-center'
+                  />
+                </>
               );
             },
           },

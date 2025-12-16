@@ -13,6 +13,8 @@ import {
 } from '@/api/therapist-education';
 import { FieldOptionType } from '@/enums';
 import type { OptionType } from '@/features/calendar/types';
+import AddEducationDegreeModal from '@/features/profile/components/AddEducationDegreeModal';
+import { EducationSchema } from '@/features/profile/components/ProfileValidationSchema';
 import type { EducationOpenModalStateType, FormDataEducation } from '@/features/profile/types';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
@@ -21,9 +23,6 @@ import { InputField } from '@/stories/Common/Input';
 import Spinner from '@/stories/Common/Loader/Spinner.tsx';
 import Modal from '@/stories/Common/Modal';
 import { CustomAsyncSelect } from '@/stories/Common/Select';
-
-import AddEducationDegreeModal from './AddEducationDegreeModal';
-import { EducationSchema } from './ProfileValidationSchema';
 
 const ADD_DEGREE_OPTION = {
   label: 'Add New Degree',
@@ -166,7 +165,7 @@ const AddEducationModal = (props: {
             <Button
               variant='filled'
               title='Save'
-              className='rounded-10px !px-8'
+              className='rounded-10px !px-10 min-h-50px'
               type='button'
               onClick={handleSubmit(onSubmit)}
               isLoading={isCreatePending || isUpdatePending}

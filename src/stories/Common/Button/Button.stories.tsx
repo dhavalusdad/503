@@ -1,7 +1,7 @@
 import '../../../index.css';
-import Icon from '../Icon';
+import Icon from '@/stories/Common/Icon';
 
-import Button, { type ButtonProps } from './index';
+import Button, { type ButtonProps } from '@/stories/Common/Button';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

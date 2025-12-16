@@ -1,9 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 
+import { useMutation } from '@/api';
 import { axiosPost } from '@/api/axios';
 import type { RequestSlotProps } from '@/features/appointment/component/ClientAppointmentsBooking/types';
-
-import { useMutation } from '.';
 
 const BASE_PATH = '/request-slot';
 

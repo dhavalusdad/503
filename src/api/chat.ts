@@ -6,11 +6,10 @@ import {
   type UseQueryRestParamsType,
 } from '@/api';
 import { axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { chatQueryKeys } from '@/api/common/chat.queryKey';
 import type { ApiResponse } from '@/api/types/common.dto';
 import type { ChatSearchResponseType, ChatSessionsPage, MessageType } from '@/features/chat/types';
 import { useInvalidateQuery, useRemoveQueries } from '@/hooks/data-fetching';
-
-import { chatQueryKeys } from './common/chat.queryKey';
 
 import type { InfiniteData, QueryFunctionContext } from '@tanstack/react-query';
 

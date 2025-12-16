@@ -1,4 +1,4 @@
-import Switch from './index';
+import Switch from '@/stories/Common/Switch';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

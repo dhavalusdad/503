@@ -77,7 +77,7 @@ export interface ClientQuickDetailsProps {
   first_name: string;
   last_name: string;
   email: string;
-  phone: string | null;
+  phone: string;
   dob: Date | null;
   acceptTerms?: boolean;
   clinic: { id?: string; name?: string };
@@ -99,7 +99,13 @@ export interface RequestSlotProps {
 
 export interface AppointmentDateTimeProps {
   selectedDate: Date;
-  selectedTime: string;
+  selectedTime: {
+    time: string;
+    value: {
+      id: string;
+      status: string;
+    };
+  } | null;
 }
 export interface BookSlotProps {
   therapist_id?: string;

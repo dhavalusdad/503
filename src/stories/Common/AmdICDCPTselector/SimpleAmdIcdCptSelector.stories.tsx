@@ -1,6 +1,6 @@
 import '../../../index.css';
 
-import { AmdSimpleIcdCptSelector } from './SimpleAmdIcdCptSelector';
+import { AmdSimpleIcdCptSelector } from '@/stories/Common/AmdICDCPTselector/SimpleAmdIcdCptSelector';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

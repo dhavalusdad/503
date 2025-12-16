@@ -6,7 +6,10 @@ import moment from 'moment-timezone';
 import { useSelector } from 'react-redux';
 
 import type { TherapistBasicDetails } from '@/api/types/therapist.dto';
-import type { AppointmentBookedResponse } from '@/features/appointment/component/ClientAppointmentsBooking/types';
+import type {
+  AppointmentBookedResponse,
+  AppointmentDateTimeProps,
+} from '@/features/appointment/component/ClientAppointmentsBooking/types';
 import { redirectTo } from '@/helper/redirect';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
@@ -17,11 +20,7 @@ export interface SuccessAppointmentModalProps {
   isOpen?: boolean;
   onClose: () => void;
   closeButton: boolean;
-  appointmentData?: {
-    selectedDate: string;
-    selectedTime: string;
-    therapyType?: string;
-  };
+  appointmentData?: (AppointmentDateTimeProps & { therapyType?: string }) | undefined;
   clientDetails?: {
     first_name?: string;
     last_name: string;
@@ -43,11 +42,12 @@ const AppointmentConfirmedDashboard: React.FC<SuccessAppointmentModalProps> = ({
   };
   const { timezone, id: loggedInUserId } = useSelector(currentUser);
   const userCurrentTimeZone = loggedInUserId ? timezone : moment.tz.guess();
-  const isUserExisting = appointmentResponse?.data?.user.is_existing_user;
-  const isPasswordSet = appointmentResponse?.data?.user.is_password_set;
+  const isUserExisting = appointmentResponse?.data?.user?.is_existing_user;
+  const isPasswordSet = appointmentResponse?.data?.user?.is_password_set;
 
   const handleSetPassword = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (!appointmentResponse?.data?.loginUrl?.loginUrl) return;
     redirectTo(appointmentResponse.data.loginUrl.loginUrl, { isNewTab: true });
   };
 
@@ -97,12 +97,12 @@ const AppointmentConfirmedDashboard: React.FC<SuccessAppointmentModalProps> = ({
                 {moment
                   .tz(appointmentData?.selectedDate, userCurrentTimeZone)
                   .format('DD MMM YYYY')}
-                , {appointmentData?.selectedTime.time}
+                , {appointmentData?.selectedTime?.time || '-'}
               </span>
             </div>
             <div className='bg-primarylight w-px h-5' />
             <div>
-              <b>Therapy Type:</b> {selectedTherapist?.session_types[0]?.session_type}
+              <b>Therapy Type:</b> {selectedTherapist?.session_types[0]?.session_type || ''}
             </div>
           </div>
         </div>

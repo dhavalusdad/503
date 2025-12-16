@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useGetClientAppointmentBookingList } from '@/api/client-appointment-booking';
 import { useSendMailToDependent } from '@/api/dependents';
+import defaultUserPng from '@/assets/images/default-user.webp';
 import Slider12 from '@/assets/images/slider12.webp';
 import { ROUTES } from '@/constants/routePath';
 import { AppointmentStatus, SessionType, TherapyType } from '@/enums';
@@ -16,11 +17,13 @@ import { CopyLink } from '@/features/dashboard/components/CopyLink';
 import { showToast } from '@/helper';
 import { redirectTo } from '@/helper/redirect';
 import { usePopupClose } from '@/hooks/usePopupClose';
+import { selectIsTourActive } from '@/redux/ducks/tour';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import Image from '@/stories/Common/Image';
 import Modal from '@/stories/Common/Modal';
+import Skeleton from '@/stories/Common/Skeleton';
 import SwiperComponent from '@/stories/Common/Swiper';
 import Tooltip from '@/stories/Common/Tooltip/Tooltip';
 
@@ -96,6 +99,8 @@ export const DashboardCard = () => {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [now, setNow] = useState(moment().tz(timezone || 'UTC'));
 
+  const isTourActive = useSelector(selectIsTourActive);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(moment().tz(timezone || 'UTC'));
@@ -114,8 +119,85 @@ export const DashboardCard = () => {
     }
   };
 
+  const AppointmentCardSkeleton = ({ elementId }: { elementId?: string }) => {
+    return (
+      <div className='bg-white border border-surface rounded-2xl p-4 w-full' id={elementId}>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-4 border-b border-surface'>
+          <div className='flex items-center gap-3'>
+            {/* Avatar */}
+            <Image
+              imgPath={defaultUserPng}
+              imageClassName='rounded-full object-cover object-center w-full h-full'
+              className='w-12 h-12 rounded-full'
+              initialClassName='!text-base'
+            />
+
+            <div className='w-44'>
+              <Skeleton
+                count={2}
+                className='h-3.5 w-full rounded last:w-4/5'
+                parentClassName='flex flex-col gap-2 w-full'
+              />
+            </div>
+          </div>
+
+          {/* 3-dots icon circle */}
+          <Button
+            variant='none'
+            parentClassName='bg-surface rounded-full'
+            icon={<Icon name='eye' />}
+          />
+        </div>
+
+        {/* Middle detail line */}
+        <div className='py-4 border-b border-surface'>
+          <Skeleton count={1} className='h-4 w-56 rounded' />
+        </div>
+
+        {/* Buttons Section */}
+        <div className='flex items-center gap-3 py-4'>
+          {/* Join Session (filled) */}
+          <Button
+            variant='filled'
+            title='Join Session'
+            className='rounded-lg w-full min-h-50px'
+            parentClassName='w-3/5'
+          />
+
+          {/* Cancel button (outline red) */}
+          <Button
+            variant='outline'
+            title='Cancel'
+            isIconFirst
+            className='rounded-lg w-full min-h-50px !border-red !text-red hover:!bg-red-50'
+            parentClassName='w-2/5'
+            icon={<Icon name='close' />}
+          />
+        </div>
+
+        {/* Reschedule full-width button */}
+        <Button
+          variant='outline'
+          title='Reschedule'
+          isIconFirst
+          className='rounded-lg w-full min-h-50px !border-surface !text-blackdark'
+          parentClassName='w-full'
+          icon={<Icon name='reschedule' />}
+        />
+      </div>
+    );
+  };
+
+  const scheduledAppointments =
+    appointmentData?.data?.filter(
+      (appointment: Appointment) => appointment.status === AppointmentStatus.SCHEDULED
+    ) ?? [];
+
+  const showSkeletons = !scheduledAppointments.length && isTourActive;
+
   // handle empty / loading case
-  if (!appointmentData?.data?.length) {
+  if (!appointmentData?.data?.length && !showSkeletons) {
     return (
       <div className='bg-white rounded-2xl p-5'>
         <p className='text-center text-gray-500'>No upcoming appointments</p>
@@ -136,6 +218,7 @@ export const DashboardCard = () => {
 
     return (
       <div
+        id='tour-appoimentment-card'
         key={appointment.id}
         className='bg-white border border-solid border-surface rounded-2xl p-3.5 w-full flex-shrink-0'
       >
@@ -330,15 +413,18 @@ export const DashboardCard = () => {
               },
             }}
           >
-            {appointmentData.data
-              .filter(
-                (appointment: Appointment) => appointment.status === AppointmentStatus.SCHEDULED
-              )
-              .map((appointment: Appointment) => (
-                <div className='w-full' key={appointment.id} id={appointment.id}>
-                  {getAppointmentRescheduleOrCancelled(appointment)}
-                </div>
-              ))}
+            {!showSkeletons
+              ? scheduledAppointments.map((appointment: Appointment) => (
+                  <div className='w-full' key={appointment.id} id={appointment.id}>
+                    {getAppointmentRescheduleOrCancelled(appointment)}
+                  </div>
+                ))
+              : Array.from({ length: 4 }).map((_, index) => (
+                  <AppointmentCardSkeleton
+                    key={index}
+                    elementId={index === 1 ? 'tour-appoimentment-card' : undefined}
+                  />
+                ))}
           </SwiperComponent>
         </div>
       </div>

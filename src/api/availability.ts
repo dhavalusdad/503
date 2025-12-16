@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 
+import { useMutation, useQuery } from '@/api';
 import { axiosDelete, axiosGet, axiosPost } from '@/api/axios';
+import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
 import type {
   CreateAvailabilitySlotsRequest,
   CreateAvailabilitySlotsResponse,
@@ -8,9 +10,6 @@ import type {
   RemoveAvailabilitySlotsRequest,
 } from '@/api/types/calendar.dto';
 
-import { calendarQueryKeys } from './common/calendar.queryKey';
-
-import { useMutation, useQuery } from '.';
 const BASE_PATH = '/therapist-availability';
 
 export const useGetAvailabilitySlots = (params: GetAvailabilitySlotsRequest) => {

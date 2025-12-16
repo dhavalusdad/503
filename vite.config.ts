@@ -5,18 +5,12 @@ import svgr from 'vite-plugin-svgr';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    svgr({ include: '**/*.svg?react' }),
-    // viteCompression({
-    //   algorithm: 'brotliCompress',
-    //   deleteOriginFile: false,
-    // }),
-  ],
+  plugins: [react(), tailwindcss(), svgr({ include: '**/*.svg?react' })],
 
   resolve: {
-    alias: { '@': path.resolve(__dirname, './src') },
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
   },
 
   optimizeDeps: {

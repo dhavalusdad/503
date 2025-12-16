@@ -64,16 +64,6 @@ const AssessmentFormList = ({
             defaultValues={filters}
           />
         </div>
-        {/* <Button
-            variant='filled'
-            title='Add Form'
-            icon={<Icon name='plus' />}
-            isIconFirst
-            className='rounded-lg'
-            onClick={() => {
-              navigate(ROUTES.ADD_ASSESSMENT_FORM.path);
-            }}
-          /> */}
       </div>
 
       {/* Table */}

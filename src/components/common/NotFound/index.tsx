@@ -1,34 +1,38 @@
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { ROUTES } from '@/constants/routePath';
+import { ROUTE_BASE_PATH, ROUTES } from '@/constants/routePath';
+import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
 import Image from '@/stories/Common/Image';
 
+const generateStars = (count = 80) => {
+  return Array.from({ length: count }).map((_, i) => {
+    const top = Math.random() * 100;
+    const delay = Math.random() * 10;
+    const size = Math.random() * 2 + 1;
+
+    return (
+      <div
+        key={i}
+        className='star absolute bg-white rounded-full opacity-70 animate-starfloat'
+        style={{
+          top: `${top}vh`,
+          left: `${Math.random() * 100 + 50}vw`, // start outside screen
+          width: size,
+          height: size,
+          animationDelay: `-${delay}s`,
+        }}
+      ></div>
+    );
+  });
+};
+
 const NotFound = () => {
   const navigate = useNavigate();
-
-  const generateStars = (count = 80) => {
-    return Array.from({ length: count }).map((_, i) => {
-      const top = Math.random() * 100;
-      const delay = Math.random() * 10;
-      const size = Math.random() * 2 + 1;
-
-      return (
-        <div
-          key={i}
-          className='star absolute bg-white rounded-full opacity-70 animate-starfloat'
-          style={{
-            top: `${top}vh`,
-            left: `${Math.random() * 100 + 50}vw`, // start outside screen
-            width: size,
-            height: size,
-            animationDelay: `-${delay}s`,
-          }}
-        ></div>
-      );
-    });
-  };
+  const user = useSelector(currentUser);
+  const isAuthenticated = !!user.id;
 
   return (
     <div className='flex flex-col items-center h-screen justify-center text-center bg-primary overflow-hidden w-full relative'>
@@ -54,10 +58,16 @@ const NotFound = () => {
           </p>
           <Button
             variant='outline'
-            title='Go To Home Page'
+            title={isAuthenticated ? 'Go To Dashboard' : 'Go To Home Page'}
             className='w-full uppercase rounded-10px !font-bold min-h-50px !text-primary'
             parentClassName='w-full mt-5'
-            onClick={() => navigate(ROUTES.DEFAULT.path)}
+            onClick={() => {
+              if (isAuthenticated) {
+                navigate(ROUTE_BASE_PATH.DASHBOARD);
+              } else {
+                navigate(ROUTES.DEFAULT.path);
+              }
+            }}
           />
         </div>
       </div>

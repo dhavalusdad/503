@@ -48,6 +48,8 @@ export default {
       screens: {
         sm: '640px',
         md: '768px',
+        ipadair: '820px',
+        surfacepro: '912px',
         lg: '1024px',
         xl: '1280px',
         '2xl': '1536px',
@@ -182,10 +184,16 @@ export default {
         '500px': '500px',
         '443px': '443px',
         '650px': '650px',
+        '735px': '735px',
+        '360px': '360px',
+        '380px': '380px',
+        '535px': '535px',
       },
       minWidth: {
         '18px': '18px',
         '450px': '450px',
+        '900px': '900px',
+        '360px': '360px',
       },
       maxWidth: {
         '438px': '438px',
@@ -203,6 +211,7 @@ export default {
         '300px': '300px',
         '260px': '260px',
         '125px': '125px',
+        '360px': '360px',
       },
       gap: {
         '30px': '30px',

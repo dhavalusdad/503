@@ -20,8 +20,14 @@ import { useGetCustomerPaymentProfile } from '@/api/payment';
 import { useGetTherapistBasicDetailsInfo } from '@/api/therapist';
 import type { AvailabilitySlot } from '@/api/types/calendar.dto';
 import ClinicLogo from '@/assets/images/clinic_logo.webp';
-import { selectStyles } from '@/constants/CommonConstant';
-import { FieldOptionType, PaymentMethodEnum, RelationEnum } from '@/enums';
+import { RELATION_BY_THERAPY_TYPE, selectStyles } from '@/constants/CommonConstant';
+import {
+  FieldOptionType,
+  PaymentMethodEnum,
+  PermissionType,
+  RelationEnum,
+  TherapyType,
+} from '@/enums';
 import ConfirmAppointmentModal from '@/features/appointment/component/ClientAppointmentsBooking/ConfirmAppointmentModal';
 import MemberCard from '@/features/appointment/component/ClientAppointmentsBooking/MemberCard';
 import SuccessAppointmentModal from '@/features/appointment/component/ClientAppointmentsBooking/SuccessAppointmentModal';
@@ -32,9 +38,10 @@ import type {
 } from '@/features/appointment/component/ClientAppointmentsBooking/types';
 import { validationSchemaClientBooking } from '@/features/appointment/component/ClientAppointmentsBooking/validationSchema';
 import type { SelectOption } from '@/features/calendar/types';
-import { AddClientDependentForm } from '@/features/client/components/ClientProfile';
+import { AddClientDependentForm } from '@/features/client/components/ClientProfile/AddClientDependentForm';
 import { AddPaymentMethodModal } from '@/features/payment/components/AddPaymentMethodModal';
 import { isAdminPanelRole, showToast } from '@/helper';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import AddInsuranceModal from '@/pages/Preferences/components/AddInsuranceModal';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
@@ -46,6 +53,12 @@ import RadioField from '@/stories/Common/RadioBox';
 import Select, { CustomAsyncSelect } from '@/stories/Common/Select';
 
 import type { MultiValue } from 'react-select';
+
+const BUTTON_TITLE_BY_RELATION = {
+  [RelationEnum.FAMILY]: 'Member',
+  [RelationEnum.COUPLE]: 'Couple',
+  [RelationEnum.MINOR]: 'Minor',
+};
 
 const getCommonAreaOfFocus = (
   specialistList: SpecialtiesDataType[] = [],
@@ -61,20 +74,23 @@ const BookAppointmentDetails = () => {
   const { role, timezone, client_id } = useSelector(currentUser);
   const navigationState = location.state as NavigationState;
 
+  const { hasPermission } = useRoleBasedRouting();
   const { data: therapistData } = useGetTherapistBasicDetailsInfo({
     therapist_id: navigationState?.therapistId || navigationState?.therapist?.id,
   });
 
-  const getInternalTherapyType = (label: string): string | undefined => {
-    if (label === 'Couples Therapy') return 'Couple';
-    if (label === 'Minor Therapy') return 'Minor';
-    if (label === 'Family Therapy') return 'Family';
+  const getInternalTherapyType = (label: string): RelationEnum | undefined => {
+    if (
+      [TherapyType.FAMILY, TherapyType.COUPLE, TherapyType.MINOR].includes(label as TherapyType)
+    ) {
+      return RELATION_BY_THERAPY_TYPE[label];
+    }
     return undefined;
   };
 
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'view' | 'edit'>('create');
-  const [selectedTherapyType, setSelectedTherapyType] = useState<string | undefined>(
+  const [selectedTherapyType, setSelectedTherapyType] = useState<RelationEnum | undefined>(
     getInternalTherapyType(navigationState?.appliedFilters?.therapyType?.label || '')
   );
   const [allAvailableDates, setAllAvailableDates] = useState<{ date: Date; className: string }[]>(
@@ -92,6 +108,7 @@ const BookAppointmentDetails = () => {
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(validationSchemaClientBooking),
+    shouldFocusError: true,
     defaultValues: {
       sessionType: navigationState?.appliedFilters?.sessionType,
       selectedDate: navigationState?.selectedDate || new Date(),
@@ -114,6 +131,7 @@ const BookAppointmentDetails = () => {
   const therapyTypeValue = watch('therapyType');
   const areaOfFocus = watch('areaOfFocus');
   const appointmentType = watch('appointmentType');
+  const selectedClinicId = watch('clinic')?.id;
 
   const [therapyType, setTherapyType] = useState<string>('');
 
@@ -166,7 +184,7 @@ const BookAppointmentDetails = () => {
 
   const { data: userDependents } = useGetUserDependents(
     selectedTherapyType,
-    navigationState?.patientId
+    client_id || navigationState?.patientId
   );
 
   const cardUsers = useMemo(
@@ -545,6 +563,18 @@ const BookAppointmentDetails = () => {
                               <RadioField
                                 id={adress?.value}
                                 name='clinic'
+                                isChecked={selectedClinicId === adress.value}
+                                label={
+                                  <div className='flex items-center gap-3 cursor-pointer'>
+                                    <Image
+                                      imgPath={ClinicLogo}
+                                      className='w-50px h-50px rounded-full p-2 bg-orangelight'
+                                    />
+                                    <p className='text-sm font-semibold leading-18px text-primarygray'>
+                                      {adress?.label || ''}
+                                    </p>
+                                  </div>
+                                }
                                 onChange={() => {
                                   setValue(
                                     'clinic',
@@ -556,41 +586,35 @@ const BookAppointmentDetails = () => {
                                   );
                                 }}
                               />
-                              <Image
-                                imgPath={ClinicLogo}
-                                className='w-50px h-50px rounded-full p-2 bg-orangelight'
-                              />
-                              <p className='text-sm font-semibold leading-18px text-primarygray'>
-                                {adress?.label || ''}
-                              </p>
                             </div>
                           );
                         }
                       )}
-                    {errors.clinic?.id?.message && (
-                      <p className='text-red-600'>{errors.clinic?.id?.message}</p>
+                    {(errors.clinic?.id?.message || errors.clinic?.message) && (
+                      <p className='text-red-600'>
+                        {errors.clinic?.id?.message || errors.clinic?.message}
+                      </p>
                     )}
                   </div>
                 </div>
               </div>
             )}
-            {(selectedTherapyType?.toLowerCase().includes('family') ||
-              selectedTherapyType?.toLowerCase().includes('couple') ||
-              selectedTherapyType?.toLowerCase().includes('minor')) && (
-              <div className='bg-Gray p-5 rounded-2xl flex flex-col gap-5'>
-                {/* Family Therapy Section */}
-                {selectedTherapyType?.toLowerCase().includes('family') && (
+            {Object.values(RELATION_BY_THERAPY_TYPE).includes(selectedTherapyType) &&
+              (hasPermission(PermissionType.PATIENT_EDIT) ||
+                hasPermission(PermissionType.PATIENT_ADD)) && (
+                <div className='bg-Gray p-5 rounded-2xl flex flex-col gap-5'>
+                  {/* Family Therapy Section */}
                   <div className='flex flex-col gap-5'>
                     <div className='flex items-center justify-between gap-5'>
                       <h5 className='text-base font-bold leading-22px text-blackdark'>
-                        Family Details
+                        {`${selectedTherapyType} Details`}
                       </h5>
 
                       <Button
                         variant='filled'
-                        title='Add Member'
+                        title={`Add ${BUTTON_TITLE_BY_RELATION[selectedTherapyType]}`}
                         onClick={() => {
-                          setValue('therapyType', RelationEnum.FAMILY);
+                          setValue('therapyType', selectedTherapyType);
                           setIsOpen(true);
                         }}
                         className='rounded-lg'
@@ -598,134 +622,73 @@ const BookAppointmentDetails = () => {
                     </div>
                     {isOpen && (
                       <AddClientDependentForm
-                        relationship={RelationEnum.FAMILY}
+                        relationship={selectedTherapyType}
                         isOpen={isOpen}
                         setIsOpen={setIsOpen}
                         mode={mode}
                         setMode={setMode}
-                        patient_id={navigationState?.patientId}
+                        patient_id={client_id || navigationState?.patientId}
                       />
                     )}
                   </div>
-                )}
-                {/* Couple Therapy Section */}
-                {selectedTherapyType?.toLowerCase().includes('couple') && (
-                  <div className='bg-Gray rounded-2xl flex flex-col gap-5'>
-                    <div className='flex items-center justify-between gap-5'>
-                      <h5 className='text-base font-bold leading-22px text-blackdark'>
-                        Couple Details
-                      </h5>
-                      <Button
-                        variant='filled'
-                        title='Add Couple'
-                        onClick={() => {
-                          setValue('therapyType', RelationEnum.COUPLE);
-                          setIsOpen(true);
-                        }}
-                        className='rounded-lg'
-                      />
-                    </div>
 
-                    {isOpen && (
-                      <AddClientDependentForm
-                        relationship={RelationEnum.COUPLE}
-                        isOpen={isOpen}
-                        setIsOpen={setIsOpen}
-                        mode={mode}
-                        setMode={setMode}
-                        patient_id={navigationState?.patientId}
-                      />
-                    )}
-                  </div>
-                )}
-                {/* Minor Therapy Section */}
-                {selectedTherapyType?.toLowerCase().includes('minor') && (
-                  <div className='bg-Gray rounded-2xl flex flex-col gap-5'>
-                    <div className='flex items-center justify-between gap-5'>
-                      <h5 className='text-base font-bold leading-22px text-blackdark'>
-                        Minor Details
-                      </h5>
-                      <Button
-                        variant='filled'
-                        title='Add Minor'
-                        onClick={() => {
-                          setValue('therapyType', RelationEnum.MINOR);
-                          setIsOpen(true);
-                        }}
-                        className='rounded-lg'
-                      />
+                  {selectedIds.length > 0 && cardUsers.length > 0 && (
+                    <div className='flex flex-col gap-5'>
+                      <div className='bg-blackdark/12 h-1px w-full'></div>
+                      <div className='grid gap-5 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3'>
+                        {cardUsers.map((user, index) => (
+                          <MemberCard
+                            key={user.user_id}
+                            member={{
+                              ...user.user,
+                              id: user.id,
+                              user_id: user.user_id,
+                              dob: user?.user?.dob,
+                            }}
+                            index={index}
+                            onRemove={() =>
+                              setSelectedIds(prev => prev.filter(id => id !== user.user_id))
+                            }
+                          />
+                        ))}
+                      </div>
                     </div>
-
-                    {isOpen && (
-                      <AddClientDependentForm
-                        relationship={RelationEnum.MINOR}
-                        isOpen={isOpen}
-                        setIsOpen={setIsOpen}
-                        mode={mode}
-                        setMode={setMode}
-                        patient_id={navigationState?.patientId}
-                      />
-                    )}
-                  </div>
-                )}
-
-                {selectedIds.length > 0 && cardUsers.length > 0 && (
-                  <div className='flex flex-col gap-5'>
-                    <div className='bg-blackdark/12 h-1px w-full'></div>
-                    <div className='grid gap-5 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3'>
-                      {cardUsers.map((user, index) => (
-                        <MemberCard
-                          key={user.user_id}
-                          member={{
-                            ...user.user,
-                            id: user.id,
-                            user_id: user.user_id,
-                            dob: user?.user?.dob,
-                          }}
-                          index={index}
-                          onRemove={() =>
-                            setSelectedIds(prev => prev.filter(id => id !== user.user_id))
-                          }
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {availableUsers.length > 0 && (
-                  <>
-                    <div className='bg-blackdark/12 h-1px w-full'></div>
-                    <div className='grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
-                      {availableUsers.map((member, index) => {
-                        return (
-                          <div
-                            key={index}
-                            className='flex items-center gap-2.5 justify-between px-4 py-2 bg-white shadow-calenderheader rounded-xl border border-solid border-surface w-full'
-                          >
-                            <div className='flex items-center gap-2.5 flex-1 overflow-hidden'>
-                              <div className='w-10 h-10 rounded-full bg-surface flex items-center justify-center text-base font-bold text-Primary uppercase'>
-                                {member?.user.first_name?.[0]}
-                                {member?.user.last_name?.[0]}
+                  )}
+                  {availableUsers.length > 0 && (
+                    <>
+                      <div className='bg-blackdark/12 h-1px w-full'></div>
+                      <div className='grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
+                        {availableUsers.map((member, index) => {
+                          return (
+                            <div
+                              key={index}
+                              className='flex items-center gap-2.5 justify-between px-4 py-2 bg-white shadow-calenderheader rounded-xl border border-solid border-surface w-full'
+                            >
+                              <div className='flex items-center gap-2.5 flex-1 overflow-hidden'>
+                                <div className='w-10 h-10 rounded-full bg-surface flex items-center justify-center text-base font-bold text-Primary uppercase'>
+                                  {member?.user.first_name?.[0]}
+                                  {member?.user.last_name?.[0]}
+                                </div>
+                                <p className='text-base font-normal text-blackdark truncate flex-1'>
+                                  {member.user.first_name} {member.user.last_name}
+                                </p>
                               </div>
-                              <p className='text-base font-normal text-blackdark truncate flex-1'>
-                                {member.user.first_name} {member.user.last_name}
-                              </p>
+                              <div className='w-10 h-10 flex items-center justify-center bg-Gray text-primary rounded-full cursor-pointer'>
+                                <Icon
+                                  name='plus'
+                                  // onClick={() => setSelectedIds(prev => [...prev, member.id])}
+                                  onClick={() => attachMemberHandler(member.user_id)}
+                                  className='icon-wrapper w-6 h-6'
+                                />
+                              </div>
                             </div>
-                            <div className='w-10 h-10 flex items-center justify-center bg-Gray text-primary rounded-full cursor-pointer'>
-                              <Icon
-                                name='plus'
-                                // onClick={() => setSelectedIds(prev => [...prev, member.id])}
-                                onClick={() => attachMemberHandler(member.user_id)}
-                                className='icon-wrapper w-6 h-6'
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
           </div>
         </>
 
@@ -768,7 +731,7 @@ const BookAppointmentDetails = () => {
               timezone
             )
             .format('hh:mm A'),
-          therapyType: selectedTherapyType || 'Individual Therapy',
+          therapyType: selectedTherapyType || TherapyType.INDIVIDUAL,
           sessionType: (() => {
             const sessionTypeValue = getValues('sessionType');
             return typeof sessionTypeValue === 'object' && sessionTypeValue
@@ -810,7 +773,7 @@ const BookAppointmentDetails = () => {
         <AddPaymentMethodModal
           isOpen={showAddPaymentModal}
           onClose={() => setShowAddPaymentModal(false)}
-          clientId={navigationState?.patientId}
+          clientId={client_id || navigationState?.patientId}
           onSuccess={() => {
             setShowAddPaymentModal(false);
             if (

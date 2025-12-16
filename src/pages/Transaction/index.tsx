@@ -17,7 +17,7 @@ const Transaction = () => {
     case UserRole.CLIENT:
       return <AdminTransaction />;
     default:
-      return <>Client Transaction</>;
+      return <></>;
   }
 };
 

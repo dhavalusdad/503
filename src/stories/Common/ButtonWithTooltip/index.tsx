@@ -1,5 +1,5 @@
-import Button, { type ButtonProps } from '../Button';
-import Tooltip from '../Tooltip/Tooltip';
+import Button, { type ButtonProps } from '@/stories/Common/Button';
+import Tooltip from '@/stories/Common/Tooltip/Tooltip';
 
 import type { Placement } from 'tippy.js';
 

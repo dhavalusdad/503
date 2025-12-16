@@ -1,4 +1,4 @@
-import { Pagination } from './index';
+import { Pagination } from '@/stories/Common/Pagination';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

@@ -13,11 +13,10 @@ import { getLanguagesAsync } from '@/api/language';
 import { useGetAllCredentialedStates } from '@/api/state';
 import { GENDER_OPTION, selectStyles, SESSION_OPTIONS } from '@/constants/CommonConstant';
 import { FieldOptionType, PaymentMethodEnum } from '@/enums';
+import { appointmentFilterSchema } from '@/features/appointment/component/ClientAppointmentsBooking/validationSchema';
 import type { AppointmentFiltersProps } from '@/features/appointment/types';
 import Button from '@/stories/Common/Button';
 import Select, { CustomAsyncSelect, type SelectOption } from '@/stories/Common/Select';
-
-import { appointmentFilterSchema } from './validationSchema';
 
 import type { MultiValue } from 'react-select';
 
@@ -80,7 +79,10 @@ const AppointmentFilters = ({
 
   return (
     <>
-      <div className='grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5'>
+      <div
+        className='grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5'
+        id='tour-filters-section'
+      >
         <Select
           control={control}
           key={`state-${clearKey}`}
@@ -250,6 +252,7 @@ const AppointmentFilters = ({
 
       <div className='flex items-center justify-end gap-4 mt-5'>
         <Button
+          id='tour-search-therapist-btn'
           variant='filled'
           type='button'
           title='Search Therapist'

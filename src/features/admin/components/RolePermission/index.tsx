@@ -2,21 +2,14 @@ import { RolePermissionModal } from '@/features/admin/components/RolePermission/
 import { useRolesPermissions } from '@/features/admin/components/RolePermission/hooks/useRolesPermissions';
 import type { Role } from '@/features/admin/components/RolePermission/type';
 import Button from '@/stories/Common/Button';
+import { DeleteModal } from '@/stories/Common/DeleteModal';
 import Icon from '@/stories/Common/Icon';
 import InputField from '@/stories/Common/Input';
 import Table from '@/stories/Common/Table';
 
 const RolesPermissions: React.FC = () => {
   const {
-    useRolePermissionTable,
-    onCloseDeleteModal,
-    handleEditRole,
-    handleSubmit,
-    handleModalClose,
-    handleAddRole,
-    confirmAndDeleteRole,
-    handleDeleteRole,
-    handleView,
+    // handleSubmit,
     handleSearch,
     total,
     isLoading,
@@ -28,19 +21,21 @@ const RolesPermissions: React.FC = () => {
     setSorting,
     sorting,
     onSortingChange,
-    selectedPermission,
-    showModal,
     isDeleting,
-    deleteModal,
-    selectedRoleData,
-    backOfficeRoles,
-    permissionList,
+    data,
+    columns,
+    openModal,
+    onCloseModal,
+    onDeleteRole,
+    openCloseModal,
   } = useRolesPermissions();
 
   return (
     <div className='bg-white rounded-xl border border-solid border-surface p-5'>
       <div className='flex items-center flex-wrap gap-5 mb-5'>
-        <h2 className='text-lg font-bold leading-6 text-blackdark'>Roles & Permissions</h2>
+        <h2 className='text-lg font-bold leading-6 text-blackdark mr-auto order-1 lg:order-none'>
+          Roles & Permissions
+        </h2>
         <InputField
           name='search'
           type='text'
@@ -50,14 +45,15 @@ const RolesPermissions: React.FC = () => {
           iconFirst
           iconClassName='text-primarygray'
           onChange={handleSearch}
-          parentClassName='w-360px ml-auto'
+          parentClassName='w-full lg:w-76 xl:w-360px order-3 lg:order-none'
         />
         <Button
           title='Add Role'
           variant='filled'
           type='button'
           className='rounded-lg'
-          onClick={handleAddRole}
+          parentClassName='order-2 lg:order-none'
+          onClick={() => openCloseModal('add', true)}
           icon={<Icon name='plus' />}
           isIconFirst
         />
@@ -66,12 +62,8 @@ const RolesPermissions: React.FC = () => {
         <div className='text-center py-4'>Loading...</div>
       ) : (
         <Table<Role>
-          data={backOfficeRoles}
-          columns={useRolePermissionTable({
-            onEdit: handleEditRole,
-            onDelete: handleDeleteRole,
-            onView: handleView,
-          })}
+          data={data}
+          columns={columns}
           totalCount={total}
           sorting={sorting}
           setSorting={setSorting}
@@ -84,39 +76,31 @@ const RolesPermissions: React.FC = () => {
           isLoading={isLoading}
         />
       )}
-      {deleteModal.isOpen && (
+      {openModal.delete && (
         <DeleteModal
-          isOpen={deleteModal.isOpen}
-          onClose={onCloseDeleteModal}
-          onSubmit={confirmAndDeleteRole}
+          isOpen={openModal.delete}
+          onClose={() => onCloseModal('delete')}
+          onSubmit={onDeleteRole}
           isSubmitLoading={isDeleting}
           title='Delete Roles'
           message='Are you sure you want to delete this Role?'
         />
       )}
 
-      {showModal && (
+      {(openModal.add || (openModal.update && openModal.id) || openModal.view) && (
         <RolePermissionModal
-          isOpen={showModal}
-          onClose={handleModalClose}
-          onSubmit={handleSubmit}
-          permissionList={permissionList}
-          defaultValues={
-            selectedRoleData
-              ? {
-                  name: selectedRoleData.name,
-                  permissions: {
-                    selected: selectedPermission.selected,
-                    notSelected: selectedPermission.notSelected,
-                  },
-                  isAssignFormToPatient: selectedRoleData.isAssignFormToPatient,
-                  isPasswordResetTherapist: selectedRoleData.isPasswordResetTherapist,
-                  isPasswordResetClient: selectedRoleData.isPasswordResetClient,
-                  readOnly: selectedRoleData.readOnly,
-                }
-              : undefined
-          }
-          isEditing={!!selectedRoleData}
+          isOpen={openModal.add || openModal.update || openModal.view}
+          onClose={() => {
+            if (openModal.update) {
+              onCloseModal('update');
+            } else if (openModal.view) {
+              onCloseModal('view');
+            } else {
+              onCloseModal('add');
+            }
+          }}
+          roleId={openModal.id}
+          isView={openModal.view}
         />
       )}
     </div>

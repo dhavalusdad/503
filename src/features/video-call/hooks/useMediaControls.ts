@@ -3,8 +3,7 @@ import { useCallback, useState } from 'react';
 import { createLocalAudioTrack, createLocalVideoTrack, LocalVideoTrack } from 'twilio-video';
 
 import { useVideoCall } from '@/features/video-call/store/useVideoCall';
-
-import { startScreenShare, stopScreenShare } from '../utils/media';
+import { startScreenShare, stopScreenShare } from '@/features/video-call/utils/media';
 
 export const useMediaControls = () => {
   const [currentScreenTrack, setCurrentScreenTrack] = useState<LocalVideoTrack | null>(null);

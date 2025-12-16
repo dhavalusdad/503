@@ -6,16 +6,18 @@ import { LocalDataTrack } from 'twilio-video';
 
 import { getRoomDetails } from '@/api/twilio';
 import { useVideoCall } from '@/features/video-call/store/useVideoCall';
-import { reset } from '@/redux/ducks/videoCall';
-
-import { stopAllActiveMediaTracks } from '../utils/cleanup';
+import { stopAllActiveMediaTracks } from '@/features/video-call/utils/cleanup';
 import {
   clearConnectionDetails,
   getConnectionDetails,
   hasValidConnectionDetails,
-} from '../utils/connectionStorage';
-import { stopAllMediaStreams } from '../utils/media';
-import { connectToRoom, disconnectFromRoom, setupRoomEventListeners } from '../utils/twilio';
+} from '@/features/video-call/utils/connectionStorage';
+import { stopAllMediaStreams } from '@/features/video-call/utils/media';
+import {
+  connectToRoom,
+  disconnectFromRoom,
+  setupRoomEventListeners,
+} from '@/features/video-call/utils/twilio';
 import {
   clearTwilioSessionDetails,
   getTwilioDisplayName,
@@ -23,7 +25,8 @@ import {
   getTwilioRoomSid,
   getTwilioToken,
   updateTwilioSessionDetails,
-} from '../utils/twilioSessionStorage';
+} from '@/features/video-call/utils/twilioSessionStorage';
+import { reset } from '@/redux/ducks/videoCall';
 
 export const useRoomConnection = () => {
   const { roomId } = useParams<{ roomId: string }>();

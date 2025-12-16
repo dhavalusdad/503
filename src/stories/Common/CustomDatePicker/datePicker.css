@@ -27,6 +27,14 @@
   background-color: white !important;
 }
 
+.react-datepicker__view-calendar-icon input.error {
+  border: 1px solid #fb2c36;
+}
+
+.react-datepicker__view-calendar-icon input.error:focus {
+  outline: 0px;
+}
+
 .profile-datepicker .react-datepicker__view-calendar-icon input {
   padding: 12px 40px 12px 14px;
 }
@@ -255,7 +263,7 @@
 }
 
 .react-datepicker-popper {
-  width: 100%;
+  /* width: 100%; */
   z-index: 100 !important;
 }
 
@@ -378,7 +386,7 @@
 
 .react-datepicker__view-calendar-icon input.client-profile {
   background-color: #f6f5f4 !important;
-  padding: 12px 40px 12px 14px;
+  padding: 13px 40px 13px 14px;
   font-size: 16px;
   line-height: 22px;
 }

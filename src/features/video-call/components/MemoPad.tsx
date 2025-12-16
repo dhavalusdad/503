@@ -20,9 +20,16 @@ type MemoPadPropsType = {
   client_id: string;
   therapist_id: string;
   appointment_id: string;
+  tenant_id: string;
 };
 
-export const MemoPad = ({ client_id, therapist_id, onClose, appointment_id }: MemoPadPropsType) => {
+export const MemoPad = ({
+  client_id,
+  therapist_id,
+  onClose,
+  appointment_id,
+  tenant_id,
+}: MemoPadPropsType) => {
   const [openSection, setOpenSection] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -47,6 +54,7 @@ export const MemoPad = ({ client_id, therapist_id, onClose, appointment_id }: Me
         <DuringSessionNote
           appointment_id={appointment_id}
           client_id={client_id}
+          tenant_id={tenant_id}
           therapist_id={therapist_id}
         />
       ),
@@ -54,7 +62,9 @@ export const MemoPad = ({ client_id, therapist_id, onClose, appointment_id }: Me
     {
       id: 'currentNotes',
       title: 'Memo',
-      renderContent: () => <DuringSessionNoteList appointment_id={appointment_id} />,
+      renderContent: () => (
+        <DuringSessionNoteList tenant_id={tenant_id} appointment_id={appointment_id} />
+      ),
     },
     {
       id: 'previousNote',

@@ -1,13 +1,12 @@
 import axios, { type AxiosRequestConfig, type AxiosError } from 'axios';
 
+import { PERMISSION_QUERY_KEYS_NAME } from '@/api/common/permissions.queryKey';
 import { queryClient } from '@/api/QueryProvider';
 import { UserRole } from '@/api/types/user.dto';
 import { jwtUtils } from '@/api/utils/jwtUtlis';
 import { tokenStorage } from '@/api/utils/tokenStorage';
 import { PERMISSION_ERROR } from '@/constants/CommonConstant';
 import { ROUTES } from '@/constants/routePath';
-
-import { PERMISSION_QUERY_KEYS_NAME } from './common/permissions.queryKey';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -80,6 +79,7 @@ axiosInstance.interceptors.response.use(
           queryKey: [PERMISSION_QUERY_KEYS_NAME.GET_USER_PERMISSION],
         });
       }
+      window.location.href = ROUTES.NOT_AUTHORIZED.path;
       return Promise.reject(error);
     }
 

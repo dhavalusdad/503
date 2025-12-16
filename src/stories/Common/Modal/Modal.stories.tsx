@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Modal from '.';
+import { Modal } from '@/stories/Common/Modal';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

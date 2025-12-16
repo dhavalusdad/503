@@ -1,5 +1,5 @@
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios.ts';
-import { fieldOptionsQueryKey } from '@/api/common/fieldOptions.queryKey.ts';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
+import { fieldOptionsQueryKey } from '@/api/common/fieldOptions.queryKey';
 import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
 import type { ApiResponse } from '@/api/types/common.dto';
 import type { GetFieldOptionByTypeResponseType } from '@/api/types/field-option.dto';

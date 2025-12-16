@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import type { TherapistBasicDetails } from '@/api/types/therapist.dto';
 import DummyUserImage from '@/assets/images/default-user.webp';
 import { ROUTES } from '@/constants/routePath';
+import { formatExperience } from '@/helper';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import type { CardProps } from '@/stories/Common/Card/types';
@@ -289,10 +290,7 @@ const Card: React.FC<CardProps> = ({
                   {expertiseAreas?.join(', ') || 'Not specified'}
                 </p>
                 <p className='text-sm font-normal leading-21px text-blackdark'>
-                  <strong>Years of Experience :</strong>{' '}
-                  {therapist?.years_experience && therapist.years_experience > 0
-                    ? `${therapist.years_experience} years`
-                    : 'Not specified'}
+                  <strong>Years of Experience :</strong> {formatExperience(therapist.experiences)}
                 </p>
                 <p className='text-base font-normal text-blackdark'>
                   {therapist?.bio && therapist.bio.split(' ').length > 50 ? (

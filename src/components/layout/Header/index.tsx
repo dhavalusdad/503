@@ -23,14 +23,25 @@ const Header: React.FC<Header> = ({ logout }: Header) => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector(currentUser);
-  const routeData = Object.values(ROUTES).find(route => matchPath(route.path, location.pathname));
+
+  const routeData = Object.values(ROUTES).find(
+    route =>
+      matchPath(route.path, location.pathname) &&
+      (route.role ? route.role.includes(user.role) : true)
+  );
+
   const headerRef = useRef<HTMLInputElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   const { isOpen: isProfileVisible, setIsOpen: setProfileVisible } = usePopupClose({
     popupRef: profileRef as React.RefObject<HTMLElement>,
   });
 
-  const toggleProfile = () => setProfileVisible(v => !v);
+  // const toggleProfile = () =>     setProfileVisible(v => !v);
+
+  const toggleProfile = () => {
+    if (isProfileVisible) return;
+    setProfileVisible(true);
+  };
 
   const queryClient = useQueryClient();
 
@@ -70,7 +81,7 @@ const Header: React.FC<Header> = ({ logout }: Header) => {
         <Notification />
 
         <div className='h-10 w-1px bg-surface'></div>
-        <div className='relative'>
+        <div id='tour-profile-menu' className='relative' ref={profileRef}>
           <div
             onClick={toggleProfile}
             className='flex items-center gap-2.5 px-3 py-1.5 cursor-pointer border border-solid border-surface rounded-full'
@@ -113,10 +124,7 @@ const Header: React.FC<Header> = ({ logout }: Header) => {
             />
           </div>
           {isProfileVisible && (
-            <div
-              ref={profileRef}
-              className='absolute z-50 sm:right-0 mt-2 bg-white rounded-20px p-5 shadow-dropdown border border-solid border-surface sm:min-w-60 min-w-40'
-            >
+            <div className='absolute z-50 sm:right-0 mt-2 bg-white rounded-20px p-5 shadow-dropdown border border-solid border-surface sm:min-w-60 min-w-40'>
               <div className='flex-col items-start flex'>
                 <span className='text-base font-bold leading-22px text-blackdark'>
                   {user?.first_name || user?.last_name ? (

@@ -127,7 +127,7 @@ const AddEditAreaOfFocusModal = ({
         error={errors.name?.message}
         type='text'
         placeholder='Enter Area of Focus Name'
-        labelClass='!text-base !leading-5'
+        labelClass='!text-base'
         inputClass='!text-base !leading-5'
       />
     </Modal>

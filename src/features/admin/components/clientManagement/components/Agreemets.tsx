@@ -33,6 +33,9 @@ const Agreements = ({ clientId, isTherapistPanel = false }: Props) => {
     {
       accessorKey: 'title',
       header: 'Title',
+      meta: {
+        cellClassName: '!whitespace-normal',
+      },
     },
     {
       accessorKey: 'created_at',
@@ -49,11 +52,11 @@ const Agreements = ({ clientId, isTherapistPanel = false }: Props) => {
         if (isClientDataLoading) return 'Loading...';
 
         return agreement ? (
-          <div className='bg-Green text-white px-3 py-1 rounded-full text-center text-sm font-medium w-20'>
+          <div className='inline-flex items-center justify-center bg-Green text-white px-3 py-1 rounded-full text-sm font-medium min-w-20'>
             Signed
           </div>
         ) : (
-          <div className='bg-yellow-500 text-white px-3 py-1 rounded-full text-center text-sm font-medium w-20'>
+          <div className='inline-flex items-center justify-center bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium min-w-20'>
             Pending
           </div>
         );
@@ -100,7 +103,7 @@ const Agreements = ({ clientId, isTherapistPanel = false }: Props) => {
   return (
     <div className='flex flex-col gap-5'>
       <div className='flex items-center flex-wrap gap-5'>
-        <h5 className='text-lg leading-6 font-bold text-blackdark'>Agreements</h5>
+        <h5 className='text-lg leading-6 font-bold text-blackdark mr-auto'>Agreements</h5>
         {!isTherapistPanel && (
           <InputField
             type='search'
@@ -110,7 +113,7 @@ const Agreements = ({ clientId, isTherapistPanel = false }: Props) => {
             onChange={handleSearchChange}
             iconClassName='text-primarygray'
             icon='search'
-            parentClassName='w-full sm:w-360px ml-auto'
+            parentClassName='w-76 xl:w-360px'
           />
         )}
 

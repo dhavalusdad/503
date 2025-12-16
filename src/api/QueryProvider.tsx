@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 
-import * as Sentry from '@sentry/react';
+import { captureException } from '@sentry/react';
 import { QueryClient, type QueryClientConfig, QueryClientProvider } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -21,7 +21,7 @@ export const queryClient = new QueryClient({
       onError: error => {
         // Global error handler for mutations
         if (error instanceof AxiosError) {
-          Sentry.captureException(error, {
+          captureException(error, {
             tags: {
               error_type: 'react_query_global_mutation',
               http_status: error.response?.status,

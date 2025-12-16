@@ -180,7 +180,7 @@ const DynamicFormBuilder: React.FC<FormBuilderProps> = ({ initialForm, onPreview
               type='text'
               label='Form Title'
               isRequired
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               value={form.name}
               onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
               placeholder='Enter form title...'
@@ -188,7 +188,7 @@ const DynamicFormBuilder: React.FC<FormBuilderProps> = ({ initialForm, onPreview
             />
             <TextArea
               label='Form Description'
-              labelClass='!text-base !leading-5'
+              labelClass='!text-base'
               // name={form.description || ''}
               onChange={e => {
                 setForm(prev => ({ ...prev, description: e.target.value }));
@@ -261,7 +261,7 @@ const DynamicFormBuilder: React.FC<FormBuilderProps> = ({ initialForm, onPreview
                             key={fieldType}
                             className='border border-solid border-surface rounded-xl p-5 bg-Graylight'
                           >
-                            <h3 className='text-lg font-semibold text-blackdark leading-7 mb-3.5'>
+                            <h3 className='text-lg font-semibold text-blackdark leading-6 mb-3.5'>
                               {fieldType}
                             </h3>
                             <div className='flex flex-col gap-5'>
@@ -311,8 +311,10 @@ const DynamicFormBuilder: React.FC<FormBuilderProps> = ({ initialForm, onPreview
 
             <div className='flex items-center justify-between'>
               <div className='text-lg text-blackdark'>
-                {form.questions.length} question{form.questions.length !== 1 ? 's' : ''} •
-                {form.questions.filter(q => q.is_required).length} required
+                <span>
+                  {form.questions.length} question{form.questions.length !== 1 ? 's' : ''} •
+                </span>
+                <span>{form.questions.filter(q => q.is_required).length} required</span>
               </div>
               <div className='flex items-center gap-5'>
                 <Button
@@ -321,7 +323,7 @@ const DynamicFormBuilder: React.FC<FormBuilderProps> = ({ initialForm, onPreview
                   onClick={handleCancel}
                   icon={<Icon name='close' />}
                   isIconFirst
-                  className='flex items-center gap-2 !rounded-lg'
+                  className='rounded-lg min-h-50px'
                 />
                 {hasPermission(PermissionType.ASSESSMENT_FORM_EDIT) && (
                   <Button
@@ -330,7 +332,7 @@ const DynamicFormBuilder: React.FC<FormBuilderProps> = ({ initialForm, onPreview
                     onClick={handleSave}
                     icon={<Icon name='chat' />}
                     isIconFirst
-                    className='flex items-center gap-2 !rounded-lg min-h-50px'
+                    className='rounded-lg min-h-50px'
                   />
                 )}
               </div>
@@ -415,6 +417,7 @@ const DynamicFormBuilder: React.FC<FormBuilderProps> = ({ initialForm, onPreview
         onClose={() => setShowPreview(false)}
         title='Form Preview'
         size='2xl'
+        id='form-preview-modal'
       >
         <FormPreview formData={form} ispreviewType={true} />
       </Modal>

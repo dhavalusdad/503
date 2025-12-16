@@ -1,39 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
-
-import { formsQueryKey } from '@/api/common/assessment-form.queryKey';
 import { jwtUtils } from '@/api/utils/jwtUtlis';
 import { PendingTask } from '@/features/video-call/components/PendingTaskList';
 
 export const WaitingRoom = ({
   appointmentId,
   tenant_id,
+  role,
 }: {
   appointmentId: string;
   userId?: string;
   tenant_id: string;
+  role: string;
 }) => {
   const [showWaitingList, setShowWaitingList] = useState(false);
-  const queryClient = useQueryClient();
+
   const userId = jwtUtils.getUserFromToken(sessionStorage.getItem('inviteToken') as string)?.id;
 
   const handleData = (pendingCount: number) => setShowWaitingList(!pendingCount);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        queryClient.invalidateQueries({
-          queryKey: formsQueryKey.getList(appointmentId, userId),
-        });
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
 
   if (showWaitingList) {
     return (
@@ -65,6 +49,7 @@ export const WaitingRoom = ({
             appointmentId={appointmentId}
             handleData={handleData}
             userId={userId}
+            role={role}
           />
         </div>
         <div className='bg-gradient-to-r border-primary border-2 bg-primary/30 rounded-10px px-2 py-2 shadow-md'>

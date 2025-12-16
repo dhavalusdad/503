@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 import { UserRole } from '@/api/types/user.dto';
 import { ROUTES } from '@/constants/routePath';
-import type { ErrorResponse } from '@/features/login';
+import type { ErrorResponse } from '@/features/login/types';
 
 export const jsonStringify = <T>(value: T, defaultValue: ''): string => {
   try {
@@ -15,7 +15,7 @@ export const jsonStringify = <T>(value: T, defaultValue: ''): string => {
   }
 };
 
-export * from './dateUtils';
+export * from '@/helper/dateUtils';
 
 export const jsonParse = <T>(jsonString: string, defaultValue: T): T => {
   try {
@@ -214,4 +214,38 @@ export const normalizeText = (text: string): string => {
 
 export const isAdminPanelRole = (role: UserRole) => {
   return [UserRole.ADMIN, UserRole.BACKOFFICE].includes(role);
+};
+
+export const formatExperience = (totalMonths: number): string => {
+  if (!totalMonths || totalMonths <= 0) return 'Experience Not Specified';
+
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+
+  let result = '';
+
+  if (years > 0) {
+    result += `${years}+ Year${years > 1 ? 's' : ''}`;
+  } else {
+    if (years > 0) result += ' ';
+    result += `${months}+ Month${months > 1 ? 's' : ''}`;
+  }
+
+  return `${result} of Experience`;
+};
+
+export const isDarkColor = (hex: string) => {
+  const cleanedHex = hex.replace('#', '');
+
+  const r = parseInt(cleanedHex.substring(0, 2), 16);
+  const g = parseInt(cleanedHex.substring(2, 4), 16);
+  const b = parseInt(cleanedHex.substring(4, 6), 16);
+
+  // Relative luminance formula
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance < 0.5; // dark if below threshold
+};
+export const isBackOfficeRole = (role: UserRole) => {
+  return role === UserRole.BACKOFFICE;
 };

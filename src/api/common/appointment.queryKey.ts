@@ -1,6 +1,6 @@
 // import type { AdminAppointmentParamsType } from '../types';
 
-import type { AdminAppointmentParamsType } from '@/api/types/user.dto';
+import type { AdminAppointmentParamsType } from '@/api/types/calendar.dto';
 
 export const therapistQueryKeys = {
   all: ['therapists'] as const,

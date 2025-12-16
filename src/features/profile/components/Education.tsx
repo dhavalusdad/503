@@ -10,6 +10,11 @@ import {
 } from '@/api/therapist-education';
 import { UserRole } from '@/api/types/user.dto';
 import { PermissionType } from '@/enums';
+import AddEducationModal from '@/features/profile/components/AddEducationModal';
+import type {
+  EducationOpenModalStateType,
+  GetAllTherapistEducationType,
+} from '@/features/profile/types';
 import { DATE_FORMATS, isAdminPanelRole } from '@/helper';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { currentUser } from '@/redux/ducks/user';
@@ -17,10 +22,6 @@ import Button from '@/stories/Common/Button';
 import { DeleteModal } from '@/stories/Common/DeleteModal';
 import Icon from '@/stories/Common/Icon';
 import Spinner from '@/stories/Common/Loader/Spinner.tsx';
-
-import AddEducationModal from './AddEducationModal';
-
-import type { EducationOpenModalStateType, GetAllTherapistEducationType } from '../types';
 
 const EducationCard = (
   params: GetAllTherapistEducationType & {
@@ -156,8 +157,8 @@ export const Education = () => {
 
   return (
     <div className='bg-white w-full rounded-20px p-5 border border-solid border-surface'>
-      <div className='flex flex-wrap gap-3 justify-between items-center mb-5'>
-        <div className='flex flex-col gap-1.5'>
+      <div className='flex flex-wrap gap-5 justify-between items-center mb-5'>
+        <div className='flex flex-col gap-1.5 flex-1'>
           <h3 className='text-lg font-bold leading-6 text-blackdark'>Education</h3>
           {!isGetEducationsApiPending && !isAdmin && educationData?.inRequestMode && (
             <p className='text-yellow-600 text-sm font-semibold'>

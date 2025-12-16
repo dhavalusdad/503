@@ -1,4 +1,4 @@
-import type { User } from '@/features/login';
+import type { User } from '@/features/login/types';
 import { clearUser, setUser } from '@/redux/ducks/user';
 import { store } from '@/redux/store';
 

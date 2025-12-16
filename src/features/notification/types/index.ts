@@ -61,7 +61,6 @@ export interface NotificationMetadataType {
     className?: string;
   };
 
-  clickable?: boolean;
   navigateTo?: string;
   external?: boolean;
 }

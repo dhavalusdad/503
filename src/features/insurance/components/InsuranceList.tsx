@@ -3,6 +3,8 @@ import { useState } from 'react';
 import clsx from 'clsx';
 
 import { useUpdateInsurance, type InsuranceData } from '@/api/insurance';
+import { PermissionType } from '@/enums';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { AlertModal } from '@/stories/Common/AlertModal';
 import Button from '@/stories/Common/Button';
 import CheckboxField from '@/stories/Common/CheckBox';
@@ -33,6 +35,8 @@ export const InsuranceList = ({
     newStatus: boolean;
   } | null>(null);
   const { mutateAsync: updateInsurances, isPending } = useUpdateInsurance(clientId);
+
+  const { hasPermission } = useRoleBasedRouting();
 
   // is_active
   const handleCardClick = (insuranceId: string) => {
@@ -139,24 +143,26 @@ export const InsuranceList = ({
                     </div>
                   </div>
 
-                  <div className='flex items-center gap-3'>
-                    {onEdit && (
-                      <Button
-                        variant='none'
-                        onClick={() => onEdit(insurance)}
-                        className='!p-0'
-                        parentClassName='h-5'
-                        icon={<Icon name='edit' />}
-                      />
-                    )}
-                    {isSwitchVisible && (
-                      <Switch
-                        isChecked={insurance?.is_active}
-                        onChange={e => handleSwitchChange(e.target.checked, insurance.id)}
-                        isDisabled={isPending}
-                      />
-                    )}
-                  </div>
+                  {hasPermission(PermissionType.PATIENT_EDIT) && (
+                    <div className='flex items-center gap-3'>
+                      {onEdit && (
+                        <Button
+                          variant='none'
+                          onClick={() => onEdit(insurance)}
+                          className='!p-0'
+                          parentClassName='h-5'
+                          icon={<Icon name='edit' />}
+                        />
+                      )}
+                      {isSwitchVisible && (
+                        <Switch
+                          isChecked={insurance?.is_active}
+                          onChange={e => handleSwitchChange(e.target.checked, insurance.id)}
+                          isDisabled={isPending}
+                        />
+                      )}
+                    </div>
+                  )}
                   {/* {insurance.is_added_to_amd && (
                     <span className='px-3 py-1 text-sm font-semibold bg-green-100 text-green-700 border border-solid border-green-300 rounded-full'>
                       Active

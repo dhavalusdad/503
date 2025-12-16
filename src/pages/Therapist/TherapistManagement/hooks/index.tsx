@@ -11,7 +11,8 @@ import { useGetTherapistList } from '@/api/therapist';
 import { UserRole } from '@/api/types/user.dto';
 import { useUpdateUserStatus } from '@/api/user';
 import { ACTIVE_STATUS_OPTION, FIELD_TYPE, GENDER_OPTION } from '@/constants/CommonConstant';
-import { FieldOptionType } from '@/enums';
+import { FieldOptionType, PermissionType } from '@/enums';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import useGetTherapistManagementColumns from '@/pages/Therapist/TherapistManagement/hooks/useGetTherapistManagementColumns';
 import type {
   TherapistListDataType,
@@ -100,6 +101,7 @@ const useTherapistManagement = () => {
   // ** API Data**
   const { data: therapistData, isLoading: isGetTherapistListApiPending } = apiData;
 
+  const { hasPermission } = useRoleBasedRouting();
   // ***************** Helpers *****************
 
   // ** Modal Helpers **
@@ -160,14 +162,18 @@ const useTherapistManagement = () => {
         label: 'Status',
         options: ACTIVE_STATUS_OPTION,
       },
-      {
-        type: FIELD_TYPE.ASYNC_SELECT,
-        name: 'area_of_focus',
-        label: 'Focus Area',
-        isMulti: true,
-        queryKey: fieldOptionsQueryKey.getFieldOptionsKey(FieldOptionType.AREA_OF_FOCUS),
-        queryFn: getAreaOfFocusAsync,
-      },
+      ...(hasPermission(PermissionType.AREA_OF_FOCUS_VIEW)
+        ? [
+            {
+              type: FIELD_TYPE.ASYNC_SELECT,
+              name: 'area_of_focus',
+              label: 'Focus Area',
+              isMulti: true,
+              queryKey: fieldOptionsQueryKey.getFieldOptionsKey(FieldOptionType.AREA_OF_FOCUS),
+              queryFn: getAreaOfFocusAsync,
+            },
+          ]
+        : []),
       {
         type: FIELD_TYPE.NUMBER_RANGE,
         name: 'client_count',

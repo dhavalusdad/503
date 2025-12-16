@@ -41,9 +41,10 @@ const useCredentialListing = () => {
           ),
           { state: params }
         );
-      } else {
-        navigate(ROUTES.THERAPIST_ADD_CREDENTIALING_ITEM.path, { state: params });
       }
+      // else {
+      //   navigate(ROUTES.THERAPIST_ADD_CREDENTIALING_ITEM.path, { state: params });
+      // }
     }
   };
 

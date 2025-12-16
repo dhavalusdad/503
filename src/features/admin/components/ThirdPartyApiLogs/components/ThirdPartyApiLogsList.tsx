@@ -6,11 +6,13 @@ import { getUsersWithRolesAsync } from '@/api/user';
 import { type CommonFilterField } from '@/components/layout/Filter';
 import FilterButton from '@/components/layout/Filter/FilterButton';
 import { FIELD_TYPE } from '@/constants/CommonConstant';
+import { PermissionType } from '@/enums';
 import {
   useThirdPartyApiLogsManagement,
   type ThirdPartyApiLogsFilterType,
 } from '@/features/admin/components/ThirdPartyApiLogs/hooks/useThirdPartyApiLogsManagement';
 import type { ThirdPartyApiLog } from '@/features/admin/components/ThirdPartyApiLogs/types';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import InputField from '@/stories/Common/Input';
 import Table from '@/stories/Common/Table';
 
@@ -29,6 +31,8 @@ const SERVICE_OPTIONS = [
 const ThirdPartyApiLogsList = () => {
   const [filters, setFilters] = useState<ThirdPartyApiLogsFilterType>({});
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+
+  const { hasPermission } = useRoleBasedRouting();
 
   const {
     data,
@@ -66,22 +70,30 @@ const ThirdPartyApiLogsList = () => {
         label: 'Status',
         options: STATUS_OPTIONS,
       },
-      {
-        type: FIELD_TYPE.ASYNC_SELECT,
-        name: 'client_id',
-        label: 'Client',
-        isMulti: true,
-        queryFn: getClientsAsync,
-        queryKey: 'third-party-api-logs-clients',
-      },
-      {
-        type: FIELD_TYPE.ASYNC_SELECT,
-        name: 'therapist_id',
-        label: 'Therapist',
-        isMulti: true,
-        queryFn: getTherapistsAsync,
-        queryKey: 'third-party-api-logs-therapists',
-      },
+      ...(hasPermission(PermissionType.PATIENT_VIEW)
+        ? [
+            {
+              type: FIELD_TYPE.ASYNC_SELECT,
+              name: 'client_id',
+              label: 'Client',
+              isMulti: true,
+              queryFn: getClientsAsync,
+              queryKey: 'third-party-api-logs-clients',
+            },
+          ]
+        : []),
+      ...(hasPermission(PermissionType.THERAPIST_VIEW)
+        ? [
+            {
+              type: FIELD_TYPE.ASYNC_SELECT,
+              name: 'therapist_id',
+              label: 'Therapist',
+              isMulti: true,
+              queryFn: getTherapistsAsync,
+              queryKey: 'third-party-api-logs-therapists',
+            },
+          ]
+        : []),
       {
         type: FIELD_TYPE.ASYNC_SELECT,
         name: 'user_id',

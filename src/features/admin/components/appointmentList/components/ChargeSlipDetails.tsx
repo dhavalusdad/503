@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { PermissionType } from '@/enums';
+import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import Button from '@/stories/Common/Button';
 
 interface ChargeSlipDetailsProps {
@@ -23,30 +25,31 @@ const ChargeSlipDetails: React.FC<ChargeSlipDetailsProps> = ({
   onUpdate,
   onCharge,
 }) => {
+  const { hasPermission } = useRoleBasedRouting();
   return (
     <div className='bg-white rounded-20px flex flex-col gap-5'>
-      <div className='grid grid-cols-3 gap-5'>
-        <div className='flex flex-col gap-1.5'>
+      <div className='grid grid-cols-2 lg:grid-cols-3 gap-5'>
+        <div className='flex flex-col gap-2'>
           <h6 className='text-blackdark text-base font-semibold leading-5'>Charge Slip Date</h6>
           <p className='font-normal text-primarygray text-sm leading-5'>{chargeSlipDate}</p>
         </div>
-        <div className='flex flex-col gap-1.5'>
+        <div className='flex flex-col gap-2'>
           <h6 className='text-blackdark text-base font-semibold leading-5'>Total Amount</h6>
           <p className='font-normal text-primarygray text-sm leading-5'>${totalAmount}</p>
         </div>
 
-        <div className='flex flex-col gap-1.5'>
+        <div className='flex flex-col gap-2'>
           <h6 className='text-blackdark text-base font-semibold leading-5'>
             Amount Paid by Insurance
           </h6>
           <p className='font-normal text-primarygray text-sm leading-5'>${amountPaidByInsurance}</p>
         </div>
 
-        <div className='flex flex-col gap-1.5'>
+        <div className='flex flex-col gap-2'>
           <h6 className='text-blackdark text-base font-semibold leading-5'>Self Pay</h6>
           <p className='font-normal text-primarygray text-sm leading-5'>${selfPay}</p>
         </div>
-        <div className='flex flex-col gap-1.5'>
+        <div className='flex flex-col gap-2'>
           <h6 className='text-blackdark text-base font-semibold leading-5'>
             Remaining Balance To Pay
           </h6>
@@ -55,13 +58,15 @@ const ChargeSlipDetails: React.FC<ChargeSlipDetailsProps> = ({
       </div>
       {remainingBalanceToPay > 0 && (
         <div className='flex items-center justify-end gap-5'>
-          <Button
-            variant='filled'
-            title='Charge'
-            parentClassName='self-end'
-            className='rounded-10px !px-6'
-            onClick={onCharge}
-          />
+          {hasPermission(PermissionType.APPOINTMENT_EDIT) && (
+            <Button
+              variant='filled'
+              title='Charge'
+              parentClassName='self-end'
+              className='rounded-10px !px-6'
+              onClick={onCharge}
+            />
+          )}
           <Button
             onClick={onUpdate}
             title='Update'

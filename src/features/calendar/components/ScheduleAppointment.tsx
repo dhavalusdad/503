@@ -8,22 +8,20 @@ import { useCreateBookingAppointment } from '@/api/appointment';
 import { calendarQueryKeys } from '@/api/common/calendar.queryKey';
 import { MODAL_TITLES } from '@/constants/CommonConstant';
 import { SessionType } from '@/enums';
+import AddPatientForm from '@/features/calendar/components/scheduleAppointmentComponents/AddPatientForm';
+import AppointmentDetails from '@/features/calendar/components/scheduleAppointmentComponents/AppointmentDetails';
+import PatientSelection from '@/features/calendar/components/scheduleAppointmentComponents/PatientSelection';
+import type {
+  BookingAppointmentState,
+  CreateBookingAppointmentRequest,
+  ScheduleAppointmentProps,
+} from '@/features/calendar/types';
 import { showToast } from '@/helper';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Drawer from '@/stories/Common/Drawer';
 import Icon from '@/stories/Common/Icon';
 import Modal from '@/stories/Common/Modal';
-
-import AddPatientForm from './scheduleAppointmentComponents/AddPatientForm';
-import AppointmentDetails from './scheduleAppointmentComponents/AppointmentDetails';
-import PatientSelection from './scheduleAppointmentComponents/PatientSelection';
-
-import type {
-  BookingAppointmentState,
-  CreateBookingAppointmentRequest,
-  ScheduleAppointmentProps,
-} from '../types';
 
 const ScheduleAppointment = ({
   setScheduleAppointment,

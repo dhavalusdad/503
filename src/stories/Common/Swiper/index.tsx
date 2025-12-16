@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 
+import clsx from 'clsx';
 import { Keyboard, Pagination, Navigation, Autoplay, Grid } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -109,7 +110,7 @@ const SwiperComponent: React.FC<CustomSwiperProps> = ({
           setIsBeginning(s.isBeginning);
           setIsEnd(s.isEnd);
         }}
-        className={`mySwiper ${className}`}
+        className={clsx('mySwiper', className, showBullets ? 'bullets-parent' : '')}
       >
         {children?.map((child, index) => (
           <SwiperSlide key={index} className='!flex justify-center'>

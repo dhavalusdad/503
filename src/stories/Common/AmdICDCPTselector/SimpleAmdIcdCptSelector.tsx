@@ -6,11 +6,10 @@ import { useParams } from 'react-router-dom';
 import { useGetProblemList } from '@/api/ amdForm';
 import type { ProblemListItem } from '@/api/types/amd.dto';
 import { currentUser } from '@/redux/ducks/user';
+import cptJson from '@/stories/Common/AmdICDCPTselector/CPTcode.json';
+import icdJson from '@/stories/Common/AmdICDCPTselector/icd10_clean_with_refinement.json';
 import Button from '@/stories/Common/Button';
 import Select from '@/stories/Common/Select';
-
-import cptJson from './CPTcode.json';
-import icdJson from './icd10_clean_with_refinement.json';
 
 type ICDSourceItem = {
   code?: string;
@@ -152,6 +151,18 @@ export const AmdSimpleIcdCptSelector = ({
           value={selectedIcdCodes}
           onChange={value => setSelectedIcdCodes((value as ICDOption[]) ?? [])}
           noOptionsMessage={() => 'No ICD codes found'}
+          labelClassName='!text-base'
+          StylesConfig={{
+            control: () => ({
+              minHeight: '50px',
+            }),
+            singleValue: () => ({
+              fontSize: '16px',
+            }),
+            option: () => ({
+              fontSize: '16px',
+            }),
+          }}
         />
 
         <div className='flex flex-col gap-3 lg:flex-row lg:items-end'>
@@ -168,6 +179,18 @@ export const AmdSimpleIcdCptSelector = ({
               noOptionsMessage={() =>
                 isProblemListLoading ? 'Loading problem list...' : 'No items in the problem list'
               }
+              labelClassName='!text-base'
+              StylesConfig={{
+                control: () => ({
+                  minHeight: '50px',
+                }),
+                singleValue: () => ({
+                  fontSize: '16px',
+                }),
+                option: () => ({
+                  fontSize: '16px',
+                }),
+              }}
             />
           </div>
         </div>
@@ -182,12 +205,24 @@ export const AmdSimpleIcdCptSelector = ({
           value={selectedCptCodes}
           onChange={value => setSelectedCptCodes((value as CPTOption[]) ?? [])}
           noOptionsMessage={() => 'No CPT codes found'}
+          labelClassName='!text-base'
+          StylesConfig={{
+            control: () => ({
+              minHeight: '50px',
+            }),
+            singleValue: () => ({
+              fontSize: '16px',
+            }),
+            option: () => ({
+              fontSize: '16px',
+            }),
+          }}
         />
       </section>
       <Button
         variant='filled'
         title='Add selected problems'
-        className='rounded-10px lg:w-[220px]'
+        className='rounded-10px min-h-50px'
         onClick={() => emitChange()}
       />
     </div>

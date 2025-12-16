@@ -3,12 +3,11 @@ import * as yup from 'yup';
 import type { OptionType } from '@/api/types/field-option.dto';
 import type { DateRangeFilterObjType } from '@/components/layout/Filter/types';
 import type { QueueRequestType } from '@/enums';
-
 import type {
   QUEUE_REQUEST_METADATA_ACTIONS,
   QueueRequestProfileChangeStatus,
   TABLE_NAME_ENUM,
-} from '../constant';
+} from '@/features/admin/components/backofficeQueue/constant';
 
 export type QueueDataType = {
   id: string;

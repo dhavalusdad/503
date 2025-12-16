@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import clsx from 'clsx';
 import moment from 'moment';
@@ -14,7 +14,10 @@ import { UserRole } from '@/api/types/user.dto';
 import DataNotFound from '@/components/common/DataNotFound';
 import { ROUTES } from '@/constants/routePath';
 import { AppointmentStatus, PermissionType, SessionType, TransactionAction } from '@/enums';
+import ChargeSlipDetails from '@/features/admin/components/appointmentList/components/ChargeSlipDetails';
+import PaymentCardSelectionModal from '@/features/admin/components/appointmentList/components/PaymentCardSelectionModal';
 import type { UserAppointment } from '@/features/admin/components/appointmentList/types';
+import useTransaction from '@/features/admin/components/transaction/hooks';
 import type { Transaction } from '@/features/admin/components/transaction/types';
 import { AppointmentStatusBadge } from '@/features/appointment/component/AppointmentStatusBadge';
 import MemberCard from '@/features/appointment/component/ClientAppointmentsBooking/MemberCard';
@@ -29,13 +32,11 @@ import Icon from '@/stories/Common/Icon';
 import Image from '@/stories/Common/Image';
 import Spinner from '@/stories/Common/Loader/Spinner.tsx';
 import Modal from '@/stories/Common/Modal';
+import Skeleton from '@/stories/Common/Skeleton';
 import SwiperComponent from '@/stories/Common/Swiper';
 import Table from '@/stories/Common/Table';
 
-import useTransaction from '../../transaction/hooks';
-
-import ChargeSlipDetails from './ChargeSlipDetails';
-import PaymentCardSelectionModal from './PaymentCardSelectionModal';
+import { ProcessRefundModal } from '../../transaction/components/ProcessRefundModal';
 
 const SERVER_URL = import.meta.env.VITE_BASE_URL;
 
@@ -50,7 +51,7 @@ export const getFileFromUrl = (profile: string) => {
 const AppointmentListView: React.FC = () => {
   const { appointment_id } = useParams();
   const navigate = useNavigate();
-  const { timezone, client_id, role } = useSelector(currentUser);
+  const { timezone, client_id, role, id: currentUserId } = useSelector(currentUser);
   const isAdmin = isAdminPanelRole(role);
   const [showWarning, setShowWarning] = useState(false);
   const { invalidate } = useInvalidateQuery();
@@ -60,7 +61,8 @@ const AppointmentListView: React.FC = () => {
   const {
     data: appointmentPayment,
     refetch: refetchPayment,
-    isFetching: isPaymentLoading,
+    isLoading: isPaymentLoading,
+    isFetching: isPaymentFetching,
   } = useGetAmdAppointmentsClientPayment({
     appointmentId: appointment_id,
     isNewData: !!appointmentDetails?.amd_total_charge,
@@ -88,7 +90,12 @@ const AppointmentListView: React.FC = () => {
     toggleDeclineModal,
     setToggleDeclineModal,
     isLoading: isTransactionLoading,
-  } = useTransaction({ appointment_id: appointment_id, appointment_view: true });
+    toggleRefundModal,
+    setToggleRefundModal,
+  } = useTransaction({
+    appointment_id: appointment_id,
+    appointment_view: true,
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -107,18 +114,43 @@ const AppointmentListView: React.FC = () => {
 
   const handleBookedByNavigation = () => {
     const bookedBy = appointmentDetails?.booked_by_user;
-    const clientUser = appointmentDetails?.client?.user;
+    const clientUser = appointmentDetails?.client;
     const therapist = appointmentDetails?.therapist;
 
     // If booked_by matches client user → go to client details page
-    if (bookedBy?.id === clientUser?.id) {
+    const bookedById = bookedBy?.id;
+    if (bookedById === clientUser?.user?.id) {
       navigate(ROUTES.CLIENT_MANAGEMENT_DETAILS.navigatePath(appointmentDetails?.client?.id));
-      return;
+    } else if (bookedById === therapist?.user?.id) {
+      navigate(ROUTES.VIEW_THERAPIST_DETAILS.navigatePath(therapist?.id));
+    } else if (role === UserRole.ADMIN && currentUserId !== bookedById) {
+      navigate(ROUTES.STAFF_MANAGEMENT_DETAILS.navigatePath(bookedById));
     }
-
-    // Else → navigate to therapist details
-    navigate(ROUTES.VIEW_THERAPIST_DETAILS.navigatePath(therapist?.id));
   };
+
+  const isBookedByClickable = () => {
+    const bookedBy = appointmentDetails?.booked_by_user?.id;
+    const clientUser = appointmentDetails?.client?.user;
+    const therapist = appointmentDetails?.therapist?.user;
+    let bool = false;
+    if (!clientUser?.id || !therapist?.id) return bool;
+    if (isAdmin) {
+      if (bookedBy !== currentUserId) {
+        if (role === UserRole.ADMIN) {
+          bool = true;
+        } else if (bookedBy === clientUser?.id || bookedBy === therapist?.id) {
+          bool = true;
+        }
+      }
+    }
+    return bool;
+  };
+  const [hasClientViewPermission, hasTherapistViewPermission] = useMemo(() => {
+    return [
+      isAdmin && hasPermission(PermissionType.PATIENT_VIEW),
+      isAdmin && hasPermission(PermissionType.THERAPIST_VIEW),
+    ];
+  }, [hasPermission, isAdmin]);
 
   return (
     <>
@@ -143,7 +175,8 @@ const AppointmentListView: React.FC = () => {
                 </div>
                 {isAdminPanelRole(role) &&
                   appointmentDetails?.third_party_api_log &&
-                  appointmentDetails.third_party_api_log.length > 0 && (
+                  appointmentDetails.third_party_api_log.length > 0 &&
+                  hasPermission(PermissionType.THIRD_PARTY_LOGS_VIEW) && (
                     <Button
                       variant='filled'
                       title='Third Party API Log'
@@ -176,7 +209,10 @@ const AppointmentListView: React.FC = () => {
                 <div className='flex flex-col gap-1.5'>
                   <h3 className='text-base font-bold text-blackdark leading-22px'>Booked By</h3>
                   <div
-                    className={clsx('flex items-center gap-3', isAdmin && 'cursor-pointer')}
+                    className={clsx(
+                      'flex items-center gap-3',
+                      isBookedByClickable() && 'cursor-pointer'
+                    )}
                     onClick={isAdmin ? handleBookedByNavigation : undefined}
                   >
                     <Image
@@ -198,7 +234,7 @@ const AppointmentListView: React.FC = () => {
                     <p
                       className={clsx(
                         'text-base font-bold leading-22px text-primary',
-                        isAdmin && 'hover:underline cursor-pointer underline-offset-2'
+                        isBookedByClickable() && 'hover:underline cursor-pointer underline-offset-2'
                       )}
                     >
                       {appointmentDetails?.booked_by_user?.first_name ||
@@ -211,9 +247,12 @@ const AppointmentListView: React.FC = () => {
                 <div className='flex flex-col gap-1.5'>
                   <h3 className='text-base font-bold text-blackdark leading-22px'>Client Name</h3>
                   <div
-                    className={clsx('flex items-center gap-3', isAdmin && 'cursor-pointer')}
+                    className={clsx(
+                      'flex items-center gap-3',
+                      hasClientViewPermission && 'cursor-pointer'
+                    )}
                     onClick={
-                      isAdmin
+                      hasClientViewPermission
                         ? () =>
                             navigate(
                               ROUTES.CLIENT_MANAGEMENT_DETAILS.navigatePath(
@@ -236,7 +275,8 @@ const AppointmentListView: React.FC = () => {
                     <p
                       className={clsx(
                         'text-base font-bold leading-22px text-primary',
-                        isAdmin && 'hover:underline cursor-pointer underline-offset-2'
+                        hasClientViewPermission &&
+                          'hover:underline cursor-pointer underline-offset-2'
                       )}
                     >
                       {appointmentDetails?.client?.user?.first_name}{' '}
@@ -249,9 +289,12 @@ const AppointmentListView: React.FC = () => {
                     Therapist Name
                   </h3>
                   <div
-                    className={clsx('flex items-center gap-3', isAdmin && 'cursor-pointer')}
+                    className={clsx(
+                      'flex items-center gap-3',
+                      hasTherapistViewPermission && 'cursor-pointer'
+                    )}
                     onClick={
-                      isAdmin
+                      hasTherapistViewPermission
                         ? () =>
                             navigate(
                               ROUTES.VIEW_THERAPIST_DETAILS.navigatePath(
@@ -274,7 +317,8 @@ const AppointmentListView: React.FC = () => {
                     <p
                       className={clsx(
                         'text-base font-bold leading-22px text-primary',
-                        isAdmin && 'hover:underline cursor-pointer underline-offset-2'
+                        hasTherapistViewPermission &&
+                          'hover:underline cursor-pointer underline-offset-2'
                       )}
                     >
                       {appointmentDetails?.therapist?.user?.first_name}{' '}
@@ -372,6 +416,12 @@ const AppointmentListView: React.FC = () => {
                     {appointmentDetails?.session_type || 'Not specified'}
                   </p>
                 </div>
+                <div className='flex flex-col gap-1.5'>
+                  <h3 className='text-base font-bold text-blackdark leading-22px'>Payment Type</h3>
+                  <p className='text-base font-normal leading-22px text-primarygray'>
+                    {appointmentDetails?.payment_method?.name || 'Not specified'}
+                  </p>
+                </div>
                 {appointmentDetails?.session_type === SessionType.CLINIC && (
                   <div className='flex flex-col gap-1.5'>
                     <h3 className='text-base font-bold text-blackdark leading-22px'>
@@ -447,8 +497,7 @@ const AppointmentListView: React.FC = () => {
               {/* Add More Insurance */}
               {!client_id &&
                 !appointmentPayment?.amd_total_charge &&
-                (hasPermission(PermissionType.APPOINTMENT_EDIT) ||
-                  hasPermission(PermissionType.APPOINTMENT_ADD)) && (
+                hasPermission(PermissionType.APPOINTMENT_EDIT) && (
                   <Button
                     variant='filled'
                     title='Apply Insurance'
@@ -465,16 +514,16 @@ const AppointmentListView: React.FC = () => {
           {isAdminPanelRole(role) && (
             <>
               <div className='bg-white rounded-20px p-5 border border-solid border-surface'>
-                <div className='flex flex-wrap gap-2 items-center justify-between mb-3.5 border-b border-surface pb-3.5'>
-                  <h3 className='text-lg font-bold text-blackdark leading-6'>
+                <div className='flex flex-wrap gap-3 lg:gap-5 items-center mb-3.5 border-b border-surface pb-3.5'>
+                  <h3 className='text-lg font-bold text-blackdark leading-6 mr-auto order-1 lg:order-none'>
                     Charge Slip Details
                   </h3>
                   {((appointmentDetails?.amd_remaining_charge !== null &&
                     Number(appointmentDetails?.amd_remaining_charge) !== 0) ||
                     appointmentDetails?.amd_remaining_charge == null) && (
-                    <div className='flex justify-end gap-5'>
+                    <>
                       {showWarning && (
-                        <div className='border border-solid border-yellow rounded-10px bg-yellowlight flex flex-wrap justify-end items-center gap-2.5 p-2.5'>
+                        <div className='border border-solid border-yellow rounded-10px bg-yellowlight flex flex-wrap justify-end items-center gap-2.5 p-2.5 order-3 lg:order-none mx-auto lg:mx-0'>
                           <div className='flex items-center gap-2.5'>
                             <Icon name='warning' className='text-yellow' />
                             <span className='text-base font-normal text-blackdark'>
@@ -487,36 +536,49 @@ const AppointmentListView: React.FC = () => {
                         <Button
                           variant='filled'
                           title='Generate Charge Slip'
-                          parentClassName='self-end'
-                          className='rounded-10px '
-                          isLoading={isPaymentLoading}
+                          parentClassName='order-2 lg:order-none'
+                          className='rounded-10px'
+                          isLoading={isPaymentFetching}
                           onClick={() => refetchAppointmentPayment()}
                         />
                       ) : (
                         <></>
                       )}
-                    </div>
+                    </>
                   )}
                 </div>
                 {appointmentDetails?.amd_total_charge && appointmentPayment ? (
                   <ChargeSlipDetails
-                    isLoading={isLoading || isPaymentLoading}
+                    isLoading={isLoading || isPaymentFetching}
                     chargeSlipDate={
                       appointmentPayment?.amd_charge_date
                         ? moment(appointmentPayment.amd_charge_date).format('  DD, MMM, YYYY')
                         : ''
                     }
-                    totalAmount={Number(appointmentPayment.amd_total_charge)}
-                    amountPaidByInsurance={Number(appointmentPayment.amd_insurance_balance)}
-                    selfPay={Number(appointmentPayment.amd_patient_balance)}
+                    totalAmount={Number(appointmentPayment?.amd_total_charge)}
+                    amountPaidByInsurance={Number(appointmentPayment?.amd_insurance_balance)}
+                    selfPay={Number(appointmentPayment?.amd_patient_balance)}
                     remainingBalanceToPay={
                       !appointmentDetails?.amd_remaining_charge
                         ? 0
-                        : Number(appointmentDetails.amd_remaining_charge)
+                        : Number(appointmentDetails?.amd_remaining_charge)
                     }
                     onUpdate={() => refetchAppointmentPayment()}
                     onCharge={() => setIsOpen(true)}
                   />
+                ) : isPaymentLoading ? (
+                  <div className='bg-white rounded-20px p-5'>
+                    <Skeleton
+                      count={5}
+                      parentClassName='grid grid-cols-2 lg:grid-cols-3 gap-5'
+                      className='h-8'
+                    />
+
+                    <div className='flex justify-end gap-5 mt-5'>
+                      <Skeleton count={1} className='h-10 w-24 rounded-10px' />
+                      <Skeleton count={1} className='h-10 w-24 rounded-10px' />
+                    </div>
+                  </div>
                 ) : (
                   <div className='text-center'>
                     <DataNotFound />
@@ -649,6 +711,18 @@ const AppointmentListView: React.FC = () => {
                 </p>
               </Modal>
             </>
+          )}
+
+          {toggleRefundModal.isModalOpen && (
+            <ProcessRefundModal
+              isOpen={toggleRefundModal.isModalOpen}
+              onClose={() => setToggleRefundModal({ transaction_id: null, isModalOpen: false })}
+              transaction={
+                (transactionTableData as Transaction[]).find(
+                  t => t.transaction_id === toggleRefundModal.transaction_id
+                ) || null
+              }
+            />
           )}
         </div>
       )}

@@ -1,10 +1,9 @@
 import { useMutation, useQuery } from '@/api';
 import { axiosGet, axiosPost } from '@/api/axios';
 import { amdAppointmentsTypesQueryKey } from '@/api/common/amdAppointmentsTypesQueryKey';
-import { normalizeText } from '@/helper';
+import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
+import { decryptData } from '@/helper/crypto';
 import { useInvalidateQuery } from '@/hooks/data-fetching';
-
-import { mutationsQueryKey } from './common/mutations.queryKey';
 
 interface AmdAppointmentClientPaymentParams {
   appointmentId?: string | null;
@@ -35,14 +34,18 @@ export const useGetAmdAppointmentsTypes = (params: object = {}) => {
   return useQuery({
     queryKey: amdAppointmentsTypesQueryKey.getAmdAppointmentsTypes(params),
     queryFn: async () => {
-      const response = await axiosGet(`${BASE_PATH}/amd-appointment-types`, {
-        params,
-      });
+      const response = await axiosGet(`${BASE_PATH}/amd-appointment-types`, { params });
+
+      // If encrypted
+      if (response.data?.encrypted) {
+        const decrypted = decryptData<{ data: unknown[] }>(response.data.payload)?.data;
+        return decrypted;
+      }
+
       return response.data;
     },
   });
 };
-
 export const useSyncAmdAppointmentsTypes = () => {
   const { invalidate } = useInvalidateQuery();
   return useMutation({
@@ -67,25 +70,58 @@ export const getAmdAppointmentsTypesAsync = async (page?: number, searchTerm?: s
       },
     });
 
-    const amdAppointmentsTypes = response?.data?.data?.data || [];
-    const hasMore = response?.data?.data?.hasMore || false;
+    let data;
+
+    if (response.data?.encrypted) {
+      data = decryptData<{ data: unknown[]; hasMore: boolean }>(response.data.payload)?.data;
+    } else {
+      data = response.data?.data;
+    }
+
+    const amdAppointmentsTypes = data?.data || [];
+    const hasMore = data?.hasMore || false;
 
     const transformedData = amdAppointmentsTypes.map((item: { amd_id: string; name: string }) => ({
       value: item.amd_id,
-      label: normalizeText(item.name),
+      label: item.name,
     }));
 
     return {
       data: transformedData,
-      hasMore: hasMore,
+      hasMore,
     };
   } catch {
-    return {
-      data: [],
-      hasMore: false,
-    };
+    return { data: [], hasMore: false };
   }
 };
+//   try {
+//     const response = await axiosGet(`${BASE_PATH}/amd-appointment-types`, {
+//       params: {
+//         ...(searchTerm ? { search: searchTerm } : {}),
+//         page: page || 1,
+//         limit: 10,
+//       },
+//     });
+
+//     const amdAppointmentsTypes = response?.data?.data?.data || [];
+//     const hasMore = response?.data?.data?.hasMore || false;
+
+//     const transformedData = amdAppointmentsTypes.map((item: { amd_id: string; name: string }) => ({
+//       value: item.amd_id,
+//       label: normalizeText(item.name),
+//     }));
+
+//     return {
+//       data: transformedData,
+//       hasMore: hasMore,
+//     };
+//   } catch {
+//     return {
+//       data: [],
+//       hasMore: false,
+//     };
+//   }
+// };
 
 export const useGetAmdAppointmentsClientPayment = (params?: AmdAppointmentClientPaymentParams) => {
   return useQuery<AmdAppointmentClientPayment | undefined>({

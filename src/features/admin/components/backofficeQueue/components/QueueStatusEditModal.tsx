@@ -4,14 +4,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 
 import { useUpdateQueueRequest } from '@/api/queueManagement';
+import { UpdateQueueRequestDataType } from '@/features/admin/components/backofficeQueue/constant';
 import { AuditTrialSchema } from '@/features/admin/components/backofficeQueue/types';
 import { formatStatusLabel } from '@/helper';
 import Button from '@/stories/Common/Button';
 import FileUpload from '@/stories/Common/FileUpload';
 import Modal from '@/stories/Common/Modal';
 import TextArea from '@/stories/Common/Textarea';
-
-import { UpdateQueueRequestDataType } from '../constant';
 
 interface QueueEditModalProps {
   isOpen: boolean;

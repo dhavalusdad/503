@@ -39,6 +39,7 @@ const GeneralSetting = (currentComponent: Props) => {
         {tabs.map(tab => (
           <Button
             key={tab.id}
+            id={`tour-${tab.id}-tab`}
             variant='none'
             title={tab.title}
             onClick={() => navigate(tab.route)}

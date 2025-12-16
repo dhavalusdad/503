@@ -5,6 +5,7 @@ import moment, { type Moment } from 'moment';
 
 import type { UserDependentResponse } from '@/api/types/calendar.dto';
 import Icon from '@/stories/Common/Icon';
+import Tooltip from '@/stories/Common/Tooltip/Tooltip';
 
 interface MemberCardProps {
   member: UserDependentResponse;
@@ -98,7 +99,13 @@ const MemberCard: React.FC<MemberCardProps> = ({
             <label className='text-base font-medium text-blackdark tracking-wide'>
               {detail?.label}
             </label>
-            <p className='text-sm font-medium text-primarygray'>{detail?.value}</p>
+            <Tooltip
+              placement='auto'
+              className='bg-primary text-white text-sm px-3 py-1 rounded-lg shadow-lg'
+              label={`${detail?.value}`}
+            >
+              <p className='text-sm font-medium text-primarygray truncate'>{detail?.value}</p>
+            </Tooltip>
           </div>
         ))}
       </div>

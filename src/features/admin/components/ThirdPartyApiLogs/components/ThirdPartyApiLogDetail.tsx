@@ -6,13 +6,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useGetThirdPartyApiLogDetails, useRetryThirdPartyApiLog } from '@/api/thirdPartyApiLogs';
 import { ROUTES } from '@/constants/routePath';
 import { PermissionType } from '@/enums';
+import { retryableOperations } from '@/features/admin/components/ThirdPartyApiLogs/constants';
 import type { ThirdPartyApiLog } from '@/features/admin/components/ThirdPartyApiLogs/types';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
 import { currentUser } from '@/redux/ducks/user';
 import Button from '@/stories/Common/Button';
 import Icon from '@/stories/Common/Icon';
-
-import { retryableOperations } from '../constants';
 
 const ThirdPartyApiLogDetailPage = () => {
   const { id } = useParams();
@@ -283,14 +282,18 @@ const ThirdPartyApiLogDetailPage = () => {
               className='!px-6 rounded-10px min-h-50px'
             />
           )}
-        {logData.success === false && logData.appointment_id && (
-          <Button
-            variant='outline'
-            title='View Appointment'
-            onClick={() => navigate(ROUTES.APPOINTMENT_VIEW.navigatePath(logData.appointment_id!))}
-            className='!px-6 rounded-10px min-h-50px'
-          />
-        )}
+        {logData.success === false &&
+          logData.appointment_id &&
+          hasPermission(PermissionType.APPOINTMENT_VIEW) && (
+            <Button
+              variant='outline'
+              title='View Appointment'
+              onClick={() =>
+                navigate(ROUTES.APPOINTMENT_VIEW.navigatePath(logData.appointment_id!))
+              }
+              className='!px-6 rounded-10px min-h-50px'
+            />
+          )}
       </div>
     </div>
   );

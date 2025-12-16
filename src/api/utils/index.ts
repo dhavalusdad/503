@@ -38,35 +38,53 @@ export const getWorkedDuration = (input: WorkDurationParams[] | WorkDurationPara
     const { start_month, start_year } = input;
     if (!start_month && !start_year) return 'Invalid experience';
   }
+
   let roles = Array.isArray(input) ? input : [input];
   if (!roles.length) return 'No experience';
 
+  // Filter out invalid or incomplete experiences
   roles = roles.filter(role => !!role.start_month && !!role.start_year);
 
-  const startDates = roles.map(
-    ({ start_year, start_month }) => new Date(start_year, start_month - 1, 1)
-  );
+  // Sort the experiences based on their start date
+  roles.sort((a, b) => {
+    const startA = new Date(a.start_year!, a.start_month! - 1);
+    const startB = new Date(b.start_year!, b.start_month! - 1);
+    return startA.getTime() - startB.getTime();
+  });
 
-  const endDates = roles.map(({ end_year, end_month }) =>
-    end_year && end_month ? new Date(end_year, end_month, 0) : new Date()
-  );
+  // Merge overlapping or contiguous durations
+  const mergedExperiences: { start: Date; end: Date }[] = [];
 
-  const earliestStart = new Date(Math.min(...startDates.map(d => d.getTime())));
-  const latestEnd = new Date(Math.max(...endDates.map(d => d.getTime())));
+  roles.forEach(({ start_year, start_month, end_year, end_month }) => {
+    const start = new Date(start_year!, start_month! - 1, 1);
+    const end = end_year && end_month ? new Date(end_year, end_month, 0) : new Date();
 
-  let years = latestEnd.getFullYear() - earliestStart.getFullYear();
-  let months = latestEnd.getMonth() - earliestStart.getMonth();
+    if (mergedExperiences.length === 0) {
+      mergedExperiences.push({ start, end });
+    } else {
+      const lastMerged = mergedExperiences[mergedExperiences.length - 1];
 
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
+      // Check if the current experience overlaps or is contiguous with the last merged one
+      if (start <= lastMerged.end) {
+        // Merge the two ranges
+        lastMerged.end = new Date(Math.max(lastMerged.end.getTime(), end.getTime()));
+      } else {
+        // No overlap, add as a new range
+        mergedExperiences.push({ start, end });
+      }
+    }
+  });
 
-  months += 1;
-  if (months === 12) {
-    years++;
-    months = 0;
-  }
+  // Calculate total months from merged periods
+  const totalMonths = mergedExperiences.reduce((sum, { start, end }) => {
+    const startIndex = start.getFullYear() * 12 + start.getMonth();
+    const endIndex = end.getFullYear() * 12 + end.getMonth();
+    return sum + (endIndex - startIndex + 1); // +1 to include both start and end months
+  }, 0);
+
+  // Convert total months to years and months
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
 
   const parts: string[] = [];
   if (years > 0) parts.push(`${years} year${years > 1 ? 's' : ''}`);
@@ -130,3 +148,14 @@ export const shouldReportToSentry = (
   // ----- FINAL FILTER -----
   return !(isCustomBackendError || isExpectedStatus || isUserMistake || isNetworkIssue);
 };
+
+export const getNormalizedPath = (path: string) =>
+  path
+    // replace UUIDs with :id
+    .replace(/\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '/:id')
+    // remove trailing /*
+    .replace(/\/\*$/, '')
+    // remove trailing /
+    .replace(/\/$/, '');
+
+export const getNormalizedParam = (route: string) => route.replace(/:\w+/g, ':id');

@@ -14,7 +14,7 @@ import type { QueueDataType, ModalType } from '@/features/admin/components/backo
 import type { OptionType } from '@/features/calendar/types';
 import { formatLabel } from '@/helper';
 import { useRoleBasedRouting } from '@/hooks/useRoleBasedRouting';
-import { currentUser } from '@/redux/ducks/user';
+import { currentUser, userRole } from '@/redux/ducks/user';
 import Icon from '@/stories/Common/Icon';
 import RowDropdown from '@/stories/Common/RowDropdown';
 import { CustomAsyncSelect } from '@/stories/Common/Select';
@@ -37,10 +37,7 @@ const useGetQueueListColumns = (props: Props) => {
   const navigate = useNavigate();
   const { openCloseModal } = props;
   const { hasPermission } = useRoleBasedRouting();
-  const {
-    roles,
-    // , id
-  } = useSelector(currentUser);
+  const role = useSelector(userRole);
 
   // Changed: Using a Map to track selected staff per row
   const [selectedStaffMembers, setSelectedStaffMembers] = useState<
@@ -66,9 +63,6 @@ const useGetQueueListColumns = (props: Props) => {
       accessorFn: row => row?.requester?.roles?.[0]?.name || '',
       header: 'Requester',
       enableSorting: false,
-      meta: {
-        cellClassName: 'w-80',
-      },
       cell: ({ row }) => {
         const role = row?.original?.request_type.includes('therapist') ? 'Therapist' : 'Client';
         const userRequested = row.original.requester.roles?.find(
@@ -78,7 +72,7 @@ const useGetQueueListColumns = (props: Props) => {
           : row.original.requester.roles?.[0]?.name;
         return (
           <span
-            className='hover:text-primary hover:font-bold hover:underline cursor-pointer underline-offset-2 block'
+            className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
             onClick={() => navigate(ROUTES.QUEUE_DETAILS_VIEW.navigatePath(row.original.id))}
           >
             {[
@@ -107,7 +101,7 @@ const useGetQueueListColumns = (props: Props) => {
         const time = row.original?.created_at;
         return (
           <div className='flex gap-3'>
-            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'},</span>
+            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'} ,</span>
             <span>{moment(time).tz(timezone).format('h:mm A')}</span>
           </div>
         );
@@ -134,19 +128,15 @@ const useGetQueueListColumns = (props: Props) => {
         );
       },
     },
-    // {
-    //   accessorKey: 'assigned_to_role',
-    //   accessorFn: row => row?.assignee?.roles?.[0]?.name || '',
-    //   header: 'Assigned To',
-    //   enableSorting: false,
-    //   cell: ({ row }) => <>{row.getValue('assigned_to_role')}</>,
-    // },
-    ...(roles.includes(UserRole.ADMIN)
+    ...(role === UserRole.ADMIN
       ? [
           {
             accessorKey: 'assigned_to',
             header: 'Assigned To',
             enableSorting: false,
+            meta: {
+              cellClassName: 'min-w-72',
+            },
             cell: ({ row }) => {
               const rowId = row.original.id;
               const assignedToId = row.original?.assigned_to_id;
@@ -168,7 +158,7 @@ const useGetQueueListColumns = (props: Props) => {
                   value={value}
                   placeholder='Select staff member'
                   onChange={e => setSelectedStaffMembers({ ...e, rowId })}
-                  name='clinic_address'
+                  name='staff_list'
                   labelClassName='!text-base !leading-22px'
                   StylesConfig={{
                     control: () => ({
@@ -187,30 +177,13 @@ const useGetQueueListColumns = (props: Props) => {
                   }}
                   isSearchable={true}
                   filterOption={() => true}
+                  menuPosition='fixed'
                 />
               );
             },
           },
         ]
-      : [
-          {
-            accessorKey: 'assigned_to',
-            header: 'Assigned To',
-            enableSorting: false,
-            cell: ({ row }) => {
-              const assignedToId = row.original?.assigned_to_id;
-              const assignedToName = row.original?.assignee
-                ? `${row.original.assignee.first_name} ${row.original.assignee.last_name}`
-                : null;
-
-              const value = assignedToId
-                ? { label: assignedToName || 'Unknown', value: assignedToId }
-                : null;
-
-              return <>{value?.label}</>;
-            },
-          },
-        ]),
+      : []),
     {
       accessorKey: 'status',
       header: 'Status',

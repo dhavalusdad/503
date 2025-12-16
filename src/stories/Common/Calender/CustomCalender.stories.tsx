@@ -1,6 +1,6 @@
-import CustomCalendar from '.';
+import CustomCalendar from '@/stories/Common/Calender';
 
-import type { Appointment, AvailableSlot } from './types';
+import type { Appointment, AvailableSlot } from '@/stories/Common/Calender/types';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof CustomCalendar> = {

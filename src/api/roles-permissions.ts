@@ -1,20 +1,18 @@
 // hooks/useRoles.ts
 import { keepPreviousData } from '@tanstack/react-query';
 
-import { axiosGet, axiosPost } from '@/api/axios';
+import { useMutation, useQuery } from '@/api';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '@/api/axios';
 import { mutationsQueryKey } from '@/api/common/mutations.queryKey';
-import { fieldOptionsQueryKey } from '@/api/common/rolePermission.queryKey';
+import { rolePermissionsQueryKey } from '@/api/common/rolePermission.queryKey';
+import type { RolePayload } from '@/features/admin/components/RolePermission/type';
 import { useInvalidateQuery, useRemoveQueries } from '@/hooks/data-fetching';
-
-import { useMutation, useQuery } from '.';
-
-import type { RolePayload } from '@features/admin/components/RolePermission/type';
 
 const BASE_PATH = '/roles';
 
 export const useRolesQuery = (params: object) => {
   return useQuery({
-    queryKey: fieldOptionsQueryKey.getRolePermissionList(params),
+    queryKey: rolePermissionsQueryKey.getRolePermissionList(params),
     queryFn: async () => {
       const res = await axiosGet(`${BASE_PATH}`, { params });
       return {
@@ -27,15 +25,14 @@ export const useRolesQuery = (params: object) => {
 
 export const useCreateRole = () => {
   const { invalidate } = useInvalidateQuery();
-  // const { removeQueries } = useRemoveQueries();
   return useMutation({
     mutationKey: mutationsQueryKey.createRole(),
-    mutationFn: (data: RolePayload) => {
-      return axiosPost(`${BASE_PATH}`, { data });
+    mutationFn: async (data: RolePayload) => {
+      const res = await axiosPost(`${BASE_PATH}`, { data });
+      return res.data;
     },
     onSuccess: async () => {
-      invalidate(fieldOptionsQueryKey.getRolePermissionList());
-      // removeQueries();
+      invalidate(rolePermissionsQueryKey.getRolePermissionList());
     },
   });
 };
@@ -43,12 +40,14 @@ export const useCreateRole = () => {
 export const useUpdateRole = () => {
   const { invalidate } = useInvalidateQuery();
   const { removeQueries } = useRemoveQueries();
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: RolePayload }) => {
-      return axiosPost(`${BASE_PATH}/updaterole/${id}`, { data });
+    mutationFn: async ({ id, data }: { id: string; data: RolePayload }) => {
+      const res = await axiosPut(`${BASE_PATH}/${id}`, { data });
+      return res.data;
     },
     onSuccess: () => {
-      invalidate(fieldOptionsQueryKey.getRolePermissionList());
+      invalidate(rolePermissionsQueryKey.getRolePermissionList());
       removeQueries();
     },
   });
@@ -58,9 +57,9 @@ export const useDeleteRole = () => {
   const { invalidate } = useInvalidateQuery();
   const { removeQueries } = useRemoveQueries();
   return useMutation({
-    mutationFn: (id: string) => axiosPost(`${BASE_PATH}/deleterole/${id}`),
+    mutationFn: (id: string) => axiosDelete(`${BASE_PATH}/${id}`),
     onSuccess: () => {
-      invalidate(fieldOptionsQueryKey.getRolePermissionList());
+      invalidate(rolePermissionsQueryKey.getRolePermissionList());
       removeQueries();
     },
   });
@@ -96,4 +95,15 @@ export const getRolesOptions = async (page?: number, searchTerm?: string) => {
       };
     }
   }
+};
+
+export const useGetPermissionsByRoleId = (roleId?: string) => {
+  return useQuery({
+    queryKey: rolePermissionsQueryKey.getByRoleId(roleId),
+    queryFn: async () => {
+      const res = await axiosGet(`${BASE_PATH}/${roleId}/permissions`);
+      return res.data;
+    },
+    enabled: !!roleId,
+  });
 };

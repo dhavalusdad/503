@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routePath';
 import { useBookSlot } from '@/features/appointment/component/ClientAppointmentsBooking/hooks/useBookSlot';
 import { type BookSlotProps } from '@/features/appointment/component/ClientAppointmentsBooking/types';
+import { formatExperience } from '@/helper';
 import Button from '@/stories/Common/Button';
 import CustomDatePicker from '@/stories/Common/CustomDatePicker';
 import Icon from '@/stories/Common/Icon';
@@ -47,9 +48,7 @@ const BookSlot = ({ therapist_id = '', onContinue, onBack }: BookSlotProps) => {
 
   const therapistFullName = therapist ? `${therapist.first_name} ${therapist.last_name}` : '';
 
-  const therapistExperience = therapist?.years_experience
-    ? `${therapist.years_experience}+ Years Experience`
-    : '';
+  const therapistExperience = therapist ? formatExperience(therapist.experiences) : '';
 
   const therapistSpecializations =
     therapist?.area_of_focus?.map((focus: { name: string }) => focus.name) || [];

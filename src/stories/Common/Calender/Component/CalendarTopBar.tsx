@@ -1,7 +1,9 @@
 import React, { memo } from 'react';
 
+import clsx from 'clsx';
+
 import Button from '@/stories/Common/Button';
-import TabNavigation from '@/stories/Common/Calender/Component/TabNavigation';
+import CalenderTabNavigation from '@/stories/Common/Calender/Component/CalenderTabNavigation';
 import {
   type CalendarTopBarProps,
   MODE_CONSTANT,
@@ -43,9 +45,9 @@ export const CalendarTopBarComponent: React.FC<CalendarTopBarProps> = ({
   };
 
   return (
-    <div className='w-full relative flex items-center justify-between flex-col lg:flex-row p-5 gap-3'>
+    <div className='w-full relative flex items-center xl:justify-between flex-wrap p-5 gap-3'>
       {/* Today & Chevron */}
-      <div className=' flex items-center gap-6'>
+      <div className=' flex items-center gap-5 order-1 xl:order-none'>
         <Button
           variant='filled'
           className='rounded-lg py-2 !font-semibold min-h-10'
@@ -69,43 +71,50 @@ export const CalendarTopBarComponent: React.FC<CalendarTopBarProps> = ({
       </div>
 
       {/* Calendar Info */}
-      <div className=' flex justify-center'>
-        <p className='text-xl font-semibold text-blackdark '>{renderTitle()}</p>
+      <div className=' flex justify-center mx-auto ipadair:w-60 lg:w-96 xl:w-auto order-2 xl:order-none'>
+        <p className='text-xl font-semibold text-blackdark whitespace-nowrap '>{renderTitle()}</p>
       </div>
 
       {/* View Mode Tabs */}
-      <div className={`flex items-center flex-wrap justify-center gap-3`}>
-        {view !== MODE_CONSTANT.MONTH && (
-          <Select
-            key={'slot-interval-config'}
-            options={slotRange.map(d => ({
-              value: d,
-              label: `${d} min`,
-            }))}
-            onChange={selected =>
-              setTimeInterval((selected as { value: number; label: string })?.value || 15)
-            }
-            placeholder={`Select Slot Interval`}
-            labelClassName='!text-base'
-            className='sm:text-base text-sm z-[100]'
-            StylesConfig={{
-              control: () => ({
-                minHeight: '46px',
-                // fontSize: '14px',
-              }),
-              option: () => ({
-                fontSize: '16px',
-                zIndex: 100,
-              }),
-            }}
-            value={{ value: timeInterval, label: `${timeInterval} min` }}
-          />
-        )}
-
-        <TabNavigation tabs={MONTH_DAY_WEEK_TOGGLE} activeTab={view} onTabChange={onTabChange} />
-        {children}
+      {/* <div className={`flex items-center flex-wrap justify-center gap-3`}> */}
+      {view !== MODE_CONSTANT.MONTH && (
+        <Select
+          key={'slot-interval-config'}
+          options={slotRange.map(d => ({
+            value: d,
+            label: `${d} min`,
+          }))}
+          onChange={selected =>
+            setTimeInterval((selected as { value: number; label: string })?.value || 15)
+          }
+          placeholder={`Select Slot Interval`}
+          labelClassName='!text-base'
+          parentClassName='order-4 xl:order-none ml-auto xl:ml-0'
+          StylesConfig={{
+            control: () => ({
+              minHeight: '46px',
+            }),
+            menu: () => ({
+              zIndex: 60,
+            }),
+            option: () => ({
+              fontSize: '16px',
+              zIndex: 100,
+            }),
+          }}
+          value={{ value: timeInterval, label: `${timeInterval} min` }}
+        />
+      )}
+      <div className={clsx('order-5 xl:order-none', view !== MODE_CONSTANT.MONTH ? '' : 'ml-auto')}>
+        <CalenderTabNavigation
+          tabs={MONTH_DAY_WEEK_TOGGLE}
+          activeTab={view}
+          onTabChange={onTabChange}
+        />
       </div>
+      {children}
     </div>
+    // </div>
   );
 };
 

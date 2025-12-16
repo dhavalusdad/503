@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { AlertModal } from '.';
+import { AlertModal } from '@/stories/Common/AlertModal';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

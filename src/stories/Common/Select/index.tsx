@@ -148,7 +148,7 @@ export const Select = forwardRef(
       if (!rawInput) return true;
       const label = option.label ?? '';
       if (typeof label !== 'string') return false;
-      return label.toLowerCase().includes(rawInput.toLowerCase());
+      return label.toLowerCase().includes(rawInput.trim().toLowerCase());
     };
 
     const mergedComponents = {

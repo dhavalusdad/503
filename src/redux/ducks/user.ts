@@ -21,6 +21,7 @@ const initialState: User = {
   timezone: 'UTC',
   agreements: [],
   permissions: [],
+  pending_tours: [],
 };
 
 const user = createSlice({
@@ -33,7 +34,7 @@ const user = createSlice({
           action.payload.profile_image = `${SERVER_URL}${action.payload.profile_image}`;
         }
       }
-      const rawPermissions = action.payload?.permissions?.[0]?.permissions;
+      const rawPermissions = action.payload?.permissions?.permissions;
 
       let flattenedPermissions = state.permissions;
 
@@ -65,5 +66,6 @@ const user = createSlice({
 });
 
 export const currentUser = (state: { user: User }) => state.user;
+export const userRole = (state: { user: User }) => state.user.role;
 export const { setUser, clearUser } = user.actions;
 export default user.reducer;

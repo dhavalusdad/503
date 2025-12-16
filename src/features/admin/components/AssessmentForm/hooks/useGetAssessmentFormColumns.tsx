@@ -53,12 +53,12 @@ const useGetAssessmentFormListColumns = (
       accessorFn: row => `${row.name}`,
       header: 'Form Title',
       meta: {
-        cellClassName: 'w-lg',
+        cellClassName: '!whitespace-normal min-w-3xs',
       },
       cell: ({ row }) => {
         return (
           <span
-            className='hover:text-primary hover:font-bold hover:underline cursor-pointer underline-offset-2 w-full'
+            className='hover:text-primary hover:underline cursor-pointer underline-offset-2'
             onClick={() => navigate(ROUTES.EDIT_ASSESSMENT_FORM.navigatePath(row.original.id))}
           >
             {row.getValue('name')}
@@ -72,8 +72,8 @@ const useGetAssessmentFormListColumns = (
       cell: ({ row }) => {
         const time = row.original?.created_at;
         return (
-          <div className='flex gap-3'>
-            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'},</span>
+          <div className='flex gap-2'>
+            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'} ,</span>
             <span>{moment(time).tz(timezone).format('h:mm A')}</span>
           </div>
         );
@@ -85,8 +85,8 @@ const useGetAssessmentFormListColumns = (
       cell: ({ row }) => {
         const time = row.original?.updated_at;
         return (
-          <div className='flex gap-3'>
-            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'},</span>
+          <div className='flex gap-2'>
+            <span>{time ? moment(time).tz(timezone).format('MMM DD, YYYY') : '-'} ,</span>
             <span>{moment(time).tz(timezone).format('h:mm A')}</span>
           </div>
         );
