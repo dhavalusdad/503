@@ -94,34 +94,6 @@ export const getAmdAppointmentsTypesAsync = async (page?: number, searchTerm?: s
     return { data: [], hasMore: false };
   }
 };
-//   try {
-//     const response = await axiosGet(`${BASE_PATH}/amd-appointment-types`, {
-//       params: {
-//         ...(searchTerm ? { search: searchTerm } : {}),
-//         page: page || 1,
-//         limit: 10,
-//       },
-//     });
-
-//     const amdAppointmentsTypes = response?.data?.data?.data || [];
-//     const hasMore = response?.data?.data?.hasMore || false;
-
-//     const transformedData = amdAppointmentsTypes.map((item: { amd_id: string; name: string }) => ({
-//       value: item.amd_id,
-//       label: normalizeText(item.name),
-//     }));
-
-//     return {
-//       data: transformedData,
-//       hasMore: hasMore,
-//     };
-//   } catch {
-//     return {
-//       data: [],
-//       hasMore: false,
-//     };
-//   }
-// };
 
 export const useGetAmdAppointmentsClientPayment = (params?: AmdAppointmentClientPaymentParams) => {
   return useQuery<AmdAppointmentClientPayment | undefined>({
